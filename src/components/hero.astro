@@ -1,0 +1,57 @@
+---
+import { Picture } from "astro:assets";
+import heroImage from "assets/hero.png";
+import Link from "@components/ui/link.astro";
+import { Icon } from "astro-icon";
+---
+
+<main
+  class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24">
+  <div class="py-6 md:order-1 hidden md:block">
+    <Picture
+      src={heroImage}
+      alt="FWTX DAO Process"
+      widths={[500,700,900]}
+      sizes="(max-width: 1000px) 200vw, 720px"
+      loading="eager"
+      format="avif"
+    />
+  </div>
+  <div>
+    <h1
+      class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
+      Web3 Excellence of Fort Worth
+    </h1>
+    <p class="text-lg mt-4 text-slate-600 max-w-xl">
+      We are a municipal DAO dedicated to the promotion and integration of Web3 technologies into everyday civic life. By fostering education and collaboration, we aim to create a more informed and equitable digital future.
+    </p>
+    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+      <Link
+        href="https://discord.gg/SY2BNKrbqS"
+        target="_blank"
+        class="flex gap-1 items-center justify-center"
+        rel="noopener">
+        <Icon class="text-white w-5 h-5" name="bx:bxl-discord" />
+        Discord
+      </Link>
+      <Link
+        href="https://t.me/fwtxdao"
+        target="_blank"
+        class="flex gap-1 items-center justify-center"
+        rel="noopener">
+        <Icon class="text-white w-5 h-5" name="bx:bxl-telegram" />
+        Telegram
+      </Link>
+      <Link
+        size="lg"
+        style="outline"
+        rel="noopener"
+        href="https://github.com/FWTX-DAO"
+        class="flex gap-1 items-center justify-center"
+        target="_blank">
+        <Icon class="text-black w-4 h-4" name="bx:bxl-github" />
+         GitHub 
+      </Link>
+    </div>
+  </div>
+</main>
