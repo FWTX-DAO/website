@@ -3,7 +3,7 @@ draft: false
 title: "A Decentralized Initiative for Achieving CIVIC Excellence"
 snippet: "The goal of the Fort Worth DAO will be a future where technology empowers community governance, education, and innovation. This non-profit entity is at the forefront of fostering a digital ecosystem that is equitable and accessible"
 image: {
-    src: "https://pixabay.com/photos/fort-worth-texas-water-gardens-1316473/",
+    src: "https://cdn.pixabay.com/photo/2016/04/08/16/32/fort-worth-1316473_960_720.jpg",
     alt: "FWTX DAO"
 }
 publishDate: "2024-02-07 10:42"
