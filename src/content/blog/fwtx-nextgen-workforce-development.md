@@ -3,7 +3,7 @@ draft: false
 title: "Leveraging CityDAOs for Technical Talent Incubation in Fort Worth"
 snippet: "Combining Fort Worth's rich history in aerospace and petroleum engineering with the innovative framework of CityDAOs presents a unique opportunity to nurture the next wave of technical talent, focusing on entrepreneurship, digital organizations, and cyber civic excellence."
 image: {
-    src: "https://cdn.pixabay.com/photo/2020/05/15/18/46/city-5176336_960_720.jpg",
+    src: "https://cdn.pixabay.com/photo/2012/10/26/03/35/aircraft-63211_1280.jpg",
     alt: "Innovation in Fort Worth"
 }
 publishDate: "2024-02-20 10:00"
