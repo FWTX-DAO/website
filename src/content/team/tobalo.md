@@ -1,7 +1,7 @@
 ---
 draft: false
 name: "Tobalo Torres-Valderas"
-title: "President"
+title: "Chairman"
 avatar: {
     src: "https://tobalo.me/img/avatar.png",
     alt: "Tobalo Torres-Valderas"

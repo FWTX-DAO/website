@@ -1,7 +1,7 @@
 ---
 draft: false
 name: "Denis O'Neil"
-title: "Head of Education"
+title: "Chancellor"
 avatar: {
     src: "https://objectstorage.us-chicago-1.oraclecloud.com/n/ax4ehqpunwgh/b/public/o/denis.png",
     alt: "Denis O'Neil"
