@@ -5,7 +5,7 @@ snippet: "In an era where information management is as complex as ever, the need
 image:
   src: "https://cdn.pixabay.com/photo/2018/01/17/20/22/analytics-3088958_1280.jpg"
   alt: "Fortifying Citizen Information"
-publishDate: "2024-01-31 15:39"
+publishDate: "2024-05-06 15:39"
 category: "Cybersecurity"
 author: "Tobalo Torres-Valderas"
 tags: [information_sovereignty, cybersecurity, digital_identity, innovation]
