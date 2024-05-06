@@ -34,7 +34,7 @@ By integrating the principles of next-gen security, we shift the defense strateg
 ### Protecting Critical Infrastructure and Future-Proofing Data:
 The impact of information sovereignty extends beyond the present. With retirement funds and critical infrastructure increasingly reliant on digital systems, the security of citizen information becomes a matter of national strategic importance. By adopting a node-centric security approach, we can better protect critical operations and ensure the resilience of our systems in the face of evolving threats.
 
-Additionally, considering post-quantum encryption, such as transitioning from RSA-2048 to more robust algorithms, becomes essential in safeguarding sensitive data well into the future. This is particularly relevant as quantum computing capabilities advance, posing new challenges to traditional encryption methods.
+Additionally, considering post-quantum encryption, such as transitioning to RSA-2048 and more robust algorithms, becomes essential in safeguarding sensitive data well into the future. This is particularly relevant as quantum computing capabilities advance, posing new challenges to traditional encryption methods.
 
 ### A Five-Star Approach to Fortification:
 Reducing the Attack Surface: Emphasize the need to reduce the number of access points and identities. This aligns with the growing movement to limit non-compete and non-disclosure agreements, which often hinder innovation and free speech while providing a false sense of security.
