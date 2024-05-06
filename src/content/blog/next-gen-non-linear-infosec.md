@@ -26,7 +26,7 @@ Traditional legal and corporate architectures often view liability and relations
 
 The OSI model, with its seven layers, provides a framework for understanding the complex interplay of information flow and security. From the physical layer to the application layer, each level presents unique challenges and opportunities for securing citizen information. By applying the principles of the OSI model, we can design more resilient and secure information management systems.
 
-### Next-Gen Security Paradigm: Node-Centric Defense:
+### Next-Gen Security Paradigm - Node-Centric Defense:
 The traditional network perimeter is evolving with the rise of machine-to-machine communication and the Internet of Things (IoT). In this new paradigm, security focuses on entities as nodes contributing to a larger, interconnected network. The integrity of data becomes paramount, with an emphasis on mitigating source data tampering, spoofing, and poisoned data that could compromise critical operations and downstream automations.
 
 By integrating the principles of next-gen security, we shift the defense strategy to protect the integrity of data exchanged between nodes. This approach becomes crucial as we consider the growing reliance on AI and the need for provable, tamper-proof data payloads. Hashing data, for example, ensures the integrity of information exchanged between devices, identities, and systems, forming the foundation of secure machine-to-machine communication.
