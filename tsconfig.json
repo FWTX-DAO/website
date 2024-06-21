@@ -1,7 +1,7 @@
 {
   "extends": "astro/tsconfigs/base",
   "compilerOptions": {
-    "baseUrl": "/Users/thomasdang/Desktop/website/src",
+    "baseUrl": "src",
     "strictNullChecks": true,
     "types": [
       "astro/client"
