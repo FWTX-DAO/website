@@ -1,5 +1,4 @@
-// src/components/MyForm.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -104,7 +103,6 @@ const SignUp = () => {
           name="investedInCrypto"
           checked={formData.investedInCrypto}
           onChange={handleChange}
-          required
           className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
         />
       </div>
