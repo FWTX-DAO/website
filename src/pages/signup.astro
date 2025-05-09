@@ -1,0 +1,19 @@
+---
+import SignUp from "@components/react/SignUp.jsx";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+---
+
+<Layout title="Sign Up">
+    <Container>
+        <Sectionhead>
+        <Fragment slot="title">Sign Up</Fragment>
+        <Fragment slot="desc">
+            Submit your information and sign up to access memberships
+        </Fragment>
+        </Sectionhead>
+        <SignUp client:only/>
+    </Container>
+</Layout>
+
