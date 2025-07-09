@@ -5,6 +5,8 @@ import Dropdown from "./dropdown.astro";
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Image } from "astro:assets";
 import fwLogo from 'assets/logo.png'
+// @ts-ignore
+import { Icon } from "astro-icon";
 const menuitems = [
   {
     title: "Whitepaper",
@@ -90,17 +92,33 @@ const menuitems = [
             ))
           }
         </ul>
-        <!-- <div class="lg:hidden flex items-center mt-3 gap-4">
-          <Link href="#" style="muted" block size="md">Log in</Link>
-          <Link href="#" size="md" block>Sign up</Link>
-        </div> -->
       </MenuItems>
     </Astronav>
-    <!-- <div>
-      <div class="hidden lg:flex items-center gap-4">
-        <a href="#">Log in</a>
-        <Link href="#" size="md">Sign up</Link>
-      </div>
-    </div> -->
+    <div class="flex items-center gap-3">
+      <a 
+        href="https://twitter.com/FWTX_DAO" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="text-gray-600 hover:text-gray-900 transition-colors"
+        aria-label="X (Twitter)">
+        <Icon name="mdi:twitter" class="w-5 h-5" />
+      </a>
+      <a 
+        href="https://linkedin.com/company/FWTX_DAO" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="text-gray-600 hover:text-gray-900 transition-colors"
+        aria-label="LinkedIn">
+        <Icon name="mdi:linkedin" class="w-5 h-5" />
+      </a>
+      <a 
+        href="https://instagram.com/FWTX_DAO" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="text-gray-600 hover:text-gray-900 transition-colors"
+        aria-label="Instagram">
+        <Icon name="mdi:instagram" class="w-5 h-5" />
+      </a>
+    </div>
   </header>
 </Container>
