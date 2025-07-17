@@ -6,20 +6,25 @@ import "@fontsource-variable/inter/index.css";
 
 export interface Props {
   title: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
 
+const { title, description, image, noindex } = Astro.props;
+
 const resolvedImageWithDomain = new URL(
-  "/fwtx-cyber.png",
+  image || "/ogimage.png",
   Astro.site
 ).toString();
-
-const { title } = Astro.props;
 
 const makeTitle = title
   ? title + " | " + "FWTX DAO"
   : "FWTX DAO - Web3 Excellence of Fort Worth";
+
+const metaDescription = description || "FWTX DAO is a Web3 and civic innovation community in Fort Worth, Texas. Join us for workshops, education, and building the decentralized future of North Texas.";
 ---
 
 <!DOCTYPE html>
@@ -29,11 +34,13 @@ const makeTitle = title
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="generator" content={Astro.generator} />
+    
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <!-- <link rel="preload" as="image" href={src} alt="Hero" /> -->
     <SEO
       title={makeTitle}
-      description="FWTX DAO is a web3 and cyber civic community of Fort Worth, TX"
+      description={metaDescription}
       canonical={canonicalURL}
       twitter={{
         creator: "@tobalotv",
@@ -44,14 +51,26 @@ const makeTitle = title
         basic: {
           url: canonicalURL,
           type: "website",
-          title: `FWTX DAO - North Texas Web3 Excellence`,
+          title: makeTitle,
           image: resolvedImageWithDomain,
         },
         image: {
-          alt: "FWTX Cyber Ranch",
+          alt: "FWTX DAO - Digital Sovereignty is Mission Critical",
+          width: 1200,
+          height: 630,
         },
       }}
     />
+    
+    <!-- Additional meta tags for better SEO -->
+    <meta name="author" content="FWTX DAO" />
+    <meta name="keywords" content="Fort Worth, DAO, Web3, blockchain, civic innovation, digital sovereignty, Texas, crypto, decentralization, community" />
+    <link rel="canonical" href={canonicalURL} />
+    
+    <!-- Favicon variations -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/logo.svg" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/logo.svg" />
   </head>
   <body>
     <Navbar />
