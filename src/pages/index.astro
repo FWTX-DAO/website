@@ -10,7 +10,50 @@ import Layout from "@layouts/Layout.astro";
 <Layout title="">
   <Container>
     <Hero />
+    
+    <!-- Community Roundtables Section -->
+    <div class="mt-8 mb-20">
+      <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-3xl lg:text-4xl font-bold lg:tracking-tight mb-8">
+          Join Our Community Roundtables
+        </h2>
+        <p class="text-lg text-slate-600 mb-8">
+          Growing a technologist culture in Fort Worth via Digital Assets, Emerging Tech, and Information Age First principles
+        </p>
+        <a
+          href="https://fwtx.city/events"
+          class="bg-black text-white px-8 py-3 rounded-lg inline-flex items-center gap-2 hover:bg-slate-800 transition"
+        >
+          RSVP
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
     <Features />
+    <!-- Event Section -->
+    <div class="my-20">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl lg:text-4xl font-bold lg:tracking-tight">
+          Events Programming
+        </h2>
+      </div>
+      <div class="px-4">
+        <div class="w-full max-w-6xl mx-auto">
+          <iframe
+            src="https://luma.com/embed/event/evt-qSiNR6N2rQLewTZ/simple"
+            frameborder="0"
+            allow="fullscreen; payment"
+            aria-hidden="false"
+            tabindex="0"
+            class="w-full h-[500px] md:h-[600px] lg:h-[700px] rounded-lg shadow-lg"
+            style="border: 1px solid #bfcbda88;"
+          ></iframe>
+        </div>
+      </div>
+    </div>
     <Logos />
     <Cta />
   </Container>

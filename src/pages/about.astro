@@ -1,14 +1,7 @@
 ---
-import { getCollection } from "astro:content";
-import { Picture } from "astro:assets";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import Sectionhead from "@components/sectionhead.astro";
-
-// Filter team entries with 'draft: false' & date before current date
-const publishedTeamMembers = await getCollection("team", ({ data }) => {
-  return !data.draft && data.publishDate < new Date();
-});
 ---
 
 <Layout 
@@ -17,41 +10,33 @@ const publishedTeamMembers = await getCollection("team", ({ data }) => {
   <Container>
     <Sectionhead>
       <Fragment slot="title">About</Fragment>
-      <Fragment slot="desc">We are a small passionate team.</Fragment>
+      <Fragment slot="desc">Building Fort Worth's innovation ecosystem</Fragment>
     </Sectionhead>
 
-    <div class="flex flex-col gap-3 mx-auto max-w-4xl mt-16">
+    <div class="flex flex-col gap-6 mx-auto max-w-4xl mt-16">
       <h2 class="font-bold text-3xl text-gray-800">
         Empowering Fort Worth with Web3 & Innovation.
       </h2>
       <p class="text-lg leading-relaxed text-slate-500">
         We're composed of experts in Web3, digital marketing, cybersecurity, FinTech, and software development, harnesses the power of decentralized technologies to pioneer innovative urban solutions. This multi-disciplinary group collaborates to integrate blockchain and Web3 principles into urban development, revolutionizing how future cities operate and interact in a digitally advanced landscape.
       </p>
-    </div>
-    <div class="grid md:grid-cols-3 gap-10 mx-auto max-w-4xl mt-12">
-      {
-        publishedTeamMembers.map((teamMemberEntry) => (
-          <div class="group">
-            <div class="w-full aspect-square">
-              <Picture
-                src={teamMemberEntry.data.avatar.src}
-                alt={teamMemberEntry.data.avatar.alt}
-                sizes="(max-width: 800px) 100vw, 400px"
-                width={400}
-                height={400}
-                class="w-full rounded-md rounded transition group-hover:-translate-y-1 group-hover:shadow-xl bg-white object-cover object-center aspect-square"
-              />
-            </div>
-
-            <div class="mt-4 text-center">
-              <h2 class="text-lg text-gray-800">{teamMemberEntry.data.name}</h2>
-              <h3 class="text-sm text-slate-500">
-                {teamMemberEntry.data.title}
-              </h3>
-            </div>
-          </div>
-        ))
-      }
+      
+      <h3 class="font-bold text-2xl text-gray-800 mt-8">
+        Fort Worth: Primed for Civic Innovation
+      </h3>
+      <p class="text-lg leading-relaxed text-slate-500">
+        Fort Worth stands at a pivotal moment, ripe and primed to strengthen civic innovation and grow emerging tech companies. With its unique position in the Texas innovation corridor, the city offers unparalleled opportunities for economic and workforce development. Our approach focuses on creating education-driven pathways that provide bottom-of-funnel exposure to emerging technologies while harnessing top-of-funnel talent acquisition strategies.
+      </p>
+      <p class="text-lg leading-relaxed text-slate-500">
+        By bridging the gap between traditional industries and cutting-edge technology, we're cultivating an ecosystem where innovation thrives. Our initiatives connect educational institutions with industry leaders, creating pipelines that transform curious learners into skilled technologists. Through strategic partnerships and community-driven programs, we're not just adapting to the future—we're actively building it, ensuring Fort Worth emerges as a leader in civic innovation and technological advancement.
+      </p>
+      <p class="text-lg leading-relaxed text-slate-500">
+        This is more than workforce development; it's about creating a sustainable innovation culture that attracts talent, nurtures startups, and establishes Fort Worth as a hub for emerging technologies. From blockchain and AI to cybersecurity and digital infrastructure, we're laying the groundwork for a thriving tech economy that benefits all residents while maintaining the unique character that makes Fort Worth special.
+      </p>
+      
+      <p class="text-base italic text-slate-600 mt-12 text-center">
+        Read more on our work and thought leadership at <a href="/blog" class="text-blue-600 hover:text-blue-800 underline">our blog</a>.
+      </p>
     </div>
   </Container>
 </Layout>
