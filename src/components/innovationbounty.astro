@@ -1,0 +1,90 @@
+---
+import Link from "./ui/link.astro";
+import Container from "./container.astro";
+import Sectionhead from "./sectionhead.astro";
+// @ts-ignore
+import { Icon } from "astro-icon";
+---
+
+<Container>
+  <Sectionhead>
+    <Fragment slot="title">Innovation Bounties</Fragment>
+    <Fragment slot="desc">
+      Submit your innovative ideas and help shape the future of Fort Worth's Web3 ecosystem
+    </Fragment>
+  </Sectionhead>
+
+  <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-12">
+    <div class="flex flex-col justify-center">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4">
+        Have an Innovation Idea?
+      </h3>
+      <p class="text-lg text-gray-600 mb-6">
+        We're looking for creative solutions and innovative projects that can advance Fort Worth's Web3 initiatives. Submit your bounty proposal and collaborate with our community.
+      </p>
+      <ul class="space-y-4">
+        <li class="flex items-start">
+          <Icon name="mdi:check-circle" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <span class="text-gray-600">Community-driven innovation</span>
+        </li>
+        <li class="flex items-start">
+          <Icon name="mdi:check-circle" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <span class="text-gray-600">Transparent bounty system</span>
+        </li>
+        <li class="flex items-start">
+          <Icon name="mdi:check-circle" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <span class="text-gray-600">Collaborative development</span>
+        </li>
+        <li class="flex items-start">
+          <Icon name="mdi:check-circle" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <span class="text-gray-600">Real-world impact</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+      <div class="flex items-center justify-center mb-6">
+        <Icon name="mdi:lightbulb" class="w-16 h-16 text-indigo-600" />
+      </div>
+      <h4 class="text-xl font-bold text-gray-800 mb-4 text-center">
+        Submit Your Bounty
+      </h4>
+      <p class="text-gray-600 mb-6 text-center">
+        Visit our Innovation Bounties platform to submit proposals, browse active bounties, and join the conversation.
+      </p>
+      <div class="flex flex-col gap-4">
+        <Link
+          href="https://innovate.fwtx.city"
+          style="primary"
+          size="lg"
+          block
+          rel="noopener noreferrer">
+          Submit Innovation Bounty
+        </Link>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-16 bg-gradient-to-r from-indigo-50 to-purple-50 p-8 rounded-lg">
+    <h4 class="text-xl font-bold text-gray-800 mb-4 text-center">
+      What Can You Submit?
+    </h4>
+    <div class="grid md:grid-cols-3 gap-6 mt-8">
+      <div class="text-center">
+        <Icon name="mdi:code-braces" class="w-12 h-12 text-indigo-600 mx-auto mb-3" />
+        <h5 class="font-semibold text-gray-800 mb-2">Technical Solutions</h5>
+        <p class="text-sm text-gray-600">Smart contracts, dApps, and blockchain integrations</p>
+      </div>
+      <div class="text-center">
+        <Icon name="mdi:account-group" class="w-12 h-12 text-indigo-600 mx-auto mb-3" />
+        <h5 class="font-semibold text-gray-800 mb-2">Community Initiatives</h5>
+        <p class="text-sm text-gray-600">Education programs, events, and outreach projects</p>
+      </div>
+      <div class="text-center">
+        <Icon name="mdi:chart-line" class="w-12 h-12 text-indigo-600 mx-auto mb-3" />
+        <h5 class="font-semibold text-gray-800 mb-2">Strategic Projects</h5>
+        <p class="text-sm text-gray-600">Research, governance proposals, and ecosystem development</p>
+      </div>
+    </div>
+  </div>
+</Container>
