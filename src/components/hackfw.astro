@@ -1,0 +1,134 @@
+---
+import Link from "./ui/link.astro";
+import Container from "./container.astro";
+import Sectionhead from "./sectionhead.astro";
+// @ts-ignore
+import { Icon } from "astro-icon";
+---
+
+<Container>
+  <Sectionhead>
+    <Fragment slot="title">HackFW 2026</Fragment>
+    <Fragment slot="desc">
+      Fort Worth's Innovation Flywheel - Building local tech talent through civic innovation challenges
+    </Fragment>
+  </Sectionhead>
+
+  <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-12">
+    <div class="flex flex-col justify-center">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4">
+        Join Fort Worth's Premier Hackathon
+      </h3>
+      <p class="text-lg text-gray-600 mb-6">
+        HackFW is a sustained talent pipeline designed to connect builders with real-world challenges. Whether you're a student, professional, or innovator, this is your chance to make an impact.
+      </p>
+
+      <div class="space-y-3 mb-6">
+        <div class="flex items-start">
+          <Icon name="mdi:calendar" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <div>
+            <p class="font-semibold text-gray-800">Virtual Hackathon</p>
+            <p class="text-gray-600">March 26 – April 26, 2026</p>
+          </div>
+        </div>
+        <div class="flex items-start">
+          <Icon name="mdi:calendar-star" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <div>
+            <p class="font-semibold text-gray-800">In-Person Event</p>
+            <p class="text-gray-600">April 24-26, 2026 at TCC Trinity River Campus</p>
+          </div>
+        </div>
+        <div class="flex items-start">
+          <Icon name="mdi:account-group" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <div>
+            <p class="font-semibold text-gray-800">100+ Participants</p>
+            <p class="text-gray-600">1,000+ target attendees</p>
+          </div>
+        </div>
+      </div>
+
+      <ul class="space-y-4">
+        <li class="flex items-start">
+          <Icon name="mdi:check-circle" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <span class="text-gray-600">Hands-on technical product development</span>
+        </li>
+        <li class="flex items-start">
+          <Icon name="mdi:check-circle" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <span class="text-gray-600">Real-world challenges from industry partners</span>
+        </li>
+        <li class="flex items-start">
+          <Icon name="mdi:check-circle" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <span class="text-gray-600">Mentorship from established professionals</span>
+        </li>
+        <li class="flex items-start">
+          <Icon name="mdi:check-circle" class="w-6 h-6 text-indigo-600 mr-3 mt-1 flex-shrink-0" />
+          <span class="text-gray-600">Pathways to employment opportunities</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+      <div class="flex items-center justify-center mb-6">
+        <Icon name="mdi:rocket-launch" class="w-16 h-16 text-indigo-600" />
+      </div>
+      <h4 class="text-xl font-bold text-gray-800 mb-4 text-center">
+        Get Involved
+      </h4>
+      <p class="text-gray-600 mb-6 text-center">
+        Register to compete, learn more about the event, or sponsor the next generation of Fort Worth innovators.
+      </p>
+      <div class="flex flex-col gap-4">
+        <Link
+          href="https://fwtx.devpost.com"
+          style="primary"
+          size="lg"
+          block
+          rel="noopener noreferrer">
+          Register to Compete
+        </Link>
+        <Link
+          href="https://hack.fwtx.city"
+          style="outline"
+          size="lg"
+          block
+          rel="noopener noreferrer">
+          Learn More
+        </Link>
+      </div>
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <p class="text-sm text-gray-600 text-center mb-2">
+          Interested in sponsoring?
+        </p>
+        <a
+          href="mailto:community@fwtx.city"
+          class="flex items-center justify-center text-indigo-600 hover:text-indigo-700 font-semibold">
+          <Icon name="mdi:email" class="w-5 h-5 mr-2" />
+          community@fwtx.city
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-16 bg-gradient-to-r from-indigo-50 to-purple-50 p-8 rounded-lg">
+    <h4 class="text-xl font-bold text-gray-800 mb-4 text-center">
+      What to Expect
+    </h4>
+    <div class="grid md:grid-cols-3 gap-6 mt-8">
+      <div class="text-center">
+        <Icon name="mdi:code-tags" class="w-12 h-12 text-indigo-600 mx-auto mb-3" />
+        <h5 class="font-semibold text-gray-800 mb-2">Technical Challenges</h5>
+        <p class="text-sm text-gray-600">Data engineering, software development, and emerging tech integration</p>
+      </div>
+      <div class="text-center">
+        <Icon name="mdi:school" class="w-12 h-12 text-indigo-600 mx-auto mb-3" />
+        <h5 class="font-semibold text-gray-800 mb-2">Free Workshops</h5>
+        <p class="text-sm text-gray-600">Networking opportunities and skill-building sessions</p>
+      </div>
+      <div class="text-center">
+        <Icon name="mdi:trophy" class="w-12 h-12 text-indigo-600 mx-auto mb-3" />
+        <h5 class="font-semibold text-gray-800 mb-2">Prizes & Recognition</h5>
+        <p class="text-sm text-gray-600">Connect with sponsors and gain product deployment opportunities</p>
+      </div>
+    </div>
+  </div>
+</Container>
