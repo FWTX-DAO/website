@@ -1,6 +1,4 @@
 ---
-// @ts-ignore
-import { Icon } from "astro-icon";
 import { Image } from "astro:assets";
 import tbcLogo from "@assets/partners/tbc.jpg"
 import fwifLogo from "@assets/partners/fwif.png"
@@ -14,16 +12,38 @@ import liquidacre from "@assets/partners/liquidacre.png"
 ---
 
 <div class="mt-24">
-  <h2 class="text-center text-slate-500">Partners</h2>
-  <div class="flex gap-8 md:gap-20 items-center justify-center mt-10 flex-wrap">
-    <a href="https://yeetum.com" target="_blank"><Image src={yLogo} alt="Yeetum Intelligence Platform" height="75" width="100"/></a>
-    <a href="https://texasblockchaincouncil.org/" target="_blank"><Image src={tbcLogo} alt="Texas Blockchain Council" height="75" width="100"/></a>
-    <a href="https://www.digifoundry.org/" target="_blank"><Image src={ndf} alt="National DigiFoundry" height="75" width="100"/></a>
-    <a href="https://ipser.com" target="_blank"><Image src={fwifLogo} alt="Fort Worth Innovators Forum" height="75" width="100"/></a>
-    <a href="https://olinkscorp.com/" target="_blank"><Image src={oLinks} alt="O'Links Corporation" height="75" width="100"/></a>
-    <a href="https://cse.tcu.edu/" target="_blank"><Image src={tcu} alt="Texas Christian University" height="75" width="100"/></a>
-    <a href="https://www.utsa.edu/" target="_blank"><Image src={utsa} alt="University of Texas San Antonio" height="75" width="100"/></a>
-    <a href="https://simbachain.com/" target="_blank"><Image src={simba} alt="Simba Chain" height="75" width="100"/></a>
-    <a href="https://liquidacre.com/" target="_blank"><Image src={liquidacre} alt="LiquidAcre" height="75" width="100"/></a>
+  <h2 class="text-center text-slate-400 text-lg font-semibold mb-2">Partners & Collaborators</h2>
+  <p class="text-center text-slate-500 text-sm mb-8">Building the future of Fort Worth together</p>
+
+  <div class="bg-white rounded-2xl p-10 md:p-14 shadow-xl">
+    <div class="flex flex-wrap gap-10 md:gap-14 items-center justify-center">
+      <a href="https://yeetum.com" target="_blank" class="hover:scale-105 transition-transform duration-300">
+        <Image src={yLogo} alt="Yeetum Intelligence Platform" height="45" width="140" class="h-10 w-auto object-contain"/>
+      </a>
+      <a href="https://texasblockchaincouncil.org/" target="_blank" class="hover:scale-105 transition-transform duration-300">
+        <Image src={tbcLogo} alt="Texas Blockchain Council" height="45" width="140" class="h-10 w-auto object-contain"/>
+      </a>
+      <a href="https://www.digifoundry.org/" target="_blank" class="hover:scale-105 transition-transform duration-300">
+        <Image src={ndf} alt="National DigiFoundry" height="45" width="140" class="h-10 w-auto object-contain"/>
+      </a>
+      <a href="https://ipser.com" target="_blank" class="hover:scale-105 transition-transform duration-300">
+        <Image src={fwifLogo} alt="Fort Worth Innovators Forum" height="45" width="140" class="h-10 w-auto object-contain"/>
+      </a>
+      <a href="https://olinkscorp.com/" target="_blank" class="hover:scale-105 transition-transform duration-300">
+        <Image src={oLinks} alt="O'Links Corporation" height="45" width="140" class="h-10 w-auto object-contain"/>
+      </a>
+      <a href="https://cse.tcu.edu/" target="_blank" class="hover:scale-105 transition-transform duration-300">
+        <Image src={tcu} alt="Texas Christian University" height="45" width="140" class="h-10 w-auto object-contain"/>
+      </a>
+      <a href="https://www.utsa.edu/" target="_blank" class="hover:scale-105 transition-transform duration-300">
+        <Image src={utsa} alt="University of Texas San Antonio" height="45" width="140" class="h-10 w-auto object-contain"/>
+      </a>
+      <a href="https://simbachain.com/" target="_blank" class="hover:scale-105 transition-transform duration-300">
+        <Image src={simba} alt="Simba Chain" height="45" width="140" class="h-10 w-auto object-contain"/>
+      </a>
+      <a href="https://liquidacre.com/" target="_blank" class="hover:scale-105 transition-transform duration-300">
+        <Image src={liquidacre} alt="LiquidAcre" height="45" width="140" class="h-10 w-auto object-contain"/>
+      </a>
+    </div>
   </div>
 </div>

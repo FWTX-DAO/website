@@ -2,7 +2,7 @@
 interface Props {
   size?: "md" | "lg";
   block?: boolean;
-  style?: "outline" | "primary" | "inverted";
+  style?: "outline" | "primary" | "inverted" | "cyber" | "cyber-outline";
   class?: string;
   [x: string]: any;
 }
@@ -22,15 +22,18 @@ const sizes = {
 
 const styles = {
   outline: "border-2 border-black hover:bg-black text-black hover:text-white",
-  primary:
-    "bg-black text-white hover:bg-slate-900  border-2 border-transparent",
+  primary: "bg-black text-white hover:bg-slate-900 border-2 border-transparent",
+  inverted: "bg-white text-black border-2 border-transparent",
+  // Cybernetic styles
+  cyber: "bg-neon-cyan text-cyber-dark font-semibold border-2 border-neon-cyan hover:bg-neon-cyan/90 hover:shadow-glow-cyan transition-all duration-300",
+  "cyber-outline": "bg-transparent text-neon-cyan font-semibold border-2 border-neon-cyan/50 hover:border-neon-cyan hover:bg-neon-cyan/10 hover:shadow-glow-sm transition-all duration-300",
 };
 ---
 
 <button
   {...rest}
   class:list={[
-    "rounded text-center transition focus-visible:ring-2 ring-offset-2 ring-gray-200",
+    "rounded text-center transition focus-visible:ring-2 ring-offset-2 ring-neon-cyan/50 focus-visible:ring-offset-cyber-dark",
     block && "w-full",
     sizes[size],
     styles[style],

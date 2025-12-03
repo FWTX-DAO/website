@@ -72,15 +72,161 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
     <link rel="icon" type="image/png" sizes="32x32" href="/logo.svg" />
     <link rel="icon" type="image/png" sizes="16x16" href="/logo.svg" />
   </head>
-  <body>
-    <Navbar />
-    <slot />
-    <Footer />
+  <body class="bg-cyber-dark min-h-screen text-gray-100 antialiased">
+    <!-- Cybernetic grid background -->
+    <div class="fixed inset-0 bg-grid-pattern bg-grid opacity-30 pointer-events-none"></div>
+
+    <!-- Gradient overlay -->
+    <div class="fixed inset-0 bg-gradient-to-b from-transparent via-cyber-dark/50 to-cyber-dark pointer-events-none"></div>
+
+    <!-- Main content -->
+    <div class="relative z-10">
+      <Navbar />
+      <slot />
+      <Footer />
+    </div>
+
     <style is:global>
       /* Improve Page speed */
-      /* https://css-tricks.com/almanac/properties/c/content-visibility/ */
       img {
         content-visibility: auto;
+      }
+
+      /* Cybernetic base styles */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background-color: #0A0F1C;
+      }
+
+      /* Selection styling */
+      ::selection {
+        background-color: rgba(0, 255, 255, 0.3);
+        color: #00FFFF;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #0A0F1C;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #00FFFF 0%, #8B5CF6 100%);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #00FFFF 0%, #FF00FF 100%);
+      }
+
+      /* Glow text utility */
+      .text-glow {
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3);
+      }
+
+      .text-glow-purple {
+        text-shadow: 0 0 10px rgba(139, 92, 246, 0.5), 0 0 20px rgba(139, 92, 246, 0.3);
+      }
+
+      /* Gradient text */
+      .gradient-text {
+        background: linear-gradient(90deg, #00FFFF 0%, #0066FF 50%, #8B5CF6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Glassmorphism card */
+      .glass-card {
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(0, 255, 255, 0.1);
+      }
+
+      .glass-card:hover {
+        border-color: rgba(0, 255, 255, 0.3);
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+      }
+
+      /* Neon border effect */
+      .neon-border {
+        position: relative;
+      }
+
+      .neon-border::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(90deg, #00FFFF, #8B5CF6, #FF00FF, #00FFFF);
+        background-size: 300% 100%;
+        border-radius: inherit;
+        z-index: -1;
+        animation: shimmer 3s linear infinite;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .neon-border:hover::before {
+        opacity: 1;
+      }
+
+      @keyframes shimmer {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 300% 50%; }
+      }
+
+      /* Cybernetic link styling */
+      .cyber-link {
+        position: relative;
+        color: #94a3b8;
+        transition: color 0.3s ease;
+      }
+
+      .cyber-link:hover {
+        color: #00FFFF;
+      }
+
+      .cyber-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: linear-gradient(90deg, #00FFFF, #8B5CF6);
+        transition: width 0.3s ease;
+      }
+
+      .cyber-link:hover::after {
+        width: 100%;
+      }
+
+      /* Scan line effect (subtle) */
+      .scan-lines::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.1) 2px,
+          rgba(0, 0, 0, 0.1) 4px
+        );
+        pointer-events: none;
+        opacity: 0.3;
+      }
+
+      /* Hero SVG glow filter - makes dark SVGs visible on dark background */
+      .hero-svg-glow img,
+      .hero-svg-glow picture img {
+        filter: invert(0.85) sepia(0.15) saturate(1.5) hue-rotate(160deg) brightness(1.1) drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
       }
     </style>
   </body>

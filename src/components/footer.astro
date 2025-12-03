@@ -3,21 +3,26 @@
 import { Icon } from "astro-icon";
 ---
 
-<footer class="my-20">
-  <div class="flex justify-center items-center gap-4 mb-4">
+<footer class="my-20 relative">
+  <!-- Top border glow -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-neon-cyan/50 to-transparent"></div>
+
+  <div class="flex justify-center items-center gap-6 mb-6 pt-8">
     <a
-      href="https://twitter.com/FWTX_DAO"
+      href="https://x.com/FWTX_DAO"
       target="_blank"
       rel="noopener noreferrer"
-      class="text-slate-500 hover:text-slate-700 transition-colors"
-      aria-label="X (Twitter)">
-      <Icon name="mdi:twitter" class="w-6 h-6" />
+      class="text-slate-500 hover:text-neon-cyan hover:shadow-glow-sm transition-all duration-300 p-2"
+      aria-label="X">
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
     </a>
     <a
       href="https://linkedin.com/company/FWTX_DAO"
       target="_blank"
       rel="noopener noreferrer"
-      class="text-slate-500 hover:text-slate-700 transition-colors"
+      class="text-slate-500 hover:text-neon-blue hover:shadow-glow-sm transition-all duration-300 p-2"
       aria-label="LinkedIn">
       <Icon name="mdi:linkedin" class="w-6 h-6" />
     </a>
@@ -25,21 +30,27 @@ import { Icon } from "astro-icon";
       href="https://instagram.com/FWTX_DAO"
       target="_blank"
       rel="noopener noreferrer"
-      class="text-slate-500 hover:text-slate-700 transition-colors"
+      class="text-slate-500 hover:text-neon-magenta hover:shadow-glow-sm transition-all duration-300 p-2"
       aria-label="Instagram">
       <Icon name="mdi:instagram" class="w-6 h-6" />
     </a>
   </div>
+
   <p class="text-center text-sm text-slate-500">
-    Copyright © {new Date().getFullYear()} Fort Worth DAO LCA. All rights reserved.
+    Copyright © {new Date().getFullYear()} <span class="text-slate-400">Fort Worth DAO LCA</span>. All rights reserved.
   </p>
-  <p class="text-center text-xs text-slate-500 mt-1">
+  <p class="text-center text-xs text-slate-600 mt-2">
     Managed by <a
       href="https://yeetum.com/contact"
       target="_blank"
       rel="noopener"
-      class="hover:underline">
+      class="text-slate-500 hover:text-neon-cyan transition-colors duration-300">
       Eden Advisory
     </a>
   </p>
+
+  <!-- Bottom accent line -->
+  <div class="flex justify-center mt-8">
+    <div class="w-24 h-1 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-cyan rounded-full opacity-50"></div>
+  </div>
 </footer>

@@ -6,70 +6,91 @@ import { Icon } from "astro-icon";
 ---
 
 <main
-  class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24">
-  <div class="py-6 md:order-1 hidden md:block">
-    <Picture
-      src={heroImage}
-      alt="FWTX DAO Process"
-      widths={[500, 700, 900]}
-      sizes="(max-width: 1000px) 200vw, 720px"
-      loading="eager"
-      format="avif"
-    />
+  class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24 gap-8 lg:gap-12">
+  <div class="py-6 md:order-1 hidden md:block animate-float">
+    <div class="relative">
+      <!-- White glow effect behind image for contrast -->
+      <div class="absolute inset-0 bg-white blur-3xl rounded-full opacity-60"></div>
+      <div class="absolute inset-0 bg-white blur-2xl rounded-full translate-x-8 opacity-50"></div>
+      <Picture
+        src={heroImage}
+        alt="FWTX DAO Process"
+        widths={[500, 700, 900]}
+        sizes="(max-width: 1000px) 200vw, 720px"
+        loading="eager"
+        format="avif"
+        class="relative z-10 hero-svg-glow"
+      />
+    </div>
   </div>
-  <div>
+  <div class="animate-fade-in">
     <h1
-      class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
-      Web3 Excellence of Fort Worth
+      class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter text-white">
+      <span class="gradient-text">Web3 Excellence</span>
+      <br />
+      <span class="text-gray-100">of Fort Worth</span>
     </h1>
-    <div class="text-lg mt-4 text-slate-600 max-w-xl space-y-4">
+    <div class="text-lg mt-6 text-slate-400 max-w-xl space-y-4 leading-relaxed">
       <p>
-        We are a municipal DAO dedicated to evangelizing digital sovereignty and
-        property rights for Fort Worth - educating on the intersection of
-        blockchain, cryptography, and ownership.
+        We are a municipal DAO dedicated to evangelizing
+        <span class="text-neon-cyan">digital sovereignty</span> and property rights
+        for Fort Worth - educating on the intersection of blockchain, cryptography,
+        and ownership.
       </p>
       <p>
         We focus on the nuance of digital ownership and emerging tech for our
-        constituents by fostering open source ecosystems, knowledge sharing, and
-        assets in our civic innovation lab.
+        constituents by fostering
+        <span class="text-neon-purple">open source ecosystems</span>, knowledge
+        sharing, and assets in our civic innovation lab.
       </p>
       <p>
         We aim to create a more technologically literate, informed, and
         equitable digital future for an efficient and optimized city.
         <a
           href="https://constitution.fwtx.city"
-          class="text-blue-600 hover:underline">
+          class="text-neon-cyan hover:text-neon-purple transition-colors duration-300 underline decoration-neon-cyan/30 hover:decoration-neon-purple underline-offset-4">
           Read our constitution and whitepaper.
         </a>
       </p>
     </div>
-    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+    <div class="mt-8 flex flex-col sm:flex-row gap-4">
       <Link
         href="https://dao.fwtx.city"
         target="_blank"
-        class="flex gap-1 items-center justify-center"
+        style="cyber"
+        class="flex gap-2 items-center justify-center group"
         rel="noopener">
-        <Icon class="text-white w-5 h-5" name="bx:bx-user-plus" />
-        Join
+        <Icon class="text-cyber-dark w-5 h-5 group-hover:animate-pulse" name="bx:bx-user-plus" />
+        Join DAO
       </Link>
       <Link
         href="https://t.me/fwtxdao"
         target="_blank"
-        class="flex gap-1 items-center justify-center"
+        style="cyber"
+        class="flex gap-2 items-center justify-center group"
         rel="noopener">
-        <Icon class="text-white w-5 h-5" name="bx:bxl-telegram" />
+        <Icon class="text-cyber-dark w-5 h-5" name="bx:bxl-telegram" />
         Telegram
       </Link>
       <Link
         size="lg"
-        style="outline"
+        style="cyber-outline"
         rel="noopener"
         href="https://github.com/FWTX-DAO"
-        class="flex gap-1 items-center justify-center"
+        class="flex gap-2 items-center justify-center group"
         target="_blank">
-        <Icon class="text-black w-4 h-4" name="bx:bxl-github" />
+        <Icon class="text-neon-cyan w-4 h-4 group-hover:text-neon-purple transition-colors" name="bx:bxl-github" />
         GitHub
       </Link>
+    </div>
+
+    <!-- Status indicator -->
+    <div class="mt-8 flex items-center gap-3">
+      <div class="relative flex h-3 w-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-neon-green"></span>
+      </div>
+      <span class="text-sm text-slate-500 font-mono">DAO Status: <span class="text-neon-green">Active</span></span>
     </div>
   </div>
 </main>
