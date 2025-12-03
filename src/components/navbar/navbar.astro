@@ -3,8 +3,6 @@ import Container from "@components/container.astro";
 import Link from "@components/ui/link.astro";
 import Dropdown from "./dropdown.astro";
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
-import { Image } from "astro:assets";
-import fwLogo from 'assets/logo.png'
 // @ts-ignore
 import { Icon } from "astro-icon";
 const menuitems = [
@@ -17,12 +15,27 @@ const menuitems = [
     path: "#",
     children: [
       { title: "Whitepaper", path: "https://constitution.fwtx.city/" },
-      { title: "Constitution", path: "https://constitution.fwtx.city/assets/constitution.pdf" },
-      { title: "Developer", path: "https://github.com/FWTX-DAO/DeFi-Developer-Road-Map" },
-      { title: "Investigations", path: "https://github.com/FWTX-DAO/On-Chain-Investigations-Tools-List" },
-      { title: "OpSec", path: "https://github.com/FWTX-DAO/Crypto-OpSec-SelfGuard-RoadMap" },
+      {
+        title: "Constitution",
+        path: "https://constitution.fwtx.city/assets/constitution.pdf",
+      },
+      {
+        title: "Developer",
+        path: "https://github.com/FWTX-DAO/DeFi-Developer-Road-Map",
+      },
+      {
+        title: "Investigations",
+        path: "https://github.com/FWTX-DAO/On-Chain-Investigations-Tools-List",
+      },
+      {
+        title: "OpSec",
+        path: "https://github.com/FWTX-DAO/Crypto-OpSec-SelfGuard-RoadMap",
+      },
       { title: "AI", path: "https://github.com/FWTX-DAO/ai-study-guide" },
-      { title: "Zero Trust", path: "https://github.com/FWTX-DAO/awesome-zero-trust" },
+      {
+        title: "Zero Trust",
+        path: "https://github.com/FWTX-DAO/awesome-zero-trust",
+      },
     ],
   },
   /* {
@@ -52,11 +65,9 @@ const menuitems = [
   <header class="flex flex-col lg:flex-row justify-between items-center my-5">
     <Astronav>
       <div class="flex w-full lg:w-auto items-center justify-between">
-        <a href="/" class="text-lg">
-          <Image src={fwLogo} 
-          alt="FWTX DAO Logo" 
-          width="200"
-          height="150"/>
+        <a href="/" class="flex items-center gap-3">
+          <img src="/logo.svg" alt="FWTX DAO Logo" class="w-12 h-12" />
+          <span class="text-xl font-semibold text-gray-800">Fort Worth DAO</span>
         </a>
         <div class="block lg:hidden">
           <MenuIcon class="w-4 h-4 text-gray-800" />

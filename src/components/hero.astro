@@ -11,7 +11,7 @@ import { Icon } from "astro-icon";
     <Picture
       src={heroImage}
       alt="FWTX DAO Process"
-      widths={[500,700,900]}
+      widths={[500, 700, 900]}
       sizes="(max-width: 1000px) 200vw, 720px"
       loading="eager"
       format="avif"
@@ -22,9 +22,27 @@ import { Icon } from "astro-icon";
       class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
       Web3 Excellence of Fort Worth
     </h1>
-    <p class="text-lg mt-4 text-slate-600 max-w-xl">
-      We are a municipal DAO dedicated to the promotion and integration of Web3 technologies into everyday civic life. We focus on the nuance of digital ownership and emerging tech for our constiuents by fostering education and collaboration. We aim to create a more technologically literate, informed, and equitable digital future.
-    </p>
+    <div class="text-lg mt-4 text-slate-600 max-w-xl space-y-4">
+      <p>
+        We are a municipal DAO dedicated to evangelizing digital sovereignty and
+        property rights for Fort Worth - educating on the intersection of
+        blockchain, cryptography, and ownership.
+      </p>
+      <p>
+        We focus on the nuance of digital ownership and emerging tech for our
+        constituents by fostering open source ecosystems, knowledge sharing, and
+        assets in our civic innovation lab.
+      </p>
+      <p>
+        We aim to create a more technologically literate, informed, and
+        equitable digital future for an efficient and optimized city.
+        <a
+          href="https://constitution.fwtx.city"
+          class="text-blue-600 hover:underline">
+          Read our constitution and whitepaper.
+        </a>
+      </p>
+    </div>
     <div class="mt-6 flex flex-col sm:flex-row gap-3">
       <Link
         href="https://dao.fwtx.city"
@@ -50,7 +68,7 @@ import { Icon } from "astro-icon";
         class="flex gap-1 items-center justify-center"
         target="_blank">
         <Icon class="text-black w-4 h-4" name="bx:bxl-github" />
-         GitHub 
+        GitHub
       </Link>
     </div>
   </div>
