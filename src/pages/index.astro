@@ -7,6 +7,38 @@ import Logos from "@components/logos.astro";
 import InnovationBounty from "@components/innovationbounty.astro";
 import HackFW from "@components/hackfw.astro";
 import Layout from "@layouts/Layout.astro";
+
+const faqs = [
+  {
+    question: "What is FWTX DAO?",
+    answer: "FWTX DAO is a community-driven decentralized autonomous organization (DAO) focused on Web3 civic innovation in Fort Worth, Texas. We build open source assets at the intersection of blockchain, AI, and physical systems to create transparent, resilient civic infrastructure.",
+  },
+  {
+    question: "How can I get involved with Web3 in Fort Worth?",
+    answer: "You can join our community roundtables, attend workshops, participate in innovation bounties, or contribute to open source projects. Visit our events page to RSVP for upcoming meetups, or reach out at community@fwtx.city to connect with our members.",
+  },
+  {
+    question: "What events does FWTX DAO host?",
+    answer: "FWTX DAO hosts regular community roundtables, educational workshops on blockchain and cybersecurity, HackFW hackathons, and innovation bounty programs. Our events focus on growing a technologist culture in Fort Worth through digital assets, emerging tech, and information age first principles.",
+  },
+  {
+    question: "What is a Municipal DAO?",
+    answer: "A Municipal DAO is a decentralized autonomous organization focused on civic infrastructure and local governance. FWTX DAO applies Web3 principles like transparency, decentralization, and community ownership to improve how cities operate—from digital identity and public records to economic development and workforce training.",
+  },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+};
 ---
 
 <Layout title="">
@@ -92,6 +124,31 @@ import Layout from "@layouts/Layout.astro";
       </div>
     </div>
     <Logos />
+
+    <!-- FAQ Section -->
+    <div class="my-20">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl lg:text-4xl font-bold lg:tracking-tight text-white">
+            Frequently Asked <span class="gradient-text">Questions</span>
+          </h2>
+          <p class="text-lg text-slate-400 mt-4">
+            Learn more about FWTX DAO and Web3 civic innovation in Fort Worth.
+          </p>
+        </div>
+        <div class="space-y-6">
+          {faqs.map((faq) => (
+            <div class="glass-card rounded-xl p-6">
+              <h3 class="text-xl font-semibold text-white mb-3">{faq.question}</h3>
+              <p class="text-slate-400 leading-relaxed">{faq.answer}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
     <Cta />
   </Container>
 </Layout>

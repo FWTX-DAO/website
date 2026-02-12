@@ -1,0 +1,25 @@
+# FWTX DAO
+
+> Fort Worth Municipal DAO - Web3 civic innovation, digital sovereignty,
+> and decentralized governance community in Fort Worth, Texas.
+
+FWTX DAO is a community-driven decentralized autonomous organization building
+open source assets at the intersection of blockchain, AI, and physical systems
+for civic infrastructure in Fort Worth, Texas.
+
+## Core Pages
+- [About](https://fwtx.city/about): Mission, team, and community overview
+- [Blog](https://fwtx.city/blog): Research on Web3, DAOs, cybersecurity, and civic tech
+- [Programs](https://fwtx.city/pricing): Workshops, roundtables, and participation details
+- [Contact](https://fwtx.city/contact): Get involved - community@fwtx.city
+
+## Blog Articles
+- [FWTX DAO Initiative](https://fwtx.city/blog/fwtx-dao-initiative): Decentralized initiative for civic excellence
+- [Web3 Excellence](https://fwtx.city/blog/fwtx-web3-excellence): Fort Worth Web3 thought leadership
+- [NextGen Workforce](https://fwtx.city/blog/fwtx-nextgen-workforce): Next-generation workforce development
+- [Web3 Infrastructure Security](https://fwtx.city/blog/web3-infrastructure-security): Security insights
+- [Non-Linear InfoSec](https://fwtx.city/blog/next-gen-non-linear-infosec): Information security research
+
+## Resources
+- [Whitepaper](https://constitution.fwtx.city/): FWTX DAO Constitution
+- [Innovation Bounties](https://innovate.fwtx.city): Community innovation program

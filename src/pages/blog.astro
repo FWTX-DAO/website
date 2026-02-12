@@ -14,11 +14,31 @@ const publishedBlogEntries = await getCollection("blog", ({ data }) => {
 publishedBlogEntries.sort(function (a, b) {
   return b.data.publishDate.valueOf() - a.data.publishDate.valueOf();
 });
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://fwtx.city",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Blog",
+      item: "https://fwtx.city/blog",
+    },
+  ],
+};
 ---
 
-<Layout 
-  title="Blog" 
+<Layout
+  title="Blog"
   description="Read the latest insights on Web3, blockchain, and civic innovation from FWTX DAO. Explore how Fort Worth is leading digital transformation in North Texas.">
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <Container>
     <Sectionhead>
       <Fragment slot="title">Our Blog</Fragment>

@@ -9,11 +9,47 @@ export interface Props {
   description?: string;
   image?: string;
   noindex?: boolean;
+  publishDate?: string;
+  author?: string;
+  tags?: string[];
+  type?: "website" | "article";
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
 
-const { title, description, image, noindex } = Astro.props;
+const { title, description, image, noindex, publishDate, author, tags, type = "website" } = Astro.props;
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "FWTX DAO",
+  url: "https://fwtx.city",
+  logo: "https://fwtx.city/logo.svg",
+  description: "Fort Worth Municipal DAO - Web3 civic innovation, digital sovereignty, and decentralized governance community in Fort Worth, Texas.",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "400 Bryan Ave Ste. 102",
+    addressLocality: "Fort Worth",
+    addressRegion: "TX",
+    postalCode: "76104",
+    addressCountry: "US",
+  },
+  sameAs: [
+    "https://twitter.com/FWTX_DAO",
+    "https://github.com/FWTX-DAO",
+    "https://www.linkedin.com/company/fwtx-dao",
+    "https://www.youtube.com/@fwtxdao",
+    "https://www.instagram.com/fwtx_dao",
+  ],
+};
+
+const webSiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "FWTX DAO",
+  url: "https://fwtx.city",
+  description: "Fort Worth Municipal DAO - Web3 civic innovation, digital sovereignty, and decentralized governance community in Fort Worth, Texas.",
+};
 
 const resolvedImageWithDomain = new URL(
   image || "/ogimage.png",
@@ -50,7 +86,7 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
       openGraph={{
         basic: {
           url: canonicalURL,
-          type: "website",
+          type: type,
           title: makeTitle,
           image: resolvedImageWithDomain,
         },
@@ -61,6 +97,22 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
         },
       }}
     />
+
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="FWTX DAO" />
+
+    {type === "article" && publishDate && (
+      <meta property="article:published_time" content={publishDate} />
+    )}
+    {type === "article" && author && (
+      <meta property="article:author" content={author} />
+    )}
+    {type === "article" && tags && tags.map((tag) => (
+      <meta property="article:tag" content={tag} />
+    ))}
+
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(webSiteSchema)} />
     
     <!-- Additional meta tags for better SEO -->
     <meta name="author" content="FWTX DAO" />
