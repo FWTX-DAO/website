@@ -1,6 +1,5 @@
 ---
 import Container from "@components/container.astro";
-import Link from "@components/ui/link.astro";
 import Dropdown from "./dropdown.astro";
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Icon } from "astro-icon/components";
@@ -14,134 +13,95 @@ const menuitems = [
     path: "#",
     children: [
       { title: "Whitepaper", path: "https://constitution.fwtx.city/" },
-      {
-        title: "Constitution",
-        path: "/constitution.pdf",
-      },
-      {
-        title: "Developer",
-        path: "https://github.com/FWTX-DAO/DeFi-Developer-Road-Map",
-      },
-      {
-        title: "Investigations",
-        path: "https://github.com/FWTX-DAO/On-Chain-Investigations-Tools-List",
-      },
-      {
-        title: "OpSec",
-        path: "https://github.com/FWTX-DAO/Crypto-OpSec-SelfGuard-RoadMap",
-      },
+      { title: "Constitution", path: "/constitution.pdf" },
+      { title: "Developer", path: "https://github.com/FWTX-DAO/DeFi-Developer-Road-Map" },
+      { title: "Investigations", path: "https://github.com/FWTX-DAO/On-Chain-Investigations-Tools-List" },
+      { title: "OpSec", path: "https://github.com/FWTX-DAO/Crypto-OpSec-SelfGuard-RoadMap" },
       { title: "AI", path: "https://github.com/FWTX-DAO/ai-study-guide" },
-      {
-        title: "Zero Trust",
-        path: "https://github.com/FWTX-DAO/awesome-zero-trust",
-      },
+      { title: "Zero Trust", path: "https://github.com/FWTX-DAO/awesome-zero-trust" },
     ],
   },
-  {
-    title: "About",
-    path: "/about",
-  },
-  {
-    title: "Blog",
-    path: "/blog",
-  },
-  {
-    title: "Events",
-    path: "https://meetu.ps/e/P1Npn/10RhC9/i",
-  },
-  {
-    title: "Contact",
-    path: "/contact",
-  },
+  { title: "About", path: "/about" },
+  { title: "Blog", path: "/blog" },
+  { title: "Events", path: "https://meetu.ps/e/P1Npn/10RhC9/i" },
 ];
 ---
 
-<Container>
-  <header class="flex flex-col lg:flex-row justify-between items-center my-5">
-    <Astronav>
-      <div class="flex w-full lg:w-auto items-center justify-between">
-        <a href="/" class="flex items-center gap-3 group">
-          <div class="relative">
-            <div class="absolute inset-0 bg-neon-cyan/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <img src="/logo.svg" alt="FWTX DAO Logo" class="relative w-12 h-12" />
+<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-navy-950/80 border-b border-navy-700/50">
+  <Container>
+    <div class="flex flex-col lg:flex-row justify-between items-center py-3">
+      <Astronav>
+        <div class="flex w-full lg:w-auto items-center justify-between">
+          <a href="/" class="flex items-center gap-3 group">
+            <div class="relative">
+              <div class="absolute inset-0 bg-blue-500/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <img src="/logo.svg" alt="FWTX DAO Logo" class="relative w-12 h-12" />
+            </div>
+            <span class="font-display text-2xl font-semibold text-gray-100 group-hover:text-blue-400 transition-colors duration-300">
+              Fort Worth DAO
+            </span>
+          </a>
+          <div class="block lg:hidden">
+            <MenuIcon class="w-4 h-4 text-gray-300" aria-label="Toggle menu" />
           </div>
-          <span class="text-xl font-semibold text-gray-100 group-hover:text-neon-cyan transition-colors duration-300">
-            Fort Worth DAO
-          </span>
-        </a>
-        <div class="block lg:hidden">
-          <MenuIcon class="w-4 h-4 text-gray-300" aria-label="Toggle menu" />
         </div>
+        <MenuItems class="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">
+          <ul class="flex flex-col lg:flex-row lg:gap-3">
+            {
+              menuitems.map((item, index) => (
+                <>
+                  {item.children && (
+                    <Dropdown
+                      title={item.title}
+                      children={item.children}
+                      lastItem={index === menuitems.length - 1}
+                    />
+                  )}
+                  {!item.children && (
+                    <li>
+                      <a
+                        href={item.path}
+                        class="flex lg:px-3 py-2 items-center text-slate-300 hover:text-blue-400 transition-colors duration-300 relative group min-h-[44px]">
+                        <span>{item.title}</span>
+                        <span class="absolute bottom-0 left-3 right-3 h-px bg-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                      </a>
+                    </li>
+                  )}
+                </>
+              ))
+            }
+          </ul>
+          <!-- Mobile social links -->
+          <div class="flex items-center justify-center gap-5 py-4 border-t border-navy-700/50 mt-4 lg:hidden">
+            <a href="https://x.com/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-400 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="X">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://linkedin.com/company/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-400 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="LinkedIn">
+              <Icon name="mdi:linkedin" class="w-5 h-5" aria-hidden="true" />
+            </a>
+            <a href="https://instagram.com/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-pink-400 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Instagram">
+              <Icon name="mdi:instagram" class="w-5 h-5" aria-hidden="true" />
+            </a>
+            <a href="https://www.youtube.com/@fortworthdao" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-red-500 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="YouTube">
+              <Icon name="mdi:youtube" class="w-5 h-5" aria-hidden="true" />
+            </a>
+          </div>
+        </MenuItems>
+      </Astronav>
+      <div class="hidden lg:flex items-center gap-4">
+        <a href="https://x.com/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-400 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="X">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="https://linkedin.com/company/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-400 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="LinkedIn">
+          <Icon name="mdi:linkedin" class="w-5 h-5" aria-hidden="true" />
+        </a>
+        <a href="https://instagram.com/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-pink-400 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Instagram">
+          <Icon name="mdi:instagram" class="w-5 h-5" aria-hidden="true" />
+        </a>
+        <a href="https://www.youtube.com/@fortworthdao" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-red-500 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="YouTube">
+          <Icon name="mdi:youtube" class="w-5 h-5" aria-hidden="true" />
+        </a>
       </div>
-      <MenuItems class="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">
-        <ul class="flex flex-col lg:flex-row lg:gap-3">
-          {
-            menuitems.map((item, index) => (
-              <>
-                {item.children && (
-                  <Dropdown
-                    title={item.title}
-                    children={item.children}
-                    lastItem={index === menuitems.length - 1}
-                  />
-                )}
-
-                {!item.children && (
-                  <li>
-                    <a
-                      href={item.path}
-                      class="flex lg:px-3 py-2 items-center text-slate-400 hover:text-neon-cyan transition-colors duration-300 relative group">
-                      <span>{item.title}</span>
-                      <span class="absolute bottom-0 left-3 right-3 h-px bg-gradient-to-r from-neon-cyan to-neon-purple scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-                      {item.badge && (
-                        <span class="ml-1 px-2 py-0.5 text-[10px] animate-pulse font-semibold uppercase text-cyber-dark bg-neon-cyan rounded-full shadow-glow-sm">
-                          New
-                        </span>
-                      )}
-                    </a>
-                  </li>
-                )}
-              </>
-            ))
-          }
-        </ul>
-      </MenuItems>
-    </Astronav>
-    <div class="hidden lg:flex items-center gap-4">
-      <a
-        href="https://x.com/FWTX_DAO"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-slate-400 hover:text-neon-cyan hover:shadow-glow-sm transition duration-300"
-        aria-label="X">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
-      </a>
-      <a
-        href="https://linkedin.com/company/FWTX_DAO"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-slate-400 hover:text-neon-blue hover:shadow-glow-sm transition duration-300"
-        aria-label="LinkedIn">
-        <Icon name="mdi:linkedin" class="w-5 h-5" aria-hidden="true" />
-      </a>
-      <a
-        href="https://instagram.com/FWTX_DAO"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-slate-400 hover:text-neon-magenta hover:shadow-glow-sm transition duration-300"
-        aria-label="Instagram">
-        <Icon name="mdi:instagram" class="w-5 h-5" aria-hidden="true" />
-      </a>
-      <a
-        href="https://www.youtube.com/@fortworthdao"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-slate-400 hover:text-red-500 hover:shadow-glow-sm transition duration-300"
-        aria-label="YouTube">
-        <Icon name="mdi:youtube" class="w-5 h-5" aria-hidden="true" />
-      </a>
     </div>
-  </header>
-</Container>
+  </Container>
+</header>

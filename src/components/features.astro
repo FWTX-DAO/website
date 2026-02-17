@@ -7,43 +7,49 @@ const features = [
     description:
       "Empower your projects with DAO structures, enabling decentralized decision-making and community-driven development in the Web3 space.",
     icon: "bx:bxs-briefcase",
+    warm: true,
   },
   {
     title: "Smart City Integration",
     description:
       "Leverage blockchain technology to build smart, interconnected urban environments that enhance sustainability and improve quality of life.",
     icon: "bx:bxs-window-alt",
+    warm: false,
   },
   {
     title: "Web3 Education & Workshops",
     description:
       "Offer comprehensive learning modules and interactive workshops focused on Web3, blockchain fundamentals, and their applications in various sectors.",
     icon: "bx:bxs-data",
+    warm: true,
   },
   {
     title: "Cross-Disciplinary Collaboration",
     description:
       "Foster collaborations across diverse fields like FinTech, cybersecurity, and urban planning to innovate in the realm of Web3 and smart cities.",
     icon: "bx:bxs-bot",
+    warm: false,
   },
   {
     title: "Non-Profit Initiatives",
     description:
       "Engage in non-profit ventures that utilize blockchain for transparency and efficiency, focusing on societal welfare and community building.",
     icon: "bx:bxs-file-find",
+    warm: true,
   },
   {
     title: "Cyber Workforce Development",
     description:
       "Develop skilled professionals at the intersection of IT security, runtime protection, and digital asset governance - equipping them to manage and secure cryptocurrency operations in enterprise and decentralized environments.",
     icon: "bx:bxs-user",
+    warm: false,
   },
 ];
 ---
 
 <div class="mt-16 md:mt-0 text-center">
-  <h2 class="text-4xl lg:text-5xl font-bold lg:tracking-tight text-white">
-    <span class="gradient-text">Web3 Excellence</span> Starts with Education
+  <h2 class="font-display text-5xl lg:text-6xl font-bold tracking-tight text-white">
+    <span class="gradient-text">Web3 Excellence</span> Starts with <span class="text-frontier-amber">Education</span>
   </h2>
   <p class="text-lg mt-4 text-slate-400 max-w-3xl mx-auto">
     FWTX DAO serves our community by enabling students, and multi-disiplinary
@@ -57,11 +63,17 @@ const features = [
     features.map((item) => (
       <div class="glass-card rounded-lg p-6 group hover:scale-[1.02] transition duration-300">
         <div class="flex gap-4 items-start">
-          <div class="mt-1 bg-gradient-to-br from-neon-cyan to-neon-purple rounded-lg p-2 w-10 h-10 shrink-0 flex items-center justify-center group-hover:shadow-glow-sm transition-shadow duration-300">
+          <div class:list={[
+            "mt-1 rounded-lg p-2 w-10 h-10 shrink-0 flex items-center justify-center group-hover:shadow-glow-sm transition-shadow duration-300",
+            item.warm ? "bg-gradient-to-br from-frontier-amber to-frontier-copper" : "bg-gradient-to-br from-neon-cyan to-neon-purple"
+          ]}>
             <Icon class="text-cyber-dark w-5 h-5" name={item.icon} aria-hidden="true" />
           </div>
           <div>
-            <h3 class="font-semibold text-lg text-white group-hover:text-neon-cyan transition-colors duration-300">
+            <h3 class:list={[
+              "font-semibold text-lg text-white transition-colors duration-300",
+              item.warm ? "group-hover:text-frontier-amber" : "group-hover:text-neon-cyan"
+            ]}>
               {item.title}
             </h3>
             <p class="text-slate-400 mt-2 leading-relaxed text-sm">

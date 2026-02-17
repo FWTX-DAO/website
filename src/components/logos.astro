@@ -2,7 +2,7 @@
 import { Image } from "astro:assets";
 import tbcLogo from "@assets/partners/tbc.jpg"
 import fwifLogo from "@assets/partners/fwif.png"
-import yLogo from "@assets/partners/yeetum.png"
+import yLogo from "@assets/partners/y2.svg"
 import oLinks from "@assets/partners/olinks.png"
 import tcu from "@assets/partners/tcu.svg"
 import utsa from "@assets/partners/utsa.svg"
@@ -13,40 +13,42 @@ import techfw from "@assets/partners/techfw.avif"
 ---
 
 <div class="mt-24">
-  <h2 class="text-center text-slate-400 text-lg font-semibold mb-2">Partners & Collaborators</h2>
+  <h2 class="font-display text-3xl text-center text-slate-300 font-semibold mb-2 tracking-wide">
+    Partners & <span class="text-frontier-amber">Collaborators</span>
+  </h2>
   <p class="text-center text-slate-500 text-sm mb-8">Building the future of Fort Worth together</p>
 
-  <div class="bg-white rounded-2xl p-10 md:p-14 shadow-xl">
+  <div class="glass-card rounded-2xl p-10 md:p-14">
     <div class="flex flex-wrap gap-10 md:gap-14 items-center justify-center">
-      <a href="https://yeetum.com" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-        <Image src={yLogo} alt="Yeetum Intelligence Platform" height="45" width="140" format="avif" class="h-10 w-auto object-contain"/>
+      <a href="https://y2.dev" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
+        <Image src={yLogo} alt="Yeetum Intelligence Platform" height="45" width="97" class="h-10 w-auto object-contain grayscale brightness-0 invert opacity-60 hover:opacity-100 hover:grayscale-0 hover:invert-0 transition-all duration-300"/>
       </a>
       <a href="https://texasblockchaincouncil.org/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-        <Image src={tbcLogo} alt="Texas Blockchain Council" height="45" width="140" format="avif" class="h-10 w-auto object-contain"/>
+        <Image src={tbcLogo} alt="Texas Blockchain Council" height="45" width="140" format="avif" class="h-10 w-auto object-contain grayscale invert opacity-60 hover:opacity-100 hover:grayscale-0 transition-all duration-300"/>
       </a>
       <a href="https://www.digifoundry.org/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-        <Image src={ndf} alt="National DigiFoundry" height="45" width="140" format="avif" class="h-10 w-auto object-contain"/>
+        <Image src={ndf} alt="National DigiFoundry" height="45" width="140" format="avif" class="h-10 w-auto object-contain grayscale brightness-0 invert opacity-60 hover:opacity-100 hover:grayscale-0 hover:invert-0 transition-all duration-300"/>
       </a>
       <a href="https://ipser.com" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-        <Image src={fwifLogo} alt="Fort Worth Innovators Forum" height="45" width="140" format="avif" class="h-10 w-auto object-contain"/>
+        <Image src={fwifLogo} alt="Fort Worth Innovators Forum" height="45" width="140" format="avif" class="h-10 w-auto object-contain grayscale invert opacity-60 hover:opacity-100 hover:grayscale-0 transition-all duration-300"/>
       </a>
       <a href="https://olinkscorp.com/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-        <Image src={oLinks} alt="O'Links Corporation" height="45" width="140" format="avif" class="h-10 w-auto object-contain"/>
+        <Image src={oLinks} alt="O'Links Corporation" height="45" width="140" format="avif" class="h-10 w-auto object-contain grayscale invert opacity-60 hover:opacity-100 hover:grayscale-0 transition-all duration-300"/>
       </a>
       <a href="https://cse.tcu.edu/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-        <Image src={tcu} alt="Texas Christian University" height="45" width="140" class="h-10 w-auto object-contain"/>
+        <Image src={tcu} alt="Texas Christian University" height="45" width="140" class="h-10 w-auto object-contain grayscale brightness-0 invert opacity-60 hover:opacity-100 hover:grayscale-0 hover:invert-0 transition-all duration-300"/>
       </a>
       <a href="https://www.utsa.edu/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-        <Image src={utsa} alt="University of Texas San Antonio" height="45" width="140" class="h-10 w-auto object-contain"/>
+        <Image src={utsa} alt="University of Texas San Antonio" height="45" width="140" class="h-10 w-auto object-contain grayscale brightness-0 invert opacity-60 hover:opacity-100 hover:grayscale-0 hover:invert-0 transition-all duration-300"/>
       </a>
       <a href="https://simbachain.com/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-        <Image src={simba} alt="Simba Chain" height="45" width="140" class="h-10 w-auto object-contain"/>
+        <Image src={simba} alt="Simba Chain" height="45" width="140" class="h-10 w-auto object-contain grayscale brightness-0 invert opacity-60 hover:opacity-100 hover:grayscale-0 hover:invert-0 transition-all duration-300"/>
       </a>
       <a href="https://liquidacre.com/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-        <Image src={liquidacre} alt="LiquidAcre" height="45" width="140" format="avif" class="h-10 w-auto object-contain"/>
+        <Image src={liquidacre} alt="LiquidAcre" height="45" width="140" format="avif" class="h-10 w-auto object-contain grayscale brightness-0 invert opacity-60 hover:opacity-100 hover:grayscale-0 hover:invert-0 transition-all duration-300"/>
       </a>
       <a href="https://techfw.org/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-        <Image src={techfw} alt="TechFW" height="45" width="140" format="avif" class="h-10 w-auto object-contain"/>
+        <Image src={techfw} alt="TechFW" height="45" width="140" format="avif" class="h-10 w-auto object-contain grayscale brightness-0 invert opacity-60 hover:opacity-100 hover:grayscale-0 hover:invert-0 transition-all duration-300"/>
       </a>
     </div>
   </div>

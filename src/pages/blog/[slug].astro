@@ -80,42 +80,42 @@ const breadcrumbSchema = {
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <Container>
     <div class="mx-auto max-w-3xl mt-14">
-      <span class="text-blue-400 uppercase tracking-wider text-sm font-medium">
+      <span class="text-frontier-amber uppercase tracking-wider text-sm font-medium">
         {entry.data.category}
       </span>
       <h1
-        class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight">
+        class="font-display text-5xl lg:text-6xl font-bold tracking-tight mt-1 leading-tight text-white">
         {entry.data.title}
       </h1>
       <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap">
-        <span class="text-gray-400">
+        <span class="text-slate-400">
           {entry.data.author}
         </span>
-        <span class="text-gray-400">•</span>
+        <span class="text-slate-400">&bull;</span>
         <time
-          class="text-gray-400"
+          class="text-slate-400"
           datetime={entry.data.publishDate.toISOString()}>
           {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(entry.data.publishDate)}
         </time>
-        <span class="text-gray-400 hidden md:block">•</span>
+        <span class="text-slate-400 hidden md:block">&bull;</span>
         <div class="w-full md:w-auto flex flex-wrap gap-3">
           {
             entry.data.tags.map((tag) => (
-              <span class="text-sm text-gray-500">#{tag}</span>
+              <span class="text-sm text-slate-400">#{tag}</span>
             ))
           }
         </div>
       </div>
     </div>
 
-    <div class="mx-auto prose prose-lg mt-6 max-w-3xl">
+    <div class="mx-auto prose prose-lg prose-invert mt-6 max-w-3xl">
       <Content />
     </div>
     <div class="text-center mt-8">
       <a
         href="/blog"
-        class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-dark"
-        >← Back to Blog</a
+        class="bg-transparent text-frontier-amber font-semibold border-2 border-frontier-amber/50 hover:border-frontier-amber hover:bg-frontier-amber/10 hover:shadow-glow-amber px-5 py-3 rounded-md transition-all duration-300 focus-visible:ring-2 focus-visible:ring-frontier-amber/50 focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-dark inline-block"
+        >&larr; Back to Blog</a
       >
     </div>
   </Container>

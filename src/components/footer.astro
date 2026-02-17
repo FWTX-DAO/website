@@ -3,61 +3,44 @@ import { Icon } from "astro-icon/components";
 ---
 
 <footer class="my-20 relative">
-  <!-- Top border glow -->
-  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-neon-cyan/50 to-transparent"></div>
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
 
   <div class="flex justify-center items-center gap-6 mb-6 pt-8">
-    <a
-      href="https://x.com/FWTX_DAO"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="text-slate-500 hover:text-neon-cyan hover:shadow-glow-sm transition duration-300 p-2"
-      aria-label="X">
-      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-      </svg>
+    <a href="https://x.com/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-400 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="X">
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
     </a>
-    <a
-      href="https://linkedin.com/company/FWTX_DAO"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="text-slate-500 hover:text-neon-blue hover:shadow-glow-sm transition duration-300 p-2"
-      aria-label="LinkedIn">
+    <a href="https://linkedin.com/company/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-400 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="LinkedIn">
       <Icon name="mdi:linkedin" class="w-6 h-6" aria-hidden="true" />
     </a>
-    <a
-      href="https://instagram.com/FWTX_DAO"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="text-slate-500 hover:text-neon-magenta hover:shadow-glow-sm transition duration-300 p-2"
-      aria-label="Instagram">
+    <a href="https://instagram.com/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-pink-400 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Instagram">
       <Icon name="mdi:instagram" class="w-6 h-6" aria-hidden="true" />
     </a>
-    <a
-      href="https://www.youtube.com/@fortworthdao"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="text-slate-500 hover:text-red-500 hover:shadow-glow-sm transition duration-300 p-2"
-      aria-label="YouTube">
+    <a href="https://www.youtube.com/@fortworthdao" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-red-500 transition duration-300 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="YouTube">
       <Icon name="mdi:youtube" class="w-6 h-6" aria-hidden="true" />
     </a>
   </div>
 
-  <p class="text-center text-sm text-slate-500">
-    Copyright © {new Date().getFullYear()} <span class="text-slate-400">Fort Worth DAO LCA</span>. All rights reserved.
+  <p class="text-center text-sm text-slate-400 mb-4 flex items-center justify-center gap-1.5">
+    <svg class="w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+    </svg>
+    Built in Fort Worth
   </p>
-  <p class="text-center text-xs text-slate-600 mt-2">
+
+  <p class="text-center text-sm text-slate-400">
+    Copyright &copy; {new Date().getFullYear()} <span class="text-slate-300">Fort Worth DAO LCA</span>. All rights reserved.
+  </p>
+  <p class="text-center text-xs text-slate-400 mt-2">
     Managed by <a
-      href="https://yeetum.com/contact"
+      href="https://eden.yeetum.com"
       target="_blank"
       rel="noopener"
-      class="text-slate-500 hover:text-neon-cyan transition-colors duration-300">
+      class="text-slate-300 hover:text-blue-400 transition-colors duration-300">
       Eden Advisory
     </a>
   </p>
 
-  <!-- Bottom accent line -->
   <div class="flex justify-center mt-8">
-    <div class="w-24 h-1 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-cyan rounded-full opacity-50"></div>
+    <div class="w-24 h-1 bg-blue-500/30 rounded-full"></div>
   </div>
 </footer>

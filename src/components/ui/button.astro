@@ -2,7 +2,7 @@
 interface Props {
   size?: "md" | "lg";
   block?: boolean;
-  style?: "outline" | "primary" | "inverted" | "cyber" | "cyber-outline";
+  style?: "outline" | "primary" | "muted";
   class?: string;
   [x: string]: any;
 }
@@ -21,19 +21,16 @@ const sizes = {
 };
 
 const styles = {
-  outline: "border-2 border-black hover:bg-black text-black hover:text-white",
-  primary: "bg-black text-white hover:bg-slate-900 border-2 border-transparent",
-  inverted: "bg-white text-black border-2 border-transparent",
-  // Cybernetic styles
-  cyber: "bg-neon-cyan text-cyber-dark font-semibold border-2 border-neon-cyan hover:bg-neon-cyan/90 hover:shadow-glow-cyan transition-all duration-300",
-  "cyber-outline": "bg-transparent text-neon-cyan font-semibold border-2 border-neon-cyan/50 hover:border-neon-cyan hover:bg-neon-cyan/10 hover:shadow-glow-sm transition-all duration-300",
+  outline: "bg-transparent text-blue-400 font-semibold border-2 border-blue-500/50 hover:border-blue-400 hover:bg-blue-500/10 hover:shadow-glow-sm transition-all duration-300",
+  primary: "bg-blue-600 text-white font-semibold border-2 border-blue-600 hover:bg-blue-500 hover:border-blue-500 hover:shadow-glow-blue transition-all duration-300",
+  muted: "bg-navy-800/60 hover:bg-navy-700 text-slate-300 border-2 border-transparent transition-all duration-300",
 };
 ---
 
 <button
   {...rest}
   class:list={[
-    "rounded text-center transition focus-visible:ring-2 ring-offset-2 ring-neon-cyan/50 focus-visible:ring-offset-cyber-dark",
+    "rounded text-center transition focus-visible:ring-2 ring-offset-2 ring-blue-500/50 focus-visible:ring-offset-navy-950",
     block && "w-full",
     sizes[size],
     styles[style],
