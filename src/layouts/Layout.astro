@@ -70,6 +70,7 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#0A0F1C" />
     
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
@@ -125,6 +126,9 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
     <link rel="icon" type="image/png" sizes="16x16" href="/logo.svg" />
   </head>
   <body class="bg-cyber-dark min-h-screen text-gray-100 antialiased">
+    <!-- Skip navigation -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-neon-cyan focus:text-cyber-dark focus:font-semibold">Skip to content</a>
+
     <!-- Cybernetic grid background -->
     <div class="fixed inset-0 bg-grid-pattern bg-grid opacity-30 pointer-events-none"></div>
 
@@ -132,7 +136,7 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
     <div class="fixed inset-0 bg-gradient-to-b from-transparent via-cyber-dark/50 to-cyber-dark pointer-events-none"></div>
 
     <!-- Main content -->
-    <div class="relative z-10">
+    <div class="relative z-10" id="main-content">
       <Navbar />
       <slot />
       <Footer />
@@ -146,7 +150,24 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
 
       /* Cybernetic base styles */
       html {
+        color-scheme: dark;
         scroll-behavior: smooth;
+      }
+
+      /* Heading typography */
+      h1, h2, h3, h4, h5, h6 {
+        text-wrap: balance;
+      }
+
+      /* Respect reduced motion preferences */
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
       }
 
       body {

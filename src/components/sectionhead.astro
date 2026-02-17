@@ -1,11 +1,11 @@
 ---
-const { align = "center" } = Astro.props;
+const { align = "center", as: Tag = "h2" } = Astro.props;
 ---
 
 <div class:list={["mt-16", align === "center" && "text-center"]}>
-  <h1 class="text-4xl lg:text-5xl font-bold lg:tracking-tight text-white">
+  <Tag class="text-4xl lg:text-5xl font-bold lg:tracking-tight text-white">
     <span class="gradient-text"><slot name="title">Title</slot></span>
-  </h1>
+  </Tag>
   <p class="text-lg mt-4 text-slate-400 max-w-2xl mx-auto">
     <slot name="desc">Some description goes here</slot>
   </p>

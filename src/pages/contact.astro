@@ -8,7 +8,7 @@ import { Icon } from "astro-icon/components";
 
 <Layout title="Contact">
   <Container>
-    <Sectionhead>
+    <Sectionhead as="h1">
       <Fragment slot="title">Contact</Fragment>
       <Fragment slot="desc">We are a here to help.</Fragment>
     </Sectionhead>
@@ -22,10 +22,10 @@ import { Icon } from "astro-icon/components";
         </p>
         <div class="mt-5">
           <div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:map-marker" />
+            <Icon class="text-gray-400 w-4 h-4" name="uil:map-marker" aria-hidden="true" />
             <span>400 Bryan Ave Ste. 102, Fort Worth, TX 76104</span>
           </div><div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:envelope" /><a
+            <Icon class="text-gray-400 w-4 h-4" name="uil:envelope" aria-hidden="true" /><a
               href="mailto:hello@astroshipstarter.com"
               >community@fwtx.city</a
             >

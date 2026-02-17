@@ -40,7 +40,7 @@ const breadcrumbSchema = {
   description="Read the latest insights on Web3, blockchain, and civic innovation from FWTX DAO. Explore how Fort Worth is leading digital transformation in North Texas.">
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <Container>
-    <Sectionhead>
+    <Sectionhead as="h1">
       <Fragment slot="title">Our Blog</Fragment>
       <Fragment slot="desc">
         We write about Web3 innovation in Fort Worth, TX.
@@ -80,7 +80,7 @@ const breadcrumbSchema = {
                       <time
                         class="text-gray-400"
                         datetime={blogPostEntry.data.publishDate.toISOString()}>
-                        {blogPostEntry.data.publishDate.toDateString()}
+                        {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(blogPostEntry.data.publishDate)}
                       </time>
                     </div>
                   </div>
