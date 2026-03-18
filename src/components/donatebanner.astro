@@ -1,0 +1,52 @@
+---
+const DONATE_URL = "https://buy.stripe.com/9B66oHfy50e1b7C7buak000";
+---
+
+<div class="mx-auto max-w-5xl my-16">
+  <div class="relative overflow-hidden rounded-2xl border border-blue-500/25 bg-gradient-to-br from-blue-600/10 via-navy-900/60 to-transparent backdrop-blur-sm p-8 md:p-10">
+    <!-- subtle top-left glow -->
+    <div class="absolute -top-12 -left-12 w-48 h-48 bg-blue-600/15 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+    <div class="relative flex flex-col md:flex-row items-center gap-8 md:gap-12">
+      <!-- Icon -->
+      <div class="shrink-0 flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/15 border border-blue-400/25">
+        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      </div>
+
+      <!-- Text -->
+      <div class="flex-1 text-center md:text-left">
+        <div class="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-400/20 rounded-full px-3 py-1 mb-3">
+          <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-blue-300 text-xs font-semibold uppercase tracking-wider">501(c)(3) Nonprofit</span>
+        </div>
+        <h2 class="font-display text-3xl lg:text-4xl text-white mb-2">
+          Donate to the Fort Worth DAO Mission
+        </h2>
+        <p class="text-slate-400 text-base leading-relaxed max-w-xl mx-auto md:mx-0">
+          All contributions are charitable donations to a federally recognized 501(c)(3) nonprofit — fully tax-deductible to the extent permitted by law. Your support funds free community education, open-source tools, and civic innovation for Fort Worth.
+        </p>
+      </div>
+
+      <!-- CTA -->
+      <div class="shrink-0 flex flex-col items-center gap-2">
+        <a
+          href={DONATE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-7 py-3 rounded-lg border-2 border-blue-600 hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_24px_rgba(59,130,246,0.4)] focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 whitespace-nowrap">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+          Donate Now
+        </a>
+        <a href="/donate" class="text-slate-500 hover:text-slate-400 text-xs transition-colors duration-200 underline underline-offset-2">
+          Learn more →
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
