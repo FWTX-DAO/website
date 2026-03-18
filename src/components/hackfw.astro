@@ -9,143 +9,206 @@ import { Icon } from "astro-icon/components";
   <Sectionhead>
     <Fragment slot="title">HackFW 2026</Fragment>
     <Fragment slot="desc">
-      Fort Worth's Innovation Flywheel - Building local tech talent through civic innovation challenges
+      Fort Worth's Innovation Flywheel — Building local tech talent through civic innovation challenges
     </Fragment>
   </Sectionhead>
 
-  <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-12">
+  <!-- Hero CTA banner -->
+  <a
+    href="https://hack.fwtx.city"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="group flex items-center justify-between mt-10 mx-auto max-w-4xl glass-card rounded-xl px-6 py-4 border border-blue-500/30 hover:border-blue-400/60 transition-all duration-300 hover:shadow-glow-sm">
+    <div class="flex items-center gap-3">
+      <Icon name="mdi:rocket-launch" class="w-6 h-6 text-blue-400 flex-shrink-0" aria-hidden="true" />
+      <span class="text-white font-semibold">Everything you need is at <span class="text-blue-400">hack.fwtx.city</span></span>
+    </div>
+    <Icon name="mdi:arrow-right" class="w-5 h-5 text-blue-400 group-hover:translate-x-1 transition-transform duration-200 flex-shrink-0" aria-hidden="true" />
+  </a>
+
+  <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-10">
     <div class="flex flex-col justify-center">
       <h3 class="text-2xl font-bold text-white mb-4">
         Join Fort Worth's Premier Hackathon
       </h3>
       <p class="text-lg text-slate-400 mb-6">
-        HackFW is a sustained talent pipeline designed to connect builders with real-world challenges. Whether you're a student, professional, or innovator, this is your chance to make an impact.
+        HackFW is a sustained talent pipeline connecting builders with real-world civic challenges. Whether you're a student, professional, or innovator — this is your chance to make an impact.
       </p>
 
       <div class="space-y-3 mb-6">
         <div class="flex items-start">
-          <Icon name="mdi:calendar" class="w-6 h-6 text-frontier-amber mr-3 mt-1 flex-shrink-0" aria-hidden="true" />
+          <Icon name="mdi:calendar" class="w-6 h-6 text-blue-400 mr-3 mt-1 flex-shrink-0" aria-hidden="true" />
           <div>
             <p class="font-semibold text-white">Virtual Hackathon</p>
-            <p class="text-slate-400">April 2nd - May 2nd</p>
+            <p class="text-slate-400">April 2nd – May 2nd, 2026</p>
           </div>
         </div>
         <div class="flex items-start">
-          <Icon name="mdi:calendar-star" class="w-6 h-6 text-neon-cyan mr-3 mt-1 flex-shrink-0" aria-hidden="true" />
+          <Icon name="mdi:map-marker" class="w-6 h-6 text-blue-300 mr-3 mt-1 flex-shrink-0" aria-hidden="true" />
           <div>
-            <p class="font-semibold text-white">In-Person Event</p>
-            <p class="text-slate-400">May 1-2, 2026 at UTA Downtown Fort Worth</p>
+            <p class="font-semibold text-white">In-Person Finals</p>
+            <p class="text-slate-400">May 1–2, 2026 · UTA Downtown Fort Worth</p>
           </div>
         </div>
         <div class="flex items-start">
-          <Icon name="mdi:account-group" class="w-6 h-6 text-neon-green mr-3 mt-1 flex-shrink-0" aria-hidden="true" />
+          <Icon name="mdi:account-group" class="w-6 h-6 text-blue-200 mr-3 mt-1 flex-shrink-0" aria-hidden="true" />
           <div>
-            <p class="font-semibold text-white">100+ Participants</p>
-            <p class="text-slate-400">1,000+ target attendees</p>
+            <p class="font-semibold text-white">1,000+ Target Attendees</p>
+            <p class="text-slate-400">Students, professionals, and civic innovators</p>
           </div>
         </div>
       </div>
 
-      <ul class="space-y-4">
+      <ul class="space-y-3">
         <li class="flex items-start">
-          <Icon name="mdi:check-circle" class="w-6 h-6 text-frontier-amber mr-3 mt-1 flex-shrink-0" aria-hidden="true" />
+          <Icon name="mdi:check-circle" class="w-5 h-5 text-blue-400 mr-3 mt-0.5 flex-shrink-0" aria-hidden="true" />
           <span class="text-slate-300">Hands-on technical product development</span>
         </li>
         <li class="flex items-start">
-          <Icon name="mdi:check-circle" class="w-6 h-6 text-neon-cyan mr-3 mt-1 flex-shrink-0" aria-hidden="true" />
+          <Icon name="mdi:check-circle" class="w-5 h-5 text-blue-400 mr-3 mt-0.5 flex-shrink-0" aria-hidden="true" />
           <span class="text-slate-300">Real-world challenges from industry partners</span>
         </li>
         <li class="flex items-start">
-          <Icon name="mdi:check-circle" class="w-6 h-6 text-frontier-amber mr-3 mt-1 flex-shrink-0" aria-hidden="true" />
+          <Icon name="mdi:check-circle" class="w-5 h-5 text-blue-400 mr-3 mt-0.5 flex-shrink-0" aria-hidden="true" />
           <span class="text-slate-300">Mentorship from established professionals</span>
         </li>
         <li class="flex items-start">
-          <Icon name="mdi:check-circle" class="w-6 h-6 text-neon-cyan mr-3 mt-1 flex-shrink-0" aria-hidden="true" />
+          <Icon name="mdi:check-circle" class="w-5 h-5 text-blue-400 mr-3 mt-0.5 flex-shrink-0" aria-hidden="true" />
           <span class="text-slate-300">Pathways to employment opportunities</span>
         </li>
       </ul>
     </div>
 
-    <div class="glass-card p-8 rounded-lg">
-      <div class="flex items-center justify-center mb-6">
-        <div class="p-4 rounded-full bg-neon-purple/10 border border-neon-purple/30">
-          <Icon name="mdi:rocket-launch" class="w-12 h-12 text-neon-purple" aria-hidden="true" />
+    <div class="glass-card p-8 rounded-lg flex flex-col">
+      <div class="flex items-center justify-center mb-5">
+        <div class="p-4 rounded-full bg-blue-500/10 border border-blue-500/30">
+          <Icon name="mdi:rocket-launch" class="w-12 h-12 text-blue-400" aria-hidden="true" />
         </div>
       </div>
-      <h4 class="text-xl font-bold text-white mb-4 text-center">
-        Get Involved
+      <h4 class="text-xl font-bold text-white mb-2 text-center">
+        Ready to compete?
       </h4>
-      <p class="text-slate-400 mb-6 text-center">
-        Register to compete, learn more about the event, or sponsor the next generation of Fort Worth innovators.
+      <p class="text-slate-400 mb-6 text-center text-sm">
+        Register, explore challenges, find teammates, and track your progress — all at the official HackFW hub.
       </p>
-      <div class="flex flex-col gap-4">
-        <Link
-          href="https://fwtx.devpost.com"
-          style="frontier"
-          size="lg"
-          block
-          rel="noopener noreferrer">
-          Register to Compete
-        </Link>
-        <Link
-          href="https://hack.fwtx.city"
-          style="cyber-outline"
-          size="lg"
-          block
-          rel="noopener noreferrer">
-          Learn More
-        </Link>
+
+      <Link
+        href="https://hack.fwtx.city"
+        style="primary"
+        size="lg"
+        block
+        target="_blank"
+        rel="noopener noreferrer">
+        Go to hack.fwtx.city →
+      </Link>
+
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <a
+          href="https://hack.fwtx.city/register"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center gap-2 rounded px-4 py-2.5 text-sm font-semibold text-blue-300 border border-blue-500/40 hover:border-blue-400 hover:bg-blue-500/10 transition-all duration-200">
+          <Icon name="mdi:account-plus" class="w-4 h-4" aria-hidden="true" />
+          Register
+        </a>
+        <a
+          href="https://hack.fwtx.city/challenges"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center gap-2 rounded px-4 py-2.5 text-sm font-semibold text-blue-300 border border-blue-500/40 hover:border-blue-400 hover:bg-blue-500/10 transition-all duration-200">
+          <Icon name="mdi:code-braces" class="w-4 h-4" aria-hidden="true" />
+          Challenges
+        </a>
+        <a
+          href="https://hack.fwtx.city/schedule"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center gap-2 rounded px-4 py-2.5 text-sm font-semibold text-blue-300 border border-blue-500/40 hover:border-blue-400 hover:bg-blue-500/10 transition-all duration-200">
+          <Icon name="mdi:calendar-month" class="w-4 h-4" aria-hidden="true" />
+          Schedule
+        </a>
+        <a
+          href="https://hack.fwtx.city/sponsors"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center gap-2 rounded px-4 py-2.5 text-sm font-semibold text-blue-300 border border-blue-500/40 hover:border-blue-400 hover:bg-blue-500/10 transition-all duration-200">
+          <Icon name="mdi:handshake" class="w-4 h-4" aria-hidden="true" />
+          Sponsors
+        </a>
       </div>
-      <div class="mt-6 pt-6 border-t border-slate-700">
-        <p class="text-sm text-slate-500 text-center mb-2">
-          Interested in sponsoring?
-        </p>
+
+      <div class="mt-6 pt-5 border-t border-slate-700 text-center">
+        <p class="text-xs text-slate-500 mb-2">Questions? Reach out directly</p>
         <a
           href="mailto:community@fwtx.city"
-          class="flex items-center justify-center text-frontier-amber hover:text-neon-cyan font-semibold transition-colors duration-300">
-          <Icon name="mdi:email" class="w-5 h-5 mr-2" aria-hidden="true" />
+          class="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 font-semibold transition-colors duration-200">
+          <Icon name="mdi:email" class="w-4 h-4" aria-hidden="true" />
           community@fwtx.city
         </a>
       </div>
     </div>
   </div>
 
-  <div class="mt-16 glass-card p-8 rounded-lg border border-neon-cyan/20">
-    <h4 class="text-xl font-bold text-white mb-4 text-center">
-      What to Expect
-    </h4>
-    <div class="grid md:grid-cols-3 gap-6 mt-8">
-      <div class="text-center">
-        <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-neon-cyan/10 flex items-center justify-center">
-          <Icon name="mdi:code-tags" class="w-8 h-8 text-neon-cyan" aria-hidden="true" />
+  <!-- What to Expect -->
+  <div class="mt-16 glass-card p-8 rounded-lg border border-blue-500/20">
+    <h4 class="text-xl font-bold text-white mb-2 text-center">What to Expect</h4>
+    <p class="text-slate-400 text-sm text-center mb-8">Four weeks of building, learning, and connecting — capped by a live Demo Day.</p>
+    <div class="grid md:grid-cols-3 gap-6">
+      <a
+        href="https://hack.fwtx.city/challenges"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group text-center p-4 rounded-lg hover:bg-blue-500/5 transition-colors duration-200">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors duration-200">
+          <Icon name="mdi:code-tags" class="w-8 h-8 text-blue-400" aria-hidden="true" />
         </div>
-        <h5 class="font-semibold text-white mb-2">Technical Challenges</h5>
+        <h5 class="font-semibold text-white mb-1">Technical Challenges</h5>
         <p class="text-sm text-slate-400">Data engineering, software development, and emerging tech integration</p>
-      </div>
-      <div class="text-center">
-        <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-frontier-amber/10 flex items-center justify-center">
-          <Icon name="mdi:school" class="w-8 h-8 text-frontier-amber" aria-hidden="true" />
+        <span class="inline-flex items-center gap-1 mt-2 text-xs text-blue-400 group-hover:gap-2 transition-all duration-200">View challenges <Icon name="mdi:arrow-right" class="w-3 h-3" /></span>
+      </a>
+      <a
+        href="https://hack.fwtx.city/schedule"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group text-center p-4 rounded-lg hover:bg-blue-500/5 transition-colors duration-200">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-blue-400/10 flex items-center justify-center group-hover:bg-blue-400/20 transition-colors duration-200">
+          <Icon name="mdi:school" class="w-8 h-8 text-blue-300" aria-hidden="true" />
         </div>
-        <h5 class="font-semibold text-white mb-2">Free Workshops</h5>
-        <p class="text-sm text-slate-400">Networking opportunities and skill-building sessions</p>
-      </div>
-      <div class="text-center">
-        <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-neon-green/10 flex items-center justify-center">
-          <Icon name="mdi:trophy" class="w-8 h-8 text-neon-green" aria-hidden="true" />
+        <h5 class="font-semibold text-white mb-1">Free Workshops</h5>
+        <p class="text-sm text-slate-400">Networking opportunities and skill-building sessions throughout the event</p>
+        <span class="inline-flex items-center gap-1 mt-2 text-xs text-blue-400 group-hover:gap-2 transition-all duration-200">See schedule <Icon name="mdi:arrow-right" class="w-3 h-3" /></span>
+      </a>
+      <a
+        href="https://hack.fwtx.city/prizes"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group text-center p-4 rounded-lg hover:bg-blue-500/5 transition-colors duration-200">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-blue-200/10 flex items-center justify-center group-hover:bg-blue-200/20 transition-colors duration-200">
+          <Icon name="mdi:trophy" class="w-8 h-8 text-blue-200" aria-hidden="true" />
         </div>
-        <h5 class="font-semibold text-white mb-2">Prizes & Recognition</h5>
+        <h5 class="font-semibold text-white mb-1">Prizes & Recognition</h5>
         <p class="text-sm text-slate-400">Connect with sponsors and gain product deployment opportunities</p>
-      </div>
+        <span class="inline-flex items-center gap-1 mt-2 text-xs text-blue-400 group-hover:gap-2 transition-all duration-200">View prizes <Icon name="mdi:arrow-right" class="w-3 h-3" /></span>
+      </a>
     </div>
   </div>
 
-  <div class="mt-16 glass-card p-8 rounded-lg border border-frontier-amber/20">
-    <h4 class="text-xl font-bold text-white mb-4 text-center">
-      Upcoming Events
-    </h4>
-    <p class="text-slate-400 mb-6 text-center max-w-2xl mx-auto">
-      Join our workshops, meetups, and hackathon prep sessions. Stay connected with the HackFW community.
-    </p>
+  <!-- Upcoming Events -->
+  <div class="mt-12 glass-card p-8 rounded-lg border border-blue-400/20">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div>
+        <h4 class="text-xl font-bold text-white mb-1">Upcoming Events</h4>
+        <p class="text-slate-400 text-sm">Workshops, meetups, and hackathon prep sessions</p>
+      </div>
+      <a
+        href="https://hack.fwtx.city/events"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors duration-200 whitespace-nowrap">
+        View all on hack.fwtx.city
+        <Icon name="mdi:arrow-right" class="w-4 h-4" aria-hidden="true" />
+      </a>
+    </div>
     <div class="flex justify-center">
       <iframe
         src="https://luma.com/embed/calendar/cal-tc45LqQ7oFAHzNY/events"
@@ -158,12 +221,12 @@ import { Icon } from "astro-icon/components";
         title="HackFW Events Calendar"
       ></iframe>
     </div>
-    <div class="mt-8 flex items-center justify-center gap-3 text-center">
-      <Icon name="mdi:calendar-clock" class="w-6 h-6 text-frontier-amber flex-shrink-0" aria-hidden="true" />
-      <p class="text-slate-300">
-        Join our <span class="text-white font-semibold">Roundtables every Wednesday at 12pm CST</span> at CreateFW.
-        <a href="https://fwtx.city/events" class="text-neon-cyan hover:text-frontier-amber transition-colors duration-300 underline underline-offset-2">
-          View all events
+    <div class="mt-6 flex items-center justify-center gap-3 text-center">
+      <Icon name="mdi:calendar-clock" class="w-5 h-5 text-blue-400 flex-shrink-0" aria-hidden="true" />
+      <p class="text-slate-300 text-sm">
+        <span class="text-white font-semibold">Roundtables every Wednesday at 12pm CST</span> at CreateFW.
+        <a href="https://fwtx.city/events" class="text-blue-400 hover:text-blue-300 transition-colors duration-200 underline underline-offset-2 ml-1">
+          All FWTX events →
         </a>
       </p>
     </div>
