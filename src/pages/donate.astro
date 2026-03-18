@@ -1,0 +1,218 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+---
+
+<Layout
+  title="Donate & Sponsor"
+  description="Support FWTX DAO — a 501(c)(3) nonprofit driving Web3 civic innovation in Fort Worth, Texas. Your donation is tax-deductible.">
+  <Container>
+    <Sectionhead as="h1">
+      <Fragment slot="title">Donate & Sponsor</Fragment>
+      <Fragment slot="desc">Support Fort Worth's Web3 civic innovation community</Fragment>
+    </Sectionhead>
+
+    <!-- 501(c)(3) Banner -->
+    <div class="mx-auto max-w-3xl mt-10">
+      <div class="relative overflow-hidden rounded-xl border border-blue-500/30 bg-blue-500/5 backdrop-blur-sm p-6 text-center">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-transparent pointer-events-none"></div>
+        <div class="relative">
+          <div class="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-400/30 rounded-full px-4 py-1.5 mb-4">
+            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="text-blue-300 text-sm font-semibold tracking-wide uppercase">501(c)(3) Nonprofit</span>
+          </div>
+          <p class="text-slate-200 text-lg leading-relaxed">
+            FWTX DAO is a registered <strong class="text-white">501(c)(3) nonprofit organization</strong>. Your donation is
+            <strong class="text-blue-300">fully tax-deductible</strong> to the extent permitted by law.
+          </p>
+          <p class="text-slate-400 text-sm mt-2">EIN available upon request · Receipts issued for all contributions</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Primary Donate CTA -->
+    <div class="mx-auto max-w-2xl mt-12 text-center">
+      <h2 class="font-display text-4xl lg:text-5xl text-white mb-4">Make a Difference</h2>
+      <p class="text-slate-300 text-lg leading-relaxed mb-8">
+        Your support powers free workshops, community events, open-source tools, and education programs that bring Web3 literacy and civic innovation to Fort Worth residents.
+      </p>
+      <a
+        href="https://buy.stripe.com/9B66oHfy50e1b7C7buak000"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-lg px-8 py-4 rounded-lg border-2 border-blue-600 hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_24px_rgba(59,130,246,0.4)] focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+        Donate Now
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+      </a>
+      <p class="text-slate-500 text-sm mt-4">Secure payment via Stripe · All major cards accepted</p>
+    </div>
+
+    <!-- Impact Stats -->
+    <div class="mx-auto max-w-4xl mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6">
+      {[
+        { stat: "3+", label: "Years of Community Service", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
+        { stat: "100%", label: "Free Public Education Events", icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" },
+        { stat: "Open", label: "Source Tools & Resources", icon: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" },
+      ].map(({ stat, label, icon }) => (
+        <div class="glass-card rounded-xl p-6 text-center">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/15 border border-blue-400/20 mb-4 mx-auto">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={icon} />
+            </svg>
+          </div>
+          <div class="font-display text-4xl text-blue-300 mb-1">{stat}</div>
+          <div class="text-slate-400 text-sm">{label}</div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Sponsorship Tiers -->
+    <div class="mx-auto max-w-5xl mt-20">
+      <h2 class="font-display text-4xl lg:text-5xl text-white text-center mb-3">Sponsorship Tiers</h2>
+      <p class="text-slate-400 text-center text-lg mb-10">Partner with FWTX DAO and invest in Fort Worth's digital future</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Community Sponsor -->
+        <div class="glass-card rounded-xl p-7 flex flex-col">
+          <div class="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-2">Community</div>
+          <div class="font-display text-5xl text-white mb-1">$500</div>
+          <div class="text-slate-500 text-sm mb-6">per year</div>
+          <ul class="space-y-3 flex-1 mb-8">
+            {[
+              "Logo on website sponsors section",
+              "Social media shoutout",
+              "2 event tickets",
+              "Newsletter feature",
+            ].map((item) => (
+              <li class="flex items-start gap-2 text-slate-300 text-sm">
+                <svg class="w-4 h-4 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <a
+            href="https://buy.stripe.com/9B66oHfy50e1b7C7buak000"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block text-center border-2 border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 font-semibold py-2.5 rounded-lg transition-all duration-300 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
+            Become a Sponsor
+          </a>
+        </div>
+
+        <!-- Innovation Sponsor — featured -->
+        <div class="relative rounded-xl p-7 flex flex-col border-2 border-blue-500/50 bg-blue-600/5 backdrop-blur-sm">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
+            <span class="bg-blue-600 text-white text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full">Most Popular</span>
+          </div>
+          <div class="text-blue-300 text-sm font-semibold uppercase tracking-widest mb-2">Innovation</div>
+          <div class="font-display text-5xl text-white mb-1">$2,500</div>
+          <div class="text-slate-500 text-sm mb-6">per year</div>
+          <ul class="space-y-3 flex-1 mb-8">
+            {[
+              "Everything in Community",
+              "Prominent logo placement",
+              "Speaking slot at one event",
+              "5 event tickets",
+              "Co-branded content",
+              "LinkedIn company tag",
+            ].map((item) => (
+              <li class="flex items-start gap-2 text-slate-300 text-sm">
+                <svg class="w-4 h-4 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <a
+            href="https://buy.stripe.com/9B66oHfy50e1b7C7buak000"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block text-center bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.35)] focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
+            Become a Sponsor
+          </a>
+        </div>
+
+        <!-- Founding Sponsor -->
+        <div class="glass-card rounded-xl p-7 flex flex-col">
+          <div class="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-2">Founding Partner</div>
+          <div class="font-display text-5xl text-white mb-1">$10K+</div>
+          <div class="text-slate-500 text-sm mb-6">per year</div>
+          <ul class="space-y-3 flex-1 mb-8">
+            {[
+              "Everything in Innovation",
+              "Title sponsorship of an event",
+              "Board advisory access",
+              "Unlimited event tickets",
+              "Joint press releases",
+              "Custom partnership terms",
+            ].map((item) => (
+              <li class="flex items-start gap-2 text-slate-300 text-sm">
+                <svg class="w-4 h-4 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <a
+            href="mailto:hello@fwtx.city?subject=Founding%20Partner%20Inquiry"
+            class="block text-center border-2 border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 font-semibold py-2.5 rounded-lg transition-all duration-300 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
+            Contact Us
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- What your donation funds -->
+    <div class="mx-auto max-w-3xl mt-20 mb-16">
+      <h2 class="font-display text-4xl text-white text-center mb-10">Where Your Money Goes</h2>
+      <div class="space-y-4">
+        {[
+          { pct: "40%", label: "Free community education events & workshops", color: "bg-blue-500" },
+          { pct: "30%", label: "Open-source tools & public resources", color: "bg-blue-400" },
+          { pct: "20%", label: "Innovation bounties & community grants", color: "bg-blue-300" },
+          { pct: "10%", label: "Operations & infrastructure", color: "bg-slate-500" },
+        ].map(({ pct, label, color }) => (
+          <div class="glass-card rounded-lg p-4 flex items-center gap-4">
+            <div class="shrink-0 w-14 text-center">
+              <span class="font-display text-2xl text-blue-300">{pct}</span>
+            </div>
+            <div class="flex-1 h-2 bg-navy-800 rounded-full overflow-hidden">
+              <div class={`h-full ${color} rounded-full`} style={`width: ${pct}`}></div>
+            </div>
+            <div class="text-slate-300 text-sm flex-shrink-0 max-w-xs hidden sm:block">{label}</div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Bottom CTA -->
+      <div class="mt-14 text-center">
+        <p class="text-slate-400 text-base mb-6">
+          Questions about donating or sponsoring?<br />
+          Reach us at <a href="mailto:hello@fwtx.city" class="text-blue-400 hover:text-blue-300 transition-colors duration-200 underline underline-offset-4 decoration-blue-500/40">hello@fwtx.city</a>
+        </p>
+        <a
+          href="https://buy.stripe.com/9B66oHfy50e1b7C7buak000"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-7 py-3 rounded-lg border-2 border-blue-600 hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_24px_rgba(59,130,246,0.4)] focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
+          Donate Now
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </Container>
+</Layout>
