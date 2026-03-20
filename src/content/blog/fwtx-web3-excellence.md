@@ -1,6 +1,6 @@
 ---
 draft: false
-title: "Fort Worth's Opportuntiy for Web3 Engineering Excellence"
+title: "Fort Worth's Opportunity for Web3 Engineering Excellence"
 snippet: "Fort Worth has been a leader historically in petroleum, aerospace, and additional STEM disciplines. It's time we lead Texas into the disciplines that will define the information age and next generation of wealth creation."
 image: {
     src: "https://cdn.pixabay.com/photo/2019/12/19/05/56/digitization-4705450_960_720.jpg",

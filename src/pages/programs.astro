@@ -1,0 +1,158 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+
+const programs = [
+  {
+    name: "Community Roundtables",
+    frequency: "Monthly",
+    description:
+      "Open community sessions covering Web3 governance, blockchain fundamentals, and civic tech trends. Free and open to all Fort Worth residents. Held monthly in-person and streamed online.",
+    topics: ["DAO governance", "DeFi basics", "Digital identity", "Civic tech policy"],
+    icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z",
+  },
+  {
+    name: "HackFW Hackathon",
+    frequency: "Annual — April–May 2026",
+    description:
+      "Fort Worth's premier civic tech hackathon, focused on cybersecurity and Web3 workforce development. Open to students, professionals, and community builders across the DFW metro.",
+    topics: ["Cybersecurity challenges", "Web3 tooling", "Smart city applications", "Open source civic infrastructure"],
+    icon: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+  },
+  {
+    name: "Web3 Workshops",
+    frequency: "Quarterly",
+    description:
+      "Hands-on technical workshops covering blockchain development, smart contract auditing, decentralized identity, and AI integration. Designed for developers and aspiring technologists.",
+    topics: ["Solidity & smart contracts", "Wallet security", "IPFS & decentralized storage", "AI + blockchain integration"],
+    icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
+  },
+  {
+    name: "Innovation Bounties",
+    frequency: "Ongoing",
+    description:
+      "Community-funded bounty program that compensates developers and researchers for building open source civic tools. Submit ideas or claim existing bounties at innovate.fwtx.city.",
+    topics: ["Open source grants", "Civic tech tooling", "Research bounties", "Student projects"],
+    icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z",
+  },
+];
+
+const howToJoinSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to Join FWTX DAO Programs",
+  description: "Step-by-step guide to participating in FWTX DAO community programs in Fort Worth, Texas.",
+  step: [
+    {
+      "@type": "HowToStep",
+      position: 1,
+      name: "Connect with the Community",
+      text: "Join the FWTX DAO Discord server or Telegram group to introduce yourself and stay updated on upcoming events.",
+    },
+    {
+      "@type": "HowToStep",
+      position: 2,
+      name: "Attend a Community Roundtable",
+      text: "RSVP for the next monthly community roundtable at fwtx.city/events. All events are free and open to the public.",
+    },
+    {
+      "@type": "HowToStep",
+      position: 3,
+      name: "Contribute to Open Source",
+      text: "Explore open innovation bounties at innovate.fwtx.city or contribute to FWTX DAO GitHub repositories.",
+    },
+    {
+      "@type": "HowToStep",
+      position: 4,
+      name: "Become a Member",
+      text: "Apply for active membership by reaching out at community@fwtx.city. Membership includes voting rights on DAO governance proposals.",
+    },
+  ],
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://fwtx.city" },
+    { "@type": "ListItem", position: 2, name: "Programs", item: "https://fwtx.city/programs" },
+  ],
+};
+---
+
+<Layout
+  title="Programs"
+  description="FWTX DAO programs — monthly community roundtables, HackFW hackathons, Web3 workshops, and innovation bounties in Fort Worth, Texas. All events are free and open to the public.">
+  <script type="application/ld+json" set:html={JSON.stringify(howToJoinSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <Container>
+    <Sectionhead as="h1">
+      <Fragment slot="title">Programs</Fragment>
+      <Fragment slot="desc">Free education, workshops, and community events in Fort Worth</Fragment>
+    </Sectionhead>
+
+    <div class="mx-auto max-w-4xl mt-16 grid gap-8">
+      {programs.map(({ name, frequency, description, topics, icon }) => (
+        <div class="glass-card rounded-xl p-8">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 bg-neon-cyan/10 rounded-lg flex items-center justify-center shrink-0 mt-1">
+              <svg class="w-6 h-6 text-neon-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d={icon} />
+              </svg>
+            </div>
+            <div class="flex-1">
+              <div class="flex flex-wrap items-center gap-3 mb-2">
+                <h2 class="font-display text-2xl text-white">{name}</h2>
+                <span class="text-xs font-semibold uppercase tracking-wider text-frontier-amber bg-frontier-amber/10 border border-frontier-amber/20 px-2 py-0.5 rounded-full">
+                  {frequency}
+                </span>
+              </div>
+              <p class="text-slate-300 leading-relaxed mb-4">{description}</p>
+              <div class="flex flex-wrap gap-2">
+                {topics.map((topic) => (
+                  <span class="text-xs text-slate-400 bg-slate-800/60 border border-slate-700/50 px-2.5 py-1 rounded-full">
+                    {topic}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- How to Join -->
+    <div class="mx-auto max-w-4xl mt-20 mb-16">
+      <h2 class="font-display text-4xl text-white text-center mb-10">How to Get Involved</h2>
+      <ol class="space-y-6">
+        {[
+          { step: "01", title: "Connect with the Community", body: "Join the FWTX DAO Discord or Telegram to introduce yourself and stay updated on upcoming events." },
+          { step: "02", title: "Attend a Community Roundtable", body: "RSVP for the next monthly roundtable at fwtx.city/events. Free and open to all Fort Worth residents." },
+          { step: "03", title: "Contribute to Open Source", body: "Explore open innovation bounties at innovate.fwtx.city or contribute to FWTX-DAO GitHub repositories." },
+          { step: "04", title: "Become a Member", body: "Apply for active membership by reaching out at community@fwtx.city. Members vote on DAO governance proposals." },
+        ].map(({ step, title, body }) => (
+          <li class="glass-card rounded-xl p-6 flex gap-6 items-start">
+            <span class="font-display text-4xl text-frontier-amber/40 shrink-0 select-none">{step}</span>
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-1">{title}</h3>
+              <p class="text-slate-400 text-sm leading-relaxed">{body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="mt-12 text-center">
+        <a
+          href="/contact"
+          class="bg-frontier-amber text-cyber-dark font-semibold px-8 py-3 rounded-lg inline-flex items-center gap-2 hover:bg-frontier-amber/90 hover:shadow-glow-amber transition duration-300 min-h-[44px]">
+          Get in Touch
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </Container>
+</Layout>

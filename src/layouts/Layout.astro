@@ -26,17 +26,40 @@ const { title, description, image, noindex, publishDate, author, tags, type = "w
 
 const organizationSchema = {
   "@context": "https://schema.org",
-  "@type": "Organization",
+  "@type": ["Organization", "NGO"],
   name: "FWTX DAO",
+  legalName: "Fort Worth DAO LCA",
   url: "https://fwtx.city",
   logo: "https://fwtx.city/logo.svg",
   description: "Fort Worth Municipal DAO - Web3 civic innovation, digital sovereignty, and decentralized governance community in Fort Worth, Texas.",
+  foundingDate: "2023-12-19",
+  areaServed: {
+    "@type": "City",
+    name: "Fort Worth",
+    containedInPlace: {
+      "@type": "State",
+      name: "Texas",
+    },
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Fort Worth",
+    addressRegion: "TX",
+    addressCountry: "US",
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "community@fwtx.city",
+    contactType: "community",
+    url: "https://fwtx.city/contact",
+  },
   sameAs: [
     "https://twitter.com/FWTX_DAO",
     "https://github.com/FWTX-DAO",
     "https://www.linkedin.com/company/fwtx-dao",
-    "https://www.youtube.com/@fwtxdao",
+    "https://www.youtube.com/@fortworthdao",
     "https://www.instagram.com/fwtx_dao",
+    "https://t.me/fwtxdao",
   ],
 };
 
@@ -76,7 +99,7 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
       description={metaDescription}
       canonical={canonicalURL}
       twitter={{
-        creator: "@tobalotv",
+        creator: "@FWTX_DAO",
         site: "@FWTX_DAO",
         card: "summary_large_image",
       }}

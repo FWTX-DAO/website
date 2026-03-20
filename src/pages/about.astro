@@ -2,11 +2,28 @@
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import Sectionhead from "@components/sectionhead.astro";
+
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "About FWTX DAO",
+  url: "https://fwtx.city/about",
+  description: "Learn about FWTX DAO — Fort Worth's Web3 and civic innovation community building decentralized civic infrastructure in North Texas.",
+  about: {
+    "@type": ["Organization", "NGO"],
+    name: "FWTX DAO",
+    legalName: "Fort Worth DAO LCA",
+    url: "https://fwtx.city",
+    foundingDate: "2023-12-19",
+    areaServed: "Fort Worth, Texas",
+  },
+};
 ---
 
 <Layout
   title="About"
   description="Learn about FWTX DAO - Fort Worth's Web3 and civic innovation community. Meet our team of experts in blockchain, cybersecurity, and digital transformation.">
+  <script type="application/ld+json" set:html={JSON.stringify(aboutSchema)} />
   <Container>
     <Sectionhead as="h1">
       <Fragment slot="title">About</Fragment>
@@ -38,5 +55,6 @@ import Sectionhead from "@components/sectionhead.astro";
         Read more on our work and thought leadership at <a href="/blog" class="text-neon-cyan hover:text-frontier-amber transition-colors duration-300 underline decoration-neon-cyan/30 hover:decoration-frontier-amber underline-offset-4 rounded focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-dark">our blog</a>.
       </p>
     </div>
+
   </Container>
 </Layout>

@@ -38,7 +38,7 @@ const blogPostingSchema = {
     "@type": "WebPage",
     "@id": `https://fwtx.city/blog/${entry.slug}`,
   },
-  image: entry.data.image?.src ? `https://fwtx.city${entry.data.image.src}` : undefined,
+  image: entry.data.image?.src || undefined,
   keywords: entry.data.tags?.join(", "),
 };
 

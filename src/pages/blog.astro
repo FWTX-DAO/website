@@ -33,12 +33,30 @@ const breadcrumbSchema = {
     },
   ],
 };
+
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "FWTX DAO Blog",
+  description: "Research and thought leadership on Web3, DAOs, cybersecurity, and civic innovation in Fort Worth, Texas.",
+  url: "https://fwtx.city/blog",
+  mainEntity: {
+    "@type": "ItemList",
+    itemListElement: publishedBlogEntries.map((post, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `https://fwtx.city/blog/${post.slug}`,
+      name: post.data.title,
+    })),
+  },
+};
 ---
 
 <Layout
   title="Blog"
   description="Read the latest insights on Web3, blockchain, and civic innovation from FWTX DAO. Explore how Fort Worth is leading digital transformation in North Texas.">
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(itemListSchema)} />
   <Container>
     <Sectionhead as="h1">
       <Fragment slot="title">Our Blog</Fragment>
