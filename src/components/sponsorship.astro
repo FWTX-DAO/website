@@ -1,0 +1,82 @@
+---
+const sponsorTiers = [
+  {
+    name: "Community Partner",
+    amount: "$500",
+    href: "https://buy.stripe.com/9B66oHfy50e1b7C7buak000?prefilled_amount=50000",
+    featured: true,
+  },
+  {
+    name: "Workforce Builder",
+    amount: "$1,000",
+    href: "https://buy.stripe.com/3cI6oH71z6Cp6RmfI0ak002",
+  },
+  {
+    name: "Ecosystem Partner",
+    amount: "$5,000",
+    href: "https://buy.stripe.com/7sYeVd5Xvd0N6RmfI0ak001",
+  },
+  {
+    name: "Innovation Leader",
+    amount: "$15,000",
+    href: "https://buy.stripe.com/9B66oHfy50e1b7C7buak000?prefilled_amount=1500000",
+  },
+];
+
+const { className = "my-20" } = Astro.props;
+---
+
+<section id="sponsorship" class={`mx-auto max-w-6xl ${className}`} aria-label="FWTX sponsorship and partnership opportunities">
+  <div class="text-center mb-10">
+    <div class="inline-flex items-center gap-2 rounded-full border border-blue-400/25 bg-blue-500/10 px-4 py-1.5 mb-4">
+      <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 14v4a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h4m4-2h6m0 0v6m0-6L10 14" />
+      </svg>
+      <span class="text-blue-300 text-xs font-semibold uppercase tracking-wider">Tax-deductible sponsorships</span>
+    </div>
+    <h2 class="font-display text-4xl lg:text-5xl text-white mb-3">Sponsorship Levels</h2>
+    <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+      Simple support levels for organizations investing in Fort Worth's builder community.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    {sponsorTiers.map((tier) => (
+      <a
+        href={tier.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        class={`group relative rounded-lg p-6 text-center transition-all duration-300 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 ${
+          tier.featured
+            ? "border-2 border-blue-500/60 bg-blue-600/10 shadow-glow-sm hover:border-blue-400"
+            : "glass-card hover:-translate-y-1"
+        }`}>
+        {tier.featured && (
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
+            Best Fit
+          </span>
+        )}
+        <p class={`text-sm font-semibold uppercase tracking-widest mb-3 ${tier.featured ? "text-blue-300" : "text-slate-400"}`}>
+          {tier.name}
+        </p>
+        <p class="font-display text-5xl text-white leading-none">{tier.amount}</p>
+        <span
+          class={`mt-6 inline-flex min-h-[40px] items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+            tier.featured
+              ? "bg-blue-600 text-white group-hover:bg-blue-500 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.35)]"
+              : "border-2 border-blue-500/50 text-blue-400 group-hover:border-blue-400 group-hover:bg-blue-500/10"
+          }`}>
+          Sponsor
+        </span>
+      </a>
+    ))}
+  </div>
+
+  <div class="mt-6 text-center">
+    <a
+      href="mailto:community@fwtx.city?subject=FWTX%20Partnership%20Inquiry"
+      class="text-sm font-semibold text-blue-400 underline underline-offset-4 decoration-blue-500/40 transition-colors duration-200 hover:text-blue-300">
+      Custom or in-kind partnership inquiry
+    </a>
+  </div>
+</section>

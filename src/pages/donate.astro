@@ -2,6 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import Sectionhead from "@components/sectionhead.astro";
+import Sponsorship from "@components/sponsorship.astro";
 ---
 
 <Layout
@@ -74,105 +75,7 @@ import Sectionhead from "@components/sectionhead.astro";
       ))}
     </div>
 
-    <!-- Sponsorship Tiers -->
-    <div class="mx-auto max-w-5xl mt-20">
-      <h2 class="font-display text-4xl lg:text-5xl text-white text-center mb-3">Sponsorship Tiers</h2>
-      <p class="text-slate-400 text-center text-lg mb-10">Partner with FWTX DAO and invest in Fort Worth's digital future</p>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Community Sponsor -->
-        <div class="glass-card rounded-xl p-7 flex flex-col">
-          <div class="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-2">Community</div>
-          <div class="font-display text-5xl text-white mb-1">$500</div>
-          <div class="text-slate-500 text-sm mb-6">per year</div>
-          <ul class="space-y-3 flex-1 mb-8">
-            {[
-              "Logo on website sponsors section",
-              "Social media shoutout",
-              "2 event tickets",
-              "Newsletter feature",
-            ].map((item) => (
-              <li class="flex items-start gap-2 text-slate-300 text-sm">
-                <svg class="w-4 h-4 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                {item}
-              </li>
-            ))}
-          </ul>
-          <a
-            href="https://buy.stripe.com/9B66oHfy50e1b7C7buak000"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="block text-center border-2 border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 font-semibold py-2.5 rounded-lg transition-all duration-300 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
-            Become a Sponsor
-          </a>
-        </div>
-
-        <!-- Innovation Sponsor — featured -->
-        <div class="relative rounded-xl p-7 flex flex-col border-2 border-blue-500/50 bg-blue-600/5 backdrop-blur-sm">
-          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
-            <span class="bg-blue-600 text-white text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full">Most Popular</span>
-          </div>
-          <div class="text-blue-300 text-sm font-semibold uppercase tracking-widest mb-2">Innovation</div>
-          <div class="font-display text-5xl text-white mb-1">$2,500</div>
-          <div class="text-slate-500 text-sm mb-6">per year</div>
-          <ul class="space-y-3 flex-1 mb-8">
-            {[
-              "Everything in Community",
-              "Prominent logo placement",
-              "Speaking slot at one event",
-              "5 event tickets",
-              "Co-branded content",
-              "LinkedIn company tag",
-            ].map((item) => (
-              <li class="flex items-start gap-2 text-slate-300 text-sm">
-                <svg class="w-4 h-4 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                {item}
-              </li>
-            ))}
-          </ul>
-          <a
-            href="https://buy.stripe.com/9B66oHfy50e1b7C7buak000"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="block text-center bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.35)] focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
-            Become a Sponsor
-          </a>
-        </div>
-
-        <!-- Founding Sponsor -->
-        <div class="glass-card rounded-xl p-7 flex flex-col">
-          <div class="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-2">Founding Partner</div>
-          <div class="font-display text-5xl text-white mb-1">$10K+</div>
-          <div class="text-slate-500 text-sm mb-6">per year</div>
-          <ul class="space-y-3 flex-1 mb-8">
-            {[
-              "Everything in Innovation",
-              "Title sponsorship of an event",
-              "Board advisory access",
-              "Unlimited event tickets",
-              "Joint press releases",
-              "Custom partnership terms",
-            ].map((item) => (
-              <li class="flex items-start gap-2 text-slate-300 text-sm">
-                <svg class="w-4 h-4 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                {item}
-              </li>
-            ))}
-          </ul>
-          <a
-            href="mailto:hello@fwtx.city?subject=Founding%20Partner%20Inquiry"
-            class="block text-center border-2 border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 font-semibold py-2.5 rounded-lg transition-all duration-300 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
-            Contact Us
-          </a>
-        </div>
-      </div>
-    </div>
+    <Sponsorship className="mt-20" />
 
     <!-- What your donation funds -->
     <div class="mx-auto max-w-3xl mt-20 mb-16">
