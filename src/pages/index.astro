@@ -3,11 +3,11 @@ import Container from "@components/container.astro";
 import Cta from "@components/cta.astro";
 import Features from "@components/features.astro";
 import Hero from "@components/hero.astro";
-import Logos from "@components/logos.astro";
 import InnovationBounty from "@components/innovationbounty.astro";
 import DonateBanner from "@components/donatebanner.astro";
 import Sponsorship from "@components/sponsorship.astro";
 import HackFW from "@components/hackfw.astro";
+import PixelLogoGrid from "@components/ui/pixel-logo-grid";
 import Layout from "@layouts/Layout.astro";
 
 const faqs = [
@@ -127,7 +127,7 @@ const faqSchema = {
         </div>
       </div>
     </div>
-    <Logos />
+    <PixelLogoGrid client:load />
 
     <!-- FAQ Section -->
     <div class="my-20">
