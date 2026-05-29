@@ -1,0 +1,99 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+
+const FORM_URL = "https://docs.google.com/forms/d/1gaAmn4uhMwgdhfdA63UzRxF6GEMb-LPtUPSuM5Snfb4/viewform";
+
+const frameworkSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "FW DAO Framework",
+  url: "https://fwtx.city/framework",
+  description: "Member orientation and skills intake for FWTX DAO. Learn what the DAO is about, how to plug in, and log your skills via the framework intake.",
+  about: {
+    "@type": "Organization",
+    name: "FWTX DAO",
+    url: "https://fwtx.city",
+  },
+};
+---
+
+<Layout
+  title="Framework"
+  description="FW DAO Framework — member orientation and skills intake for Fort Worth DAO. One place to learn what the DAO is about, how to help, and log what you bring.">
+  <script type="application/ld+json" set:html={JSON.stringify(frameworkSchema)} />
+  <Container>
+    <Sectionhead as="h1">
+      <Fragment slot="title">Framework</Fragment>
+      <Fragment slot="desc">Member orientation and skills intake</Fragment>
+    </Sectionhead>
+
+    <div class="flex flex-col gap-6 mx-auto max-w-4xl mt-16">
+      <h2 class="font-display text-4xl text-white">
+        Start <span class="text-frontier-amber">here</span>.
+      </h2>
+      <p class="text-lg leading-relaxed text-slate-300">
+        This framework does two things. It gives any new member one place to learn what the DAO is about and how to help. It logs each member's skills and accomplishments that align with the DAO so we can route people to the right efforts.
+      </p>
+      <p class="text-lg leading-relaxed text-slate-300">
+        To contribute, fill the intake form. It takes about five minutes and asks for your skills and accomplishments, what you can bring, your read on the DAO's direction, and the wallet you use for the DAO portal. Anything you mark internal stays private.
+      </p>
+      <p class="text-lg leading-relaxed text-slate-300">
+        We are gathering everyone's input by the <span class="text-neon-cyan">June 10 roundtable</span>, then locking a baseline. It reopens only for revisions or when new input changes the shape of the framework.
+      </p>
+
+      <div class="mt-6">
+        <a
+          href={FORM_URL}
+          class="inline-block px-8 py-4 bg-frontier-amber text-cyber-dark font-display text-lg rounded hover:bg-neon-cyan transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-frontier-amber/50 focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-dark"
+          target="_blank"
+          rel="noopener">
+          Fill the intake form
+        </a>
+      </div>
+
+      <h3 class="font-display text-3xl text-white mt-12">
+        What the DAO is <span class="text-neon-cyan">about</span>
+      </h3>
+      <p class="text-lg leading-relaxed text-slate-300">
+        Vision: a cyber resilient Fort Worth built on blockchain and decentralized governance.
+      </p>
+      <p class="text-lg leading-relaxed text-slate-300">
+        Focus: cyber workforce development, civic innovation, blockchain and security education, smart city infrastructure.
+      </p>
+
+      <h3 class="font-display text-3xl text-white mt-8">
+        How you can <span class="text-frontier-amber">help</span>
+      </h3>
+      <ul class="text-lg leading-relaxed text-slate-300 list-disc pl-6 space-y-2">
+        <li>Join the weekly roundtable, Wednesdays at noon, at CreateFW.</li>
+        <li>Take on a bounty (technical, community, or strategic) on the DAO portal.</li>
+        <li>Log your skills and accomplishments in the intake form so we know what we have to work with and can route you to the right efforts.</li>
+      </ul>
+
+      <h3 class="font-display text-3xl text-white mt-8">
+        How to <span class="text-neon-cyan">plug in</span>
+      </h3>
+      <ol class="text-lg leading-relaxed text-slate-300 list-decimal pl-6 space-y-2">
+        <li>Log into the <a href="https://dao.fwtx.city" class="text-neon-cyan hover:text-frontier-amber transition-colors duration-300 underline decoration-neon-cyan/30 hover:decoration-frontier-amber underline-offset-4">DAO portal</a> with your wallet.</li>
+        <li>Fill the <a href={FORM_URL} class="text-neon-cyan hover:text-frontier-amber transition-colors duration-300 underline decoration-neon-cyan/30 hover:decoration-frontier-amber underline-offset-4" target="_blank" rel="noopener">intake form</a>.</li>
+        <li>Find an effort that fits your skills, or propose one.</li>
+      </ol>
+
+      <h3 class="font-display text-3xl text-white mt-8">
+        Where the official material <span class="text-frontier-amber">lives</span>
+      </h3>
+      <ul class="text-lg leading-relaxed text-slate-300 list-disc pl-6 space-y-2">
+        <li>Constitution and charter: <a href="https://constitution.fwtx.city" class="text-neon-cyan hover:text-frontier-amber transition-colors duration-300 underline decoration-neon-cyan/30 hover:decoration-frontier-amber underline-offset-4">constitution.fwtx.city</a></li>
+        <li>Portal and bounties: <a href="https://dao.fwtx.city" class="text-neon-cyan hover:text-frontier-amber transition-colors duration-300 underline decoration-neon-cyan/30 hover:decoration-frontier-amber underline-offset-4">dao.fwtx.city</a></li>
+        <li>Code: <a href="https://github.com/FWTX-DAO" class="text-neon-cyan hover:text-frontier-amber transition-colors duration-300 underline decoration-neon-cyan/30 hover:decoration-frontier-amber underline-offset-4">github.com/FWTX-DAO</a></li>
+      </ul>
+
+      <p class="text-base italic text-slate-400 mt-12 text-center">
+        Questions? Drop into the Wednesday roundtable or DM a steward.
+      </p>
+    </div>
+
+  </Container>
+</Layout>
