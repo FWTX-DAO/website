@@ -3,7 +3,7 @@ draft: false
 title: "Building a Compliant, Non-Profit DAO - Bridging Web2 with Web3"
 snippet: "This blueprint serves as a comprehensive guide for anyone looking to build a community-led organization that merges the revolutionary potential of decentralized governance with a compliant Web2 legal structure."
 image:
-  src: "https://drive.google.com/file/d/1uYXPPF_sBmaVY7ASYw6CSX0dtRD0LSAC/view?usp=sharing"
+  src: "https://pixabay.com/vectors/greek-council-government-5594731/"
   alt: "Bridge Web2 with Web3 DAO"
 publishDate: "2026-06-01 09:51"
 category: "DAO Legal"
