@@ -5,22 +5,35 @@ import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Icon } from "astro-icon/components";
 const menuitems = [
   {
-    title: "Innovation Bounties",
-    path: "https://innovate.fwtx.city",
-  },
-  {
     title: "Resources",
     path: "#",
     children: [
-      { title: "Programs", path: "/programs" },
-      { title: "Aragon Dashboard", path: "https://app.aragon.org/dao/base-mainnet/0xCA1726313108af31C3482630062fFa2D511096FD" },
       { title: "Whitepaper", path: "https://constitution.fwtx.city/" },
       { title: "Constitution", path: "/constitution.pdf" },
-      { title: "Developer", path: "https://github.com/FWTX-DAO/DeFi-Developer-Road-Map" },
-      { title: "Investigations", path: "https://github.com/FWTX-DAO/On-Chain-Investigations-Tools-List" },
-      { title: "OpSec", path: "https://github.com/FWTX-DAO/Crypto-OpSec-SelfGuard-RoadMap" },
-      { title: "AI", path: "https://github.com/FWTX-DAO/ai-study-guide" },
-      { title: "Zero Trust", path: "https://github.com/FWTX-DAO/awesome-zero-trust" },
+      {
+        title: "Programs",
+        children: [
+          { title: "Programs Overview", path: "/programs" },
+          { title: "Innovation Bounties", path: "https://innovate.fwtx.city" },
+        ],
+      },
+      {
+        title: "Onchain",
+        children: [
+          { title: "Onchain", path: "https://app.aragon.org/dao/base-mainnet/0xCA1726313108af31C3482630062fFa2D511096FD" },
+          { title: "DeGov", path: "https://robsrulesdao.com/" },
+        ],
+      },
+      {
+        title: "Education",
+        children: [
+          { title: "Developer", path: "https://github.com/FWTX-DAO/DeFi-Developer-Road-Map" },
+          { title: "Investigations", path: "https://github.com/FWTX-DAO/On-Chain-Investigations-Tools-List" },
+          { title: "OpSec", path: "https://github.com/FWTX-DAO/Crypto-OpSec-SelfGuard-RoadMap" },
+          { title: "AI", path: "https://github.com/FWTX-DAO/ai-study-guide" },
+          { title: "Zero Trust", path: "https://github.com/FWTX-DAO/awesome-zero-trust" },
+        ],
+      },
     ],
   },
   { title: "About", path: "/about" },
@@ -29,6 +42,7 @@ const menuitems = [
 ];
 
 const DONATE_URL = "https://buy.stripe.com/9B66oHfy50e1b7C7buak000";
+const PORTAL_URL = "https://portal.fwtx.city";
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-navy-950/80 border-b border-navy-700/50">
@@ -50,7 +64,7 @@ const DONATE_URL = "https://buy.stripe.com/9B66oHfy50e1b7C7buak000";
           </div>
         </div>
         <MenuItems class="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">
-          <ul class="flex flex-col lg:flex-row lg:gap-3">
+          <ul class="flex flex-col lg:flex-row lg:gap-2">
             {
               menuitems.map((item, index) => (
                 <>
@@ -76,7 +90,15 @@ const DONATE_URL = "https://buy.stripe.com/9B66oHfy50e1b7C7buak000";
             }
           </ul>
           <!-- Mobile donate button -->
-          <div class="flex justify-center mt-4 px-2 lg:hidden">
+          <div class="grid grid-cols-2 gap-2 mt-4 px-2 lg:hidden">
+            <a
+              href={PORTAL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 border-2 border-blue-500/50 hover:border-blue-400 bg-navy-900/80 hover:bg-blue-500/10 text-slate-100 font-semibold text-sm px-5 py-2.5 rounded-lg transition-all duration-300 w-full justify-center">
+              <Icon name="mdi:login" class="w-4 h-4" aria-hidden="true" />
+              Login
+            </a>
             <a
               href={DONATE_URL}
               target="_blank"
@@ -105,7 +127,15 @@ const DONATE_URL = "https://buy.stripe.com/9B66oHfy50e1b7C7buak000";
           </div>
         </MenuItems>
       </Astronav>
-      <div class="hidden lg:flex items-center gap-2">
+      <div class="hidden lg:flex items-center gap-3">
+        <a
+          href={PORTAL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 border-2 border-blue-500/50 hover:border-blue-400 bg-navy-900/70 hover:bg-blue-500/10 text-slate-100 font-semibold text-sm px-4 py-2 rounded-lg transition-all duration-300 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
+          <Icon name="mdi:login" class="w-4 h-4" aria-hidden="true" />
+          Login
+        </a>
         <a
           href={DONATE_URL}
           target="_blank"
@@ -116,18 +146,20 @@ const DONATE_URL = "https://buy.stripe.com/9B66oHfy50e1b7C7buak000";
           </svg>
           Donate
         </a>
-        <a href="https://x.com/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-400 transition duration-300 p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="X">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        </a>
-        <a href="https://www.linkedin.com/company/fwtx-dao/" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-400 transition duration-300 p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="LinkedIn">
-          <Icon name="mdi:linkedin" class="w-5 h-5" aria-hidden="true" />
-        </a>
-        <a href="https://instagram.com/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-pink-400 transition duration-300 p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Instagram">
-          <Icon name="mdi:instagram" class="w-5 h-5" aria-hidden="true" />
-        </a>
-        <a href="https://www.youtube.com/@fortworthdao" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-red-500 transition duration-300 p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="YouTube">
-          <Icon name="mdi:youtube" class="w-5 h-5" aria-hidden="true" />
-        </a>
+        <div class="flex items-center gap-0.5 border-l border-navy-700/70 pl-2">
+          <a href="https://x.com/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-400 transition duration-300 p-1 min-w-8 min-h-8 flex items-center justify-center" aria-label="X">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/company/fwtx-dao/" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-400 transition duration-300 p-1 min-w-8 min-h-8 flex items-center justify-center" aria-label="LinkedIn">
+            <Icon name="mdi:linkedin" class="w-4 h-4" aria-hidden="true" />
+          </a>
+          <a href="https://instagram.com/FWTX_DAO" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-pink-400 transition duration-300 p-1 min-w-8 min-h-8 flex items-center justify-center" aria-label="Instagram">
+            <Icon name="mdi:instagram" class="w-4 h-4" aria-hidden="true" />
+          </a>
+          <a href="https://www.youtube.com/@fortworthdao" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-red-500 transition duration-300 p-1 min-w-8 min-h-8 flex items-center justify-center" aria-label="YouTube">
+            <Icon name="mdi:youtube" class="w-4 h-4" aria-hidden="true" />
+          </a>
+        </div>
       </div>
     </div>
   </Container>
