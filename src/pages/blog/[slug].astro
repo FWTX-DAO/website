@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
+import { Icon } from "astro-icon/components";
 
 // Generate a new path for every collection entry
 export async function getStaticPaths() {
@@ -15,6 +16,9 @@ export async function getStaticPaths() {
 // Get the entry directly from the prop on render
 const { entry } = Astro.props;
 const { Content } = await entry.render();
+const formattedPublishDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(entry.data.publishDate);
+const imageSrc = entry.data.image?.src;
+const imageAlt = entry.data.image?.alt || entry.data.title;
 
 const blogPostingSchema = {
   "@context": "https://schema.org",
@@ -75,48 +79,144 @@ const breadcrumbSchema = {
   type="article"
   publishDate={entry.data.publishDate.toISOString()}
   author={entry.data.author}
-  tags={entry.data.tags}>
+  tags={entry.data.tags}
+  background="quiet">
   <script type="application/ld+json" set:html={JSON.stringify(blogPostingSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <Container>
-    <div class="mx-auto max-w-3xl mt-14">
-      <span class="text-frontier-amber uppercase tracking-wider text-sm font-medium">
-        {entry.data.category}
-      </span>
-      <h1
-        class="font-display text-5xl lg:text-6xl font-bold tracking-tight mt-1 leading-tight text-white">
-        {entry.data.title}
-      </h1>
-      <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap">
-        <span class="text-slate-400">
-          {entry.data.author}
-        </span>
-        <span class="text-slate-400">&bull;</span>
-        <time
-          class="text-slate-400"
-          datetime={entry.data.publishDate.toISOString()}>
-          {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(entry.data.publishDate)}
-        </time>
-        <span class="text-slate-400 hidden md:block">&bull;</span>
-        <div class="w-full md:w-auto flex flex-wrap gap-3">
-          {
-            entry.data.tags.map((tag) => (
-              <span class="text-sm text-slate-400">#{tag}</span>
-            ))
-          }
-        </div>
-      </div>
-    </div>
+  <main class="py-10 md:py-14">
+    <Container>
+      <article class="mx-auto max-w-4xl overflow-hidden rounded-lg border border-slate-700/80 bg-navy-950/95 shadow-2xl shadow-black/40 ring-1 ring-white/5">
+        <div class="h-1 w-full bg-gradient-to-r from-amber-300 via-blue-400 to-cyan-300"></div>
 
-    <div class="mx-auto prose prose-lg prose-invert mt-6 max-w-3xl">
-      <Content />
-    </div>
-    <div class="text-center mt-8">
-      <a
-        href="/blog"
-        class="bg-transparent text-frontier-amber font-semibold border-2 border-frontier-amber/50 hover:border-frontier-amber hover:bg-frontier-amber/10 hover:shadow-glow-amber px-5 py-3 rounded-md transition-all duration-300 focus-visible:ring-2 focus-visible:ring-frontier-amber/50 focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-dark inline-block"
-        >&larr; Back to Blog</a
-      >
-    </div>
-  </Container>
+        <header class="px-5 py-7 md:px-10 md:py-10">
+          <a
+            href="/blog"
+            class="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-300 transition-colors duration-200 hover:border-blue-400/70 hover:text-blue-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
+            <Icon name="mdi:arrow-left" class="h-4 w-4" aria-hidden="true" />
+            Back to Blog
+          </a>
+
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <span class="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-sm font-semibold text-amber-200">
+              {entry.data.category}
+            </span>
+          </div>
+
+          <h1 class="mt-5 max-w-3xl text-3xl font-bold leading-tight text-white md:text-5xl">
+            {entry.data.title}
+          </h1>
+
+          <p class="mt-5 max-w-3xl border-l-4 border-cyan-300/70 pl-4 text-lg leading-8 text-slate-300">
+            {entry.data.snippet}
+          </p>
+
+          <div class="mt-7 grid gap-3 border-y border-slate-800 py-4 text-sm text-slate-300 sm:grid-cols-2">
+            <div class="flex min-w-0 items-center gap-2">
+              <Icon name="mdi:account-circle" class="h-5 w-5 flex-none text-blue-300" aria-hidden="true" />
+              <span class="truncate">{entry.data.author}</span>
+            </div>
+            <time class="flex items-center gap-2" datetime={entry.data.publishDate.toISOString()}>
+              <Icon name="mdi:calendar-month" class="h-5 w-5 flex-none text-cyan-300" aria-hidden="true" />
+              {formattedPublishDate}
+            </time>
+          </div>
+
+          <div class="mt-5 flex flex-wrap gap-2" aria-label="Article tags">
+            {
+              entry.data.tags.map((tag) => (
+                <span class="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1 text-sm text-slate-300">
+                  <Icon name="mdi:tag" class="h-3.5 w-3.5 text-slate-500" aria-hidden="true" />
+                  {tag}
+                </span>
+              ))
+            }
+          </div>
+        </header>
+
+        {imageSrc && (
+          <figure class="border-y border-slate-800 bg-slate-950">
+            <img
+              src={imageSrc}
+              alt={imageAlt}
+              loading="eager"
+              decoding="async"
+              class="h-64 w-full object-cover object-center md:h-96"
+            />
+          </figure>
+        )}
+
+        <div class="bg-slate-950/65 px-5 py-8 md:px-10 md:py-11">
+          <div class="blog-article-prose prose prose-lg prose-invert max-w-none">
+            <Content />
+          </div>
+        </div>
+      </article>
+
+      <div class="mx-auto mt-8 flex max-w-4xl">
+        <a
+          href="/blog"
+          class="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-slate-700 bg-navy-950/90 px-4 py-2.5 text-sm font-semibold text-slate-300 transition-colors duration-200 hover:border-blue-400/70 hover:text-blue-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
+          <Icon name="mdi:arrow-left" class="h-4 w-4" aria-hidden="true" />
+          Back to Blog
+        </a>
+      </div>
+    </Container>
+  </main>
+
+  <style is:global>
+    .blog-article-prose {
+      font-size: 1.0625rem;
+      line-height: 1.9;
+    }
+
+    .blog-article-prose :where(p, ul, ol, blockquote) {
+      margin-top: 1.25em;
+      margin-bottom: 1.25em;
+    }
+
+    .blog-article-prose :where(h2) {
+      margin-top: 2.4em;
+      margin-bottom: 0.8em;
+      border-left: 4px solid rgba(103, 232, 249, 0.8);
+      padding-left: 0.85rem;
+      color: #f8fafc;
+      scroll-margin-top: 7rem;
+    }
+
+    .blog-article-prose :where(h3) {
+      margin-top: 1.9em;
+      color: #e2e8f0;
+      scroll-margin-top: 7rem;
+    }
+
+    .blog-article-prose :where(a) {
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
+
+    .blog-article-prose :where(strong) {
+      color: #f8fafc;
+    }
+
+    .blog-article-prose :where(blockquote) {
+      border-left-color: rgba(251, 191, 36, 0.75);
+      background: rgba(15, 23, 42, 0.72);
+      padding: 1rem 1.25rem;
+      border-radius: 0.375rem;
+    }
+
+    .blog-article-prose :where(hr) {
+      margin: 2.25rem 0;
+      border-color: rgba(148, 163, 184, 0.24);
+    }
+
+    .blog-article-prose :where(li) {
+      margin-top: 0.45em;
+      margin-bottom: 0.45em;
+    }
+
+    .blog-article-prose :where(pre) {
+      border: 1px solid rgba(51, 65, 85, 0.9);
+    }
+  </style>
 </Layout>

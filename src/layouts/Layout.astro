@@ -18,11 +18,24 @@ export interface Props {
   author?: string;
   tags?: string[];
   type?: "website" | "article";
+  background?: "default" | "quiet";
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
 
-const { title, description, image, noindex, publishDate, author, tags, type = "website" } = Astro.props;
+const { title, description, image, noindex, publishDate, author, tags, type = "website", background = "default" } = Astro.props;
+
+const backgroundSettings = background === "quiet"
+  ? {
+      trailOpacity: 0.035,
+      particleCount: 140,
+      speed: 0.18,
+    }
+  : {
+      trailOpacity: 0.12,
+      particleCount: 400,
+      speed: 0.6,
+    };
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -152,11 +165,14 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
         client:load
         color="#3b82f6"
         bgColor="#0A0F1C"
-        trailOpacity={0.12}
-        particleCount={400}
-        speed={0.6}
+        trailOpacity={backgroundSettings.trailOpacity}
+        particleCount={backgroundSettings.particleCount}
+        speed={backgroundSettings.speed}
       />
     </div>
+    {background === "quiet" && (
+      <div class="pointer-events-none fixed inset-0 z-[1] bg-navy-950/80 backdrop-blur-sm" aria-hidden="true"></div>
+    )}
 
     <!-- Main content -->
     <div class="relative z-10" id="main-content">
