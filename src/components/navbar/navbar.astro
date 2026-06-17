@@ -3,6 +3,9 @@ import Container from "@components/container.astro";
 import Dropdown from "./dropdown.astro";
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Icon } from "astro-icon/components";
+const LUMA_EVENTS_URL = "https://luma.com/fwtxdao";
+const isExternal = (path) => path?.startsWith("http");
+
 const menuitems = [
   {
     title: "Resources",
@@ -38,7 +41,7 @@ const menuitems = [
   },
   { title: "About", path: "/about" },
   { title: "Blog", path: "/blog" },
-  { title: "Events", path: "/events" },
+  { title: "Events", path: LUMA_EVENTS_URL },
 ];
 
 const DONATE_URL = "https://buy.stripe.com/9B66oHfy50e1b7C7buak000";
@@ -79,6 +82,8 @@ const PORTAL_URL = "https://portal.fwtx.city";
                     <li>
                       <a
                         href={item.path}
+                        target={isExternal(item.path) ? "_blank" : undefined}
+                        rel={isExternal(item.path) ? "noopener noreferrer" : undefined}
                         class="flex lg:px-3 py-2 items-center text-slate-300 hover:text-blue-400 transition-colors duration-300 relative group min-h-[44px]">
                         <span>{item.title}</span>
                         <span class="absolute bottom-0 left-3 right-3 h-px bg-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
