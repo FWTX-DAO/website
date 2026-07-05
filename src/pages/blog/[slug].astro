@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import { Icon } from "astro-icon/components";
@@ -8,14 +8,14 @@ import { Icon } from "astro-icon/components";
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
   return blogEntries.map((entry) => ({
-    params: { slug: entry.slug },
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
 
 // Get the entry directly from the prop on render
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 const formattedPublishDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(entry.data.publishDate);
 const imageSrc = entry.data.image?.src;
 const imageAlt = entry.data.image?.alt || entry.data.title;
@@ -40,7 +40,7 @@ const blogPostingSchema = {
   },
   mainEntityOfPage: {
     "@type": "WebPage",
-    "@id": `https://fwtx.city/blog/${entry.slug}`,
+    "@id": `https://fwtx.city/blog/${entry.id}`,
   },
   image: entry.data.image?.src || undefined,
   keywords: entry.data.tags?.join(", "),
@@ -66,7 +66,7 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 3,
       name: entry.data.title,
-      item: `https://fwtx.city/blog/${entry.slug}`,
+      item: `https://fwtx.city/blog/${entry.id}`,
     },
   ],
 };

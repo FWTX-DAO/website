@@ -28,8 +28,8 @@ pnpm astro
 ## Architecture & Code Structure
 
 ### Tech Stack
-- **Framework**: Astro v3.5.5 (static site generator)
-- **Styling**: Tailwind CSS with Typography plugin
+- **Framework**: Astro v7 (static site generator)
+- **Styling**: Tailwind CSS v3 with Typography plugin through PostCSS
 - **Content**: Astro Content Collections with Zod validation
 - **Components**: `.astro` files with TypeScript support
 
@@ -48,13 +48,13 @@ pnpm astro
 
 **Component Development**: Components use Astro's `.astro` format combining markup, styles, and scripts. Props are typed with TypeScript interfaces.
 
-**Content Collections**: Blog posts and team profiles use frontmatter validated by Zod schemas defined in `src/content/config.ts`:
+**Content Collections**: Blog posts and team profiles use Astro's Content Layer API with `glob` loaders and frontmatter validated by Zod schemas defined in `src/content.config.ts`:
 - Blog: draft, title, snippet, image, publishDate, author, category, tags
 - Team: draft, name, title, avatar, publishDate
 
 **Path Aliases**: Use `@` aliases configured in tsconfig.json for clean imports.
 
-**Image Optimization**: Images in `src/assets/` are automatically optimized with Sharp during build.
+**Image Optimization**: Raster images in `src/assets/` are optimized with Sharp during build. SVGs should be rendered directly or passed through as SVG, not rasterized globally.
 
 ## External Resources & Integrations
 
@@ -67,6 +67,7 @@ pnpm astro
 
 - No linting or formatting configured - follow existing code style
 - No testing framework - manual verification required
+- Tailwind is wired through `postcss.config.cjs`; do not re-add `@astrojs/tailwind` unless its peer range supports the active Astro major.
 - Static site with no API endpoints or server-side logic
 - SEO managed through astro-seo in Layout component
 - Responsive design using Tailwind breakpoints

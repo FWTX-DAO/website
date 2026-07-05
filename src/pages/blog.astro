@@ -45,7 +45,7 @@ const itemListSchema = {
     itemListElement: publishedBlogEntries.map((post, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      url: `https://fwtx.city/blog/${post.slug}`,
+      url: `https://fwtx.city/blog/${post.id}`,
       name: post.data.title,
     })),
   },
@@ -69,7 +69,7 @@ const itemListSchema = {
         {
           publishedBlogEntries.map((blogPostEntry, index) => (
             <li>
-              <a href={`/blog/${blogPostEntry.slug}`} class="group">
+              <a href={`/blog/${blogPostEntry.id}`} class="group">
                 <div class="grid md:grid-cols-2 gap-5 md:gap-10 items-center">
                   <Picture
                     src={blogPostEntry.data.image.src}

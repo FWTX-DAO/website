@@ -1,5 +1,4 @@
 ---
-import { Picture } from "astro:assets";
 import heroImage from "../assets/hero.svg";
 import Link from "@components/ui/link.astro";
 import { Icon } from "astro-icon/components";
@@ -9,13 +8,13 @@ import { Icon } from "astro-icon/components";
   class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24 gap-8 lg:gap-12">
   <div class="py-6 md:order-1">
     <div class="relative hidden md:block">
-      <Picture
-        src={heroImage}
+      <img
+        src={heroImage.src}
         alt="FWTX DAO Process"
-        widths={[500, 700, 900]}
-        sizes="(max-width: 1000px) 200vw, 720px"
+        width={heroImage.width}
+        height={heroImage.height}
         loading="eager"
-        format="avif"
+        decoding="async"
         class="relative z-10 invert opacity-85"
       />
     </div>

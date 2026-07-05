@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
@@ -13,5 +12,5 @@ export default defineConfig({
   redirects: {
     "/events": LUMA_EVENTS_URL,
   },
-  integrations: [tailwind(), mdx(), sitemap(), icon(), react()],
+  integrations: [mdx(), sitemap(), icon(), react()],
 });
