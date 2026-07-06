@@ -161,9 +161,10 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-blue-500 focus:text-white focus:font-semibold">Skip to content</a>
 
     <!-- Flow field background -->
-    <div class="fixed inset-0 z-0">
+    <div class="fixed inset-0 z-0 h-screen w-screen overflow-hidden" aria-hidden="true">
       <NeuralBackground
         client:load
+        className="absolute inset-0 h-full w-full"
         color="#3b82f6"
         bgColor="#0A0F1C"
         trailOpacity={backgroundSettings.trailOpacity}

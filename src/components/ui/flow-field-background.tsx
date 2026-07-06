@@ -29,8 +29,8 @@ export default function NeuralBackground({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let width = container.clientWidth;
-    let height = container.clientHeight;
+    let width = 0;
+    let height = 0;
     let particles: Particle[] = [];
     let animationFrameId: number;
     let mouse = { x: -1000, y: -1000 };
@@ -112,11 +112,18 @@ export default function NeuralBackground({
 
     const bg = hexToRgb(bgColor);
 
+    const measure = () => {
+      const rect = container.getBoundingClientRect();
+      width = rect.width || window.innerWidth;
+      height = rect.height || window.innerHeight;
+    };
+
     const init = () => {
+      measure();
       const dpr = window.devicePixelRatio || 1;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
 
@@ -127,6 +134,7 @@ export default function NeuralBackground({
     };
 
     const animate = () => {
+      ctx.globalAlpha = 1;
       ctx.fillStyle = `rgba(${bg.r}, ${bg.g}, ${bg.b}, ${trailOpacity})`;
       ctx.fillRect(0, 0, width, height);
 
@@ -139,8 +147,6 @@ export default function NeuralBackground({
     };
 
     const handleResize = () => {
-      width = container.clientWidth;
-      height = container.clientHeight;
       init();
     };
 
@@ -173,10 +179,19 @@ export default function NeuralBackground({
   return (
     <div
       ref={containerRef}
-      className={cn("relative w-full h-full overflow-hidden", className)}
-      style={{ backgroundColor: bgColor }}
+      className={cn("relative h-full w-full overflow-hidden", className)}
+      style={{
+        backgroundColor: bgColor,
+        height: "100%",
+        minHeight: "100vh",
+        width: "100%",
+      }}
     >
-      <canvas ref={canvasRef} className="block w-full h-full" />
+      <canvas
+        ref={canvasRef}
+        className="block h-full w-full"
+        style={{ display: "block", height: "100%", width: "100%" }}
+      />
     </div>
   );
 }
