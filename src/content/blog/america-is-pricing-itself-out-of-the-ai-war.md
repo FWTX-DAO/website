@@ -188,10 +188,8 @@ The strategic objective should be simple: put capable intelligence into the hand
 9. [Cattle and Beef Market Outlook, USDA Economic Research Service](https://www.ers.usda.gov/topics/animal-products/cattle-beef/market-outlook)
 10. [A Framework for Frontier AI and the Dawning of a New Age, Demis Hassabis](https://demishassabis.substack.com/p/a-framework-for-frontier-ai-and-the-dawning-of-a-new-age)
 11. [DeepMind CEO pushes for AI industry self-regulation, CIO](https://www.cio.com/article/4197497/deepmind-ceo-pushes-for-ai-industry-self-regulation.html)
-
-* [Axios](https://www.axios.com/2026/07/20/ai-us-china-open-source-kimi?utm_source=chatgpt.com)
-* [Reuters](https://www.reuters.com/world/china/regulatory-action-chips-ai-is-coming-commerce-official-says-2026-07-14/?utm_source=chatgpt.com)
-* [Axios](https://www.axios.com/2026/07/17/sacks-kimi-open-source-weights-trump?utm_source=chatgpt.com)
+12. [Regulatory action on chips, AI is coming, Commerce official says, Reuters](https://www.reuters.com/world/china/regulatory-action-chips-ai-is-coming-commerce-official-says-2026-07-14/)
+13. [Kimi K3's performance bolsters Sacks' case against AI regulation, Axios](https://www.axios.com/2026/07/17/sacks-kimi-open-source-weights-trump)
 
 [1]: https://www.reuters.com/technology/us-blocks-foreign-access-anthropics-most-advanced-ai-models-axios-reports-2026-06-13/?utm_source=chatgpt.com "Anthropic disables top-tier AI models after US order limiting ..."
 [2]: https://www.ntia.gov/programs-and-initiatives/artificial-intelligence/open-model-weights-report?utm_source=chatgpt.com "Dual-Use Foundation Models with Widely Available ..."
