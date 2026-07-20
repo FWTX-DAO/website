@@ -19,6 +19,7 @@ const { Content } = await render(entry);
 const formattedPublishDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(entry.data.publishDate);
 const imageSrc = entry.data.image?.src;
 const imageAlt = entry.data.image?.alt || entry.data.title;
+const imageMetadataSrc = imageSrc ? new URL(imageSrc, Astro.site).toString() : undefined;
 
 const blogPostingSchema = {
   "@context": "https://schema.org",
@@ -42,7 +43,7 @@ const blogPostingSchema = {
     "@type": "WebPage",
     "@id": `https://fwtx.city/blog/${entry.id}`,
   },
-  image: entry.data.image?.src || undefined,
+  image: imageMetadataSrc,
   keywords: entry.data.tags?.join(", "),
 };
 
@@ -75,7 +76,8 @@ const breadcrumbSchema = {
 <Layout
   title={entry.data.title}
   description={entry.data.snippet}
-  image={entry.data.image?.src}
+  image={imageSrc}
+  imageAlt={imageAlt}
   type="article"
   publishDate={entry.data.publishDate.toISOString()}
   author={entry.data.author}
@@ -142,6 +144,23 @@ const breadcrumbSchema = {
               decoding="async"
               class="h-64 w-full object-cover object-center md:h-96"
             />
+            {entry.data.image.caption && (
+              <figcaption class="border-t border-slate-800 px-5 py-3 text-sm leading-6 text-slate-400 md:px-10">
+                <span>{entry.data.image.caption}</span>
+                {entry.data.image.source && (
+                  <>
+                    {" "}
+                    <a
+                      href={entry.data.image.source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="font-medium text-cyan-300 underline decoration-cyan-300/50 underline-offset-4 transition-colors hover:text-cyan-200">
+                      {entry.data.image.source.label}
+                    </a>
+                  </>
+                )}
+              </figcaption>
+            )}
           </figure>
         )}
 

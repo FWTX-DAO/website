@@ -11,6 +11,13 @@ const blog = defineCollection({
     image: z.object({
       src: z.string(),
       alt: z.string(),
+      caption: z.string().optional(),
+      source: z
+        .object({
+          label: z.string(),
+          url: z.string().url(),
+        })
+        .optional(),
     }),
     publishDate: z.coerce.date(),
     author: z.string().default("FWTX DAO - Research"),
