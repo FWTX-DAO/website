@@ -131,6 +131,34 @@ The answer is not zero controls.
 
 Target malicious conduct. Control genuinely exceptional offensive capabilities. Apply restrictions to demonstrated risks, not entire categories of access. Create explicit safe harbors for defensive cybersecurity research.
 
+### A better standard can still become a plutocratic gate
+
+Demis Hassabis has proposed a better starting point than blunt access controls. His framework would create a federally overseen, public-private standards body modeled partly on FINRA, with independent technical experts and open-source representatives on its board. It would define and continually update benchmarks for frontier-class models, test national-security capabilities with federal agencies and US National Labs, encourage model cards and internal cybersecurity, and eventually require frontier models to pass review before deployment in the US market. The framework would apply to frontier models whether open or closed and exempt non-frontier work from startups and academia. ([Hassabis][5])
+
+That is more coherent than banning access by nationality or treating all open weights as equally dangerous.
+
+It focuses on demonstrated capability, not the mere fact that weights can be downloaded.
+
+It also creates a better target for regulation: the small number of systems capable of producing exceptional harm.
+
+But a technically better standard can still become an economically exclusionary standard.
+
+Hassabis acknowledges that such a body would need substantial funding, likely from industry, plus world-class talent and the compute required for large-scale testing. The CIO account raises the corresponding governance problem: when the firms being regulated finance and help draft the rules, their operational reality can dominate the standard. ([CIO][6])
+
+The proposed exemption for non-frontier startups and academia matters.
+
+It does not eliminate the structural risk.
+
+Standards shape procurement, insurance, cloud access, investment, and public legitimacy long before a law formally bans anything. A “Frontier Lab” designation may become a badge that only the best-funded firms can obtain. A smaller lab that crosses the capability threshold could face a cliff of pre-release review, recurring evaluation, personnel vetting, internal cybersecurity, third-party audits, and safety staffing. An open-source collective may possess technical merit without possessing a hyperscaler’s compliance department.
+
+If incumbents fund the institution, supply the compute, help define the benchmarks, and employ the experts most able to pass them, self-regulation can become a license to compete written by the companies that already won.
+
+That would replace one form of concentration with another.
+
+A serious American standards body must therefore be anti-plutocratic by design. Its benchmarks should be public; its held-out tests independently governed; its compute and evaluation resources available at subsidized rates; its obligations proportional to measured capability; and its safe harbors explicit for open-source development, defensive research, local deployment, and downstream adaptation. Small labs, universities, public-interest technologists, and open-source communities need voting power, not symbolic seats.
+
+Otherwise, “self-regulation” becomes a paywall with federal force behind it.
+
 Most importantly, build a serious American open-weight ecosystem.
 
 Small businesses, researchers, local governments, system administrators, and ordinary citizens should be able to run capable AI under terms they can understand, prices they can afford, and infrastructure they can control.
@@ -158,6 +186,8 @@ The strategic objective should be simple: put capable intelligence into the hand
 7. [Claude Platform pricing](https://docs.anthropic.com/en/docs/about-claude/pricing)
 8. [Housing Supply: Still Undersupplied by Millions of Units, Freddie Mac](https://www.freddiemac.com/research/insight/housing-supply-still-undersupplied)
 9. [Cattle and Beef Market Outlook, USDA Economic Research Service](https://www.ers.usda.gov/topics/animal-products/cattle-beef/market-outlook)
+10. [A Framework for Frontier AI and the Dawning of a New Age, Demis Hassabis](https://demishassabis.substack.com/p/a-framework-for-frontier-ai-and-the-dawning-of-a-new-age)
+11. [DeepMind CEO pushes for AI industry self-regulation, CIO](https://www.cio.com/article/4197497/deepmind-ceo-pushes-for-ai-industry-self-regulation.html)
 
 * [Axios](https://www.axios.com/2026/07/20/ai-us-china-open-source-kimi?utm_source=chatgpt.com)
 * [Reuters](https://www.reuters.com/world/china/regulatory-action-chips-ai-is-coming-commerce-official-says-2026-07-14/?utm_source=chatgpt.com)
@@ -167,3 +197,5 @@ The strategic objective should be simple: put capable intelligence into the hand
 [2]: https://www.ntia.gov/programs-and-initiatives/artificial-intelligence/open-model-weights-report?utm_source=chatgpt.com "Dual-Use Foundation Models with Widely Available ..."
 [3]: https://developers.openai.com/api/docs/pricing?utm_source=chatgpt.com "Pricing | OpenAI API"
 [4]: https://www.freddiemac.com/research/insight/housing-supply-still-undersupplied?utm_source=chatgpt.com "Housing Supply: Still Undersupplied by Millions of Units"
+[5]: https://demishassabis.substack.com/p/a-framework-for-frontier-ai-and-the-dawning-of-a-new-age "A Framework for Frontier AI and the Dawning of a New Age"
+[6]: https://www.cio.com/article/4197497/deepmind-ceo-pushes-for-ai-industry-self-regulation.html "DeepMind CEO pushes for AI industry self-regulation"
