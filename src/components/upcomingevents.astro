@@ -1,0 +1,42 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<!-- Upcoming Events -->
+<div class="mt-12 glass-card p-8 rounded-lg border border-blue-400/20">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+      <h4 class="text-xl font-bold text-white mb-1">Upcoming Events</h4>
+      <p class="text-slate-400 text-sm">Workshops, meetups, and hackathon prep sessions</p>
+    </div>
+    <a
+      href="https://luma.com/fwtxdao"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors duration-200 whitespace-nowrap">
+      View all on luma.com/fwtxdao
+      <Icon name="mdi:arrow-right" class="w-4 h-4" aria-hidden="true" />
+    </a>
+  </div>
+  <div class="flex justify-center">
+    <iframe
+      src="https://luma.com/embed/calendar/cal-tc45LqQ7oFAHzNY/events"
+      width="100%"
+      height="450"
+      class="w-full border border-slate-700 rounded-lg max-w-[600px] min-h-[300px] md:h-[450px]"
+      allowfullscreen=""
+      aria-hidden="false"
+      tabindex="0"
+      title="HackFW Events Calendar"
+    ></iframe>
+  </div>
+  <div class="mt-6 flex items-center justify-center gap-3 text-center">
+    <Icon name="mdi:calendar-clock" class="w-5 h-5 text-blue-400 flex-shrink-0" aria-hidden="true" />
+    <p class="text-slate-300 text-sm">
+      <span class="text-white font-semibold">Roundtables every Wednesday at 12pm CST</span> at CreateFW.
+      <a href="/events" class="text-blue-400 hover:text-blue-300 transition-colors duration-200 underline underline-offset-2 ml-1">
+        All FWTX events →
+      </a>
+    </p>
+  </div>
+</div>
