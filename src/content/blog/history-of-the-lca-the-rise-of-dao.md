@@ -3,7 +3,7 @@ draft: false
 title: "History of the Colorado LCA and the Rise of the Modern DAO"
 snippet: "The Historical Origins of the Limited Cooperative Association, LCA, and its modern use for the Decentralized Autonomous Organization: Colorado’s Statutory Innovation"
 image:
-  src: "/assets/blog/america-is-pricing-itself-out-of-the-ai-war.webp"
+  src: "https://robsrulesdao.com/wp-content/uploads/2026/08/History-of-the-LCA-to-modern-DAO.jpg"
   alt: "History of the limited cooperative association to the DAO"
   caption: "The strength of the cooperative association"
   source:
