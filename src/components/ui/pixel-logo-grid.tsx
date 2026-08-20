@@ -7,7 +7,6 @@ import fslLogo from "@assets/partners/fsl.svg";
 import fwifLogo from "@assets/partners/fwif.png";
 import liquidacreLogo from "@assets/partners/liquidacre.png";
 import moonshotLogo from "@assets/partners/moonshot.webp";
-import ndfLogo from "@assets/partners/ndf.png";
 import oLinksLogo from "@assets/partners/olinks.png";
 import simbaLogo from "@assets/partners/simba.svg";
 import tbcLogo from "@assets/partners/tbc.jpg";
@@ -258,24 +257,13 @@ const PARTNERS: PartnerLogo[] = [
     preserveColor: true,
   },
   {
-    name: "National DigiFoundry",
-    href: "https://www.digifoundry.org/",
-    asset: ndfLogo,
-    brand: "#60A5FA",
-    pixelColors: ["#60A5FA", "#38BDF8", "#93C5FD"],
-    row: 1,
-    col: 3,
-    keepLight: true,
-    maskClassName: "h-14 w-40",
-  },
-  {
     name: "Fort Worth Innovators Forum",
     href: "https://ipser.com",
     asset: fwifLogo,
     brand: "#F97316",
     pixelColors: ["#F97316", "#FB923C", "#FDBA74"],
     row: 1,
-    col: 4,
+    col: 3,
     lightPlate: true,
     preserveColor: true,
   },
@@ -285,8 +273,8 @@ const PARTNERS: PartnerLogo[] = [
     asset: oLinksLogo,
     brand: "#22D3EE",
     pixelColors: ["#22D3EE", "#06B6D4", "#67E8F9"],
-    row: 2,
-    col: 1,
+    row: 1,
+    col: 4,
     className: "max-h-16",
     lightPlate: true,
     preserveColor: true,
@@ -297,7 +285,7 @@ const PARTNERS: PartnerLogo[] = [
     asset: tcuLogo,
     brand: "#7C3AED",
     pixelColors: ["#7C3AED", "#A78BFA", "#C4B5FD"],
-    row: 3,
+    row: 2,
     col: 1,
     keepLight: true,
     maskClassName: "h-14 w-28",
@@ -308,8 +296,8 @@ const PARTNERS: PartnerLogo[] = [
     asset: utsaLogo,
     brand: "#F97316",
     pixelColors: ["#F97316", "#2563EB", "#FDBA74"],
-    row: 3,
-    col: 2,
+    row: 2,
+    col: 4,
   },
   {
     name: "Simba Chain",
@@ -318,7 +306,7 @@ const PARTNERS: PartnerLogo[] = [
     brand: "#0EA5E9",
     pixelColors: ["#0EA5E9", "#38BDF8", "#0284C7"],
     row: 3,
-    col: 3,
+    col: 1,
     keepLight: true,
     maskClassName: "h-10 w-36",
   },
@@ -489,20 +477,20 @@ export function PixelLogoGrid({
     <section id="partners" className="mt-24 w-full px-4">
       <div
         className="mx-auto hidden max-w-5xl grid-cols-4 gap-px border border-blue-400/15 bg-blue-400/15 shadow-[0_24px_80px_-48px_rgba(59,130,246,0.7)] md:grid"
-        style={{ gridTemplateRows: "112px 190px 112px 112px" }}
+        style={{ gridTemplateRows: "repeat(4, 112px)" }}
       >
         {PARTNERS.map((logo) => (
           <LogoCard key={logo.name} logo={logo} positioned />
         ))}
 
-        <div className="h-full" style={{ gridColumn: "2 / span 3", gridRow: "2" }}>
+        <div className="h-full" style={{ gridColumn: "2 / span 2", gridRow: "2 / span 2" }}>
           <CenterPanel badge={badge} heading={heading} />
         </div>
       </div>
 
       <div className="mx-auto max-w-2xl md:hidden">
         <CenterPanel badge={badge} heading={heading} />
-        <div className="grid grid-cols-2 gap-px border border-blue-400/15 bg-blue-400/15 [&>a:last-child:nth-child(odd)]:col-span-2">
+        <div className="grid grid-cols-2 gap-px border border-blue-400/15 bg-blue-400/15">
           {PARTNERS.map((logo) => (
             <LogoCard key={logo.name} logo={logo} />
           ))}
