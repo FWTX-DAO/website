@@ -11,7 +11,7 @@ language: en
 contact: community@fwtx.city
 topics: Web3, DAO governance, blockchain, cybersecurity, civic tech, Fort Worth, Texas, digital sovereignty, workforce development
 
-updated: 2026-03-20
+updated: 2026-08-19
 
 ## Core Pages
 - [About](https://fwtx.city/about): Mission, team, and community overview
@@ -29,7 +29,7 @@ updated: 2026-03-20
 
 ## Resources
 - [Whitepaper / Constitution](https://constitution.fwtx.city/): FWTX DAO governance constitution and organizational whitepaper
-- [HackFW 2026](https://hack.fwtx.city): Fort Worth Cyber Workforce Hackathon — April/May 2026
+- [HackFW 2026](https://hack.fwtx.city): Current HackFW program, schedule, and participation details
 - [Innovation Bounties](https://innovate.fwtx.city): Community innovation bounty submission program
 
 ## Optional
