@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, type CSSProperties } from "react";
 import fslLogo from "@assets/partners/fsl.svg";
 import fwifLogo from "@assets/partners/fwif.png";
 import liquidacreLogo from "@assets/partners/liquidacre.png";
+import moonshotLogo from "@assets/partners/moonshot.webp";
 import ndfLogo from "@assets/partners/ndf.png";
 import oLinksLogo from "@assets/partners/olinks.png";
 import simbaLogo from "@assets/partners/simba.svg";
@@ -307,8 +308,8 @@ const PARTNERS: PartnerLogo[] = [
     asset: utsaLogo,
     brand: "#F97316",
     pixelColors: ["#F97316", "#2563EB", "#FDBA74"],
-    row: 2,
-    col: 4,
+    row: 3,
+    col: 2,
   },
   {
     name: "Simba Chain",
@@ -317,7 +318,7 @@ const PARTNERS: PartnerLogo[] = [
     brand: "#0EA5E9",
     pixelColors: ["#0EA5E9", "#38BDF8", "#0284C7"],
     row: 3,
-    col: 4,
+    col: 3,
     keepLight: true,
     maskClassName: "h-10 w-36",
   },
@@ -327,8 +328,8 @@ const PARTNERS: PartnerLogo[] = [
     asset: liquidacreLogo,
     brand: "#22C55E",
     pixelColors: ["#22C55E", "#84CC16", "#86EFAC"],
-    row: 4,
-    col: 1,
+    row: 3,
+    col: 4,
     keepLight: true,
     maskClassName: "h-10 w-44",
   },
@@ -339,7 +340,7 @@ const PARTNERS: PartnerLogo[] = [
     brand: "#3B82F6",
     pixelColors: ["#3B82F6", "#60A5FA", "#93C5FD"],
     row: 4,
-    col: 2,
+    col: 1,
   },
   {
     name: "Tekimax",
@@ -348,7 +349,7 @@ const PARTNERS: PartnerLogo[] = [
     brand: "#14B8A6",
     pixelColors: ["#14B8A6", "#2DD4BF", "#5EEAD4"],
     row: 4,
-    col: 3,
+    col: 2,
     keepLight: true,
     maskClassName: "h-12 w-44",
   },
@@ -359,9 +360,20 @@ const PARTNERS: PartnerLogo[] = [
     brand: "#F59E0B",
     pixelColors: ["#F59E0B", "#FB923C", "#FDE68A"],
     row: 4,
-    col: 4,
+    col: 3,
     keepLight: true,
     maskClassName: "h-10 w-44",
+  },
+  {
+    name: "MoonShot",
+    href: "https://moonshotus.com/",
+    asset: moonshotLogo,
+    brand: "#FACC15",
+    pixelColors: ["#FACC15", "#FDE047", "#FEF08A"],
+    row: 4,
+    col: 4,
+    className: "max-h-12",
+    preserveColor: true,
   },
 ];
 
@@ -474,23 +486,23 @@ export function PixelLogoGrid({
   heading = "Building the future of Fort Worth together",
 }: PixelLogoGridProps = {}) {
   return (
-    <section className="mt-24 w-full px-4">
+    <section id="partners" className="mt-24 w-full px-4">
       <div
         className="mx-auto hidden max-w-5xl grid-cols-4 gap-px border border-blue-400/15 bg-blue-400/15 shadow-[0_24px_80px_-48px_rgba(59,130,246,0.7)] md:grid"
-        style={{ gridTemplateRows: "repeat(4, 112px)" }}
+        style={{ gridTemplateRows: "112px 190px 112px 112px" }}
       >
         {PARTNERS.map((logo) => (
           <LogoCard key={logo.name} logo={logo} positioned />
         ))}
 
-        <div className="h-full" style={{ gridColumn: "2 / span 2", gridRow: "2 / span 2" }}>
+        <div className="h-full" style={{ gridColumn: "2 / span 3", gridRow: "2" }}>
           <CenterPanel badge={badge} heading={heading} />
         </div>
       </div>
 
       <div className="mx-auto max-w-2xl md:hidden">
         <CenterPanel badge={badge} heading={heading} />
-        <div className="grid grid-cols-2 gap-px border border-blue-400/15 bg-blue-400/15">
+        <div className="grid grid-cols-2 gap-px border border-blue-400/15 bg-blue-400/15 [&>a:last-child:nth-child(odd)]:col-span-2">
           {PARTNERS.map((logo) => (
             <LogoCard key={logo.name} logo={logo} />
           ))}

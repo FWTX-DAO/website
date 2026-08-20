@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.2",
   "private": true,
+  "packageManager": "pnpm@11.18.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -11,7 +12,7 @@
     "astro": "astro"
   },
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=22.19.0"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.1",
