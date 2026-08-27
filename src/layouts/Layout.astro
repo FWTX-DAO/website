@@ -23,9 +23,16 @@ export interface Props {
   background?: "default" | "quiet";
 }
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
-
 const { title, description, image, imageAlt, noindex, publishDate, author, tags, type = "website", background = "default" } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+const organizationId = "https://fwtx.city/#organization";
+const websiteId = "https://fwtx.city/#website";
+const defaultDescription = "Fort Worth DAO is a Web3 community and nonprofit DAO advancing education, digital sovereignty, and civic innovation across Fort Worth and Greater Texas.";
+const pageTitle = title
+  ? `${title} | Fort Worth DAO`
+  : "Fort Worth DAO | Web3 Community & Nonprofit DAO";
+const metaDescription = description || defaultDescription;
 
 const backgroundSettings = background === "quiet"
   ? {
@@ -41,35 +48,72 @@ const backgroundSettings = background === "quiet"
 
 const organizationSchema = {
   "@context": "https://schema.org",
+  "@id": organizationId,
   "@type": ["Organization", "NGO"],
-  name: "FWTX DAO",
+  name: "Fort Worth DAO",
+  alternateName: ["FWTX DAO", "Fort Worth Municipal DAO"],
   legalName: "Fort Worth DAO LCA",
   url: "https://fwtx.city",
   logo: "https://fwtx.city/logo.svg",
-  description: "Fort Worth Municipal DAO - Web3 civic innovation, digital sovereignty, and decentralized governance community in Fort Worth, Texas.",
+  email: "community@fwtx.city",
+  taxID: "41-2815082",
+  nonprofitStatus: "https://schema.org/Nonprofit501c3",
+  description: defaultDescription,
+  slogan: "Digital Sovereignty is Mission Critical",
   foundingDate: "2023-12-19",
-  areaServed: {
-    "@type": "City",
-    name: "Fort Worth",
-    containedInPlace: {
-      "@type": "State",
-      name: "Texas",
+  areaServed: [
+    {
+      "@type": "City",
+      name: "Fort Worth",
+      containedInPlace: {
+        "@type": "State",
+        name: "Texas",
+      },
     },
-  },
+    {
+      "@type": "AdministrativeArea",
+      name: "Greater Texas",
+    },
+  ],
   address: {
     "@type": "PostalAddress",
     addressLocality: "Fort Worth",
     addressRegion: "TX",
     addressCountry: "US",
   },
-  contactPoint: {
-    "@type": "ContactPoint",
-    email: "community@fwtx.city",
-    contactType: "community",
-    url: "https://fwtx.city/contact",
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      email: "community@fwtx.city",
+      contactType: "community and membership",
+      url: "https://fwtx.city/contact",
+      availableLanguage: "English",
+    },
+    {
+      "@type": "ContactPoint",
+      email: "hello@fwtx.city",
+      contactType: "partnerships and sponsorships",
+      url: "https://fwtx.city/contact",
+      availableLanguage: "English",
+    },
+  ],
+  knowsAbout: [
+    "Web3 education",
+    "decentralized autonomous organizations",
+    "digital sovereignty",
+    "blockchain governance",
+    "cybersecurity",
+    "civic technology",
+    "open source software",
+    "workforce development",
+  ],
+  potentialAction: {
+    "@type": "JoinAction",
+    name: "Join Fort Worth DAO",
+    target: "https://dao.fwtx.city",
   },
   sameAs: [
-    "https://twitter.com/FWTX_DAO",
+    "https://x.com/FWTX_DAO",
     "https://github.com/FWTX-DAO",
     "https://www.linkedin.com/company/fwtx-dao",
     "https://www.youtube.com/@fortworthdao",
@@ -80,10 +124,47 @@ const organizationSchema = {
 
 const webSiteSchema = {
   "@context": "https://schema.org",
+  "@id": websiteId,
   "@type": "WebSite",
-  name: "FWTX DAO",
+  name: "Fort Worth DAO",
+  alternateName: "FWTX DAO",
   url: "https://fwtx.city",
-  description: "Fort Worth Municipal DAO - Web3 civic innovation, digital sovereignty, and decentralized governance community in Fort Worth, Texas.",
+  description: defaultDescription,
+  inLanguage: "en-US",
+  publisher: { "@id": organizationId },
+  about: { "@id": organizationId },
+  hasPart: [
+    {
+      "@type": "WebSite",
+      name: "Fort Worth DAO Member Portal",
+      url: "https://dao.fwtx.city",
+      description: "Account access, active membership, and participation in Fort Worth DAO governance.",
+    },
+    {
+      "@type": "WebSite",
+      name: "Fort Worth DAO Constitution and Whitepaper",
+      url: "https://constitution.fwtx.city",
+      description: "The mission, membership expectations, governance structure, and cybersecurity framework of Fort Worth DAO.",
+    },
+    {
+      "@type": "WebSite",
+      name: "HackFW",
+      url: "https://hack.fwtx.city",
+      description: "Fort Worth DAO's flagship hackathon program, with current dates, registration, and partner information.",
+    },
+    {
+      "@type": "WebSite",
+      name: "FWTX Innovation Bounties",
+      url: "https://innovate.fwtx.city",
+      description: "A submission portal for community, civic, and technical challenge proposals.",
+    },
+    {
+      "@type": "WebSite",
+      name: "Fort Worth Talent Network",
+      url: "https://talent.fwtx.city",
+      description: "Profiles and connections for local builders, employers, and technology opportunities.",
+    },
+  ],
 };
 
 const resolvedImageWithDomain = new URL(
@@ -91,11 +172,22 @@ const resolvedImageWithDomain = new URL(
   Astro.site
 ).toString();
 
-const makeTitle = title
-  ? title + " | " + "FWTX DAO"
-  : "FWTX DAO - Web3 Excellence of Fort Worth";
-
-const metaDescription = description || "FWTX DAO is a Web3 and civic innovation community in Fort Worth, Texas. Join us for workshops, education, and building the decentralized future of North Texas.";
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${canonicalURL}#webpage`,
+  url: canonicalURL,
+  name: pageTitle,
+  description: metaDescription,
+  inLanguage: "en-US",
+  isPartOf: { "@id": websiteId },
+  about: { "@id": organizationId },
+  publisher: { "@id": organizationId },
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    url: resolvedImageWithDomain,
+  },
+};
 ---
 
 <!DOCTYPE html>
@@ -108,23 +200,32 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#0A0F1C" />
 
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
-
     <SEO
-      title={makeTitle}
+      title={pageTitle}
       description={metaDescription}
       canonical={canonicalURL}
+      noindex={noindex}
+      nofollow={noindex}
       twitter={{
         creator: "@FWTX_DAO",
         site: "@FWTX_DAO",
         card: "summary_large_image",
+        title: pageTitle,
+        description: metaDescription,
+        image: resolvedImageWithDomain,
+        imageAlt: imageAlt || "Fort Worth DAO - Digital Sovereignty is Mission Critical",
       }}
       openGraph={{
         basic: {
           url: canonicalURL,
           type: type,
-          title: makeTitle,
+          title: pageTitle,
           image: resolvedImageWithDomain,
+        },
+        optional: {
+          description: metaDescription,
+          locale: "en_US",
+          siteName: "Fort Worth DAO",
         },
         image: {
           alt: imageAlt || "FWTX DAO - Digital Sovereignty is Mission Critical",
@@ -133,9 +234,6 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
         },
       }}
     />
-
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:site_name" content="FWTX DAO" />
 
     {type === "article" && publishDate && (
       <meta property="article:published_time" content={publishDate} />
@@ -149,10 +247,16 @@ const metaDescription = description || "FWTX DAO is a Web3 and civic innovation 
 
     <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(webSiteSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(webPageSchema)} />
 
-    <meta name="author" content="FWTX DAO" />
-    <meta name="keywords" content="Fort Worth, DAO, Web3, blockchain, civic innovation, digital sovereignty, Texas, crypto, decentralization, community" />
-    <link rel="canonical" href={canonicalURL} />
+    <meta name="author" content="Fort Worth DAO" />
+    <meta name="keywords" content={["Fort Worth", "Greater Texas", "DAO", "Web3 community", "501(c)(3) nonprofit", "blockchain", "civic innovation", "digital sovereignty", "cybersecurity", "decentralized governance", ...(tags || [])].join(", ")} />
+    <meta name="geo.region" content="US-TX" />
+    <meta name="geo.placename" content="Fort Worth, Texas" />
+    <link rel="alternate" hreflang="en-US" href={canonicalURL} />
+    <link rel="alternate" hreflang="x-default" href={canonicalURL} />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Fort Worth DAO information for AI systems" />
 
     <link rel="apple-touch-icon" sizes="180x180" href="/logo.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/logo.svg" />

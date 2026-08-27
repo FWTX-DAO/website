@@ -7,6 +7,9 @@ Allow: /
 User-agent: ChatGPT-User
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
 User-agent: Google-Extended
 Allow: /
 
@@ -19,4 +22,5 @@ Allow: /
 User-agent: anthropic-ai
 Allow: /
 
+# Canonical discovery files
 Sitemap: https://fwtx.city/sitemap-index.xml

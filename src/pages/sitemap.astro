@@ -1,0 +1,79 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+
+const publishedPosts = await getCollection("blog", ({ data }) => !data.draft && data.publishDate < new Date());
+publishedPosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const primaryPages = [
+  { name: "Home", href: "/", description: "Fort Worth DAO's mission, current programs, events, and ways to participate." },
+  { name: "About", href: "/about", description: "Organizational identity, mission, and regional focus." },
+  { name: "Programs", href: "/programs", description: "How to join, attend, build, partner, and contribute." },
+  { name: "Blog", href: "/blog", description: "Web3, digital sovereignty, cybersecurity, DAO, and civic technology research." },
+  { name: "Donate & Sponsor", href: "/donate", description: "Support Fort Worth DAO LCA's nonprofit programs." },
+  { name: "Contact", href: "/contact", description: "Membership, community, sponsorship, and partnership contacts." },
+  { name: "Privacy", href: "/privacy", description: "How fwtx.city and its connected services handle information." },
+];
+
+const services = [
+  { name: "Member Portal", href: "https://dao.fwtx.city", description: "Create an account, sign in, and participate in the DAO." },
+  { name: "Constitution & Whitepaper", href: "https://constitution.fwtx.city", description: "Mission, membership, governance, and security framework." },
+  { name: "HackFW", href: "https://hack.fwtx.city", description: "Current hackathon program details and registration routes." },
+  { name: "Innovation Bounties", href: "https://innovate.fwtx.city", description: "Submit community, civic, and technical challenges." },
+  { name: "Talent Network", href: "https://talent.fwtx.city", description: "Connect builders, employers, skills, and opportunities." },
+];
+---
+
+<Layout
+  title="Sitemap"
+  description="Browse Fort Worth DAO pages, Web3 education and civic innovation programs, member services, subdomains, and research articles.">
+  <Container>
+    <Sectionhead as="h1">
+      <Fragment slot="title">Sitemap</Fragment>
+      <Fragment slot="desc">Fort Worth DAO pages, services, and research</Fragment>
+    </Sectionhead>
+
+    <div class="mx-auto mt-14 grid max-w-5xl gap-8 lg:grid-cols-2">
+      <section class="glass-card rounded-xl p-6">
+        <h2 class="font-display text-3xl text-white">Main Site</h2>
+        <ul class="mt-6 space-y-5">
+          {primaryPages.map((page) => (
+            <li>
+              <a href={page.href} class="text-lg font-semibold text-blue-300 underline decoration-blue-500/40 underline-offset-4 hover:text-blue-200">{page.name}</a>
+              <p class="mt-1 text-sm leading-relaxed text-slate-400">{page.description}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="glass-card rounded-xl p-6">
+        <h2 class="font-display text-3xl text-white">Official Services</h2>
+        <ul class="mt-6 space-y-5">
+          {services.map((service) => (
+            <li>
+              <a href={service.href} class="text-lg font-semibold text-blue-300 underline decoration-blue-500/40 underline-offset-4 hover:text-blue-200">{service.name}</a>
+              <p class="mt-1 text-sm leading-relaxed text-slate-400">{service.description}</p>
+            </li>
+          ))}
+        </ul>
+        <div class="mt-8 border-t border-slate-700 pt-6 text-sm text-slate-400">
+          Machine-readable discovery: <a href="/sitemap-index.xml" class="text-blue-300 underline underline-offset-4">XML sitemap</a>, <a href="/llms.txt" class="text-blue-300 underline underline-offset-4">llms.txt</a>, and <a href="/rss.xml" class="text-blue-300 underline underline-offset-4">RSS</a>.
+        </div>
+      </section>
+    </div>
+
+    <section class="mx-auto mt-8 max-w-5xl rounded-xl border border-slate-700/80 bg-navy-950/90 p-6">
+      <h2 class="font-display text-3xl text-white">Research & Education</h2>
+      <ul class="mt-6 grid gap-4 md:grid-cols-2">
+        {publishedPosts.map((post) => (
+          <li>
+            <a href={`/blog/${post.id}`} class="font-semibold text-blue-300 underline decoration-blue-500/40 underline-offset-4 hover:text-blue-200">{post.data.title}</a>
+            <p class="mt-1 text-sm text-slate-500">{post.data.category}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </Container>
+</Layout>

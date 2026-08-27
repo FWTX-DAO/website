@@ -8,21 +8,24 @@ const aboutSchema = {
   "@type": "AboutPage",
   name: "About FWTX DAO",
   url: "https://fwtx.city/about",
-  description: "Learn about FWTX DAO — Fort Worth's Web3 and civic innovation community building decentralized civic infrastructure in North Texas.",
+  description: "Learn about Fort Worth DAO, a Web3 community and nonprofit DAO advancing education, digital sovereignty, and civic innovation across Fort Worth and Greater Texas.",
   about: {
     "@type": ["Organization", "NGO"],
-    name: "FWTX DAO",
+    "@id": "https://fwtx.city/#organization",
+    name: "Fort Worth DAO",
+    alternateName: "FWTX DAO",
     legalName: "Fort Worth DAO LCA",
     url: "https://fwtx.city",
     foundingDate: "2023-12-19",
-    areaServed: "Fort Worth, Texas",
+    nonprofitStatus: "https://schema.org/Nonprofit501c3",
+    areaServed: "Fort Worth and Greater Texas",
   },
 };
 ---
 
 <Layout
   title="About"
-  description="Learn about FWTX DAO - Fort Worth's Web3 and civic innovation community. Meet our team of experts in blockchain, cybersecurity, and digital transformation.">
+  description="Learn about Fort Worth DAO, a Web3 community and 501(c)(3) nonprofit DAO advancing education, digital sovereignty, and civic innovation across Greater Texas.">
   <script type="application/ld+json" set:html={JSON.stringify(aboutSchema)} />
   <Container>
     <Sectionhead as="h1">
@@ -32,10 +35,13 @@ const aboutSchema = {
 
     <div class="flex flex-col gap-6 mx-auto max-w-4xl mt-16">
       <h2 class="font-display text-4xl text-white">
-        Empowering Fort Worth with <span class="text-frontier-amber">Web3 & Innovation</span>.
+        A Web3 Community for <span class="text-frontier-amber">Education & Digital Sovereignty</span>.
       </h2>
       <p class="text-lg leading-relaxed text-slate-300">
-        We're composed of experts in Web3, digital marketing, cybersecurity, FinTech, and software development, harnesses the power of decentralized technologies to pioneer innovative urban solutions. This multi-disciplinary group collaborates to integrate blockchain and Web3 principles into urban development, revolutionizing how future cities operate and interact in a digitally advanced landscape.
+        Fort Worth DAO is a Web3 community and decentralized autonomous organization. Its legal entity, Fort Worth DAO LCA, is a 501(c)(3) nonprofit. We serve Fort Worth and Greater Texas through public education, open source collaboration, and programs that help people understand digital ownership, cybersecurity, blockchain governance, and emerging technology.
+      </p>
+      <p class="text-lg leading-relaxed text-slate-300">
+        Our multidisciplinary community includes people working across Web3, cybersecurity, FinTech, artificial intelligence, software development, education, and civic innovation. We connect these disciplines to build practical knowledge, public-interest technology, and resilient digital infrastructure.
       </p>
 
       <h3 class="font-display text-3xl text-white mt-8">

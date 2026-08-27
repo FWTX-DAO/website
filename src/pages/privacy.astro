@@ -1,0 +1,47 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+---
+
+<Layout
+  title="Privacy"
+  description="How Fort Worth DAO handles information across fwtx.city, its contact form, analytics, event embeds, donations, and linked community services.">
+  <Container>
+    <Sectionhead as="h1">
+      <Fragment slot="title">Privacy</Fragment>
+      <Fragment slot="desc">How information is handled on fwtx.city</Fragment>
+    </Sectionhead>
+
+    <article class="prose prose-lg prose-invert mx-auto mt-14 max-w-3xl rounded-xl border border-slate-700/80 bg-navy-950/90 p-6 shadow-xl shadow-black/20 md:p-10">
+      <p class="lead">
+        Fort Worth DAO LCA is a Web3 community and 501(c)(3) nonprofit focused on education and digital sovereignty. This notice explains what information may be processed when you visit fwtx.city, contact us, register for an event, donate, or follow a link to an FWTX DAO service. It was last updated August 27, 2026.
+      </p>
+
+      <h2>Information you choose to provide</h2>
+      <p>
+        If you contact us, you may provide your name, email address, and message. The contact form is submitted through Web3Forms so the message can be delivered to our team. If you donate, register for an event, join the DAO, submit a bounty, or create a talent profile, the service handling that action may request additional information under its own terms and privacy practices. Do not submit private keys, wallet seed phrases, passwords, or other secrets through this website or by email.
+      </p>
+
+      <h2>Website and analytics data</h2>
+      <p>
+        Our hosting provider and security services may process standard request data such as IP address, browser type, requested URL, timestamps, and security signals. The homepage loads Metricool analytics to help us understand aggregate site use. Event pages may embed Luma content, and those embedded or linked services may receive technical information when they load. You can limit optional browser storage and tracking through your browser or device settings.
+      </p>
+
+      <h2>How information is used and shared</h2>
+      <p>
+        We use submitted information to respond to messages, operate community programs, maintain site security, understand site performance, and fulfill the action you requested. Fort Worth DAO does not use fwtx.city to sell personal information. Information may be handled by service providers that support hosting, analytics, forms, events, payments, or program operations, and may be disclosed when required by law or needed to protect people, systems, and the organization.
+      </p>
+
+      <h2>Linked services and retention</h2>
+      <p>
+        FWTX DAO subdomains and external services can have separate data practices because they support different functions. Review the information shown by a service before submitting data. We keep information only as long as reasonably needed for the purpose it was collected, operational records, security, legal compliance, or dispute resolution. Links to third-party sites do not make Fort Worth DAO responsible for those sites' practices.
+      </p>
+
+      <h2>Your choices and questions</h2>
+      <p>
+        You may ask about, correct, or request deletion of personal information you submitted directly to Fort Worth DAO, subject to legal and operational requirements. Email <a href="mailto:community@fwtx.city">community@fwtx.city</a> with a privacy question or request. For service-specific information, contact the provider named at the point where you submitted the data.
+      </p>
+    </article>
+  </Container>
+</Layout>
