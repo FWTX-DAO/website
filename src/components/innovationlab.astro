@@ -1,0 +1,47 @@
+---
+import texasNovaPreview from "@assets/projects/texas-nova-live-map.webp";
+import ProjectShowcase from "@components/ui/project-showcase";
+
+const projects = [
+  {
+    name: "Texas Nova",
+    designation: "Realtime Texas news across every county",
+    quote:
+      "Follow the statewide wire, select any of Texas’ 254 counties on the live map, and open local reporting directly at the source.",
+    src: texasNovaPreview.src,
+    link: "https://texas-nova.labs.fwtx.city",
+    imageAlt:
+      "Texas Nova interface showing a live Texas county news map with statewide and Tarrant County news feeds",
+    imageWidth: texasNovaPreview.width,
+    imageHeight: texasNovaPreview.height,
+  },
+];
+---
+
+<section id="innovation-lab" class="my-24 scroll-mt-28" aria-labelledby="innovation-lab-title">
+  <div class="mx-auto max-w-6xl px-4">
+    <header class="mx-auto mb-10 max-w-3xl text-center sm:mb-12">
+      <p class="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">
+        FWTX DAO · Innovation Lab
+      </p>
+      <h2 id="innovation-lab-title" class="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+        Civic systems, <span class="text-blue-400">built in the open</span>
+      </h2>
+      <p class="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
+        We build public-interest technology that turns open data and open source infrastructure into useful tools for communities across Texas.
+      </p>
+    </header>
+
+    <ProjectShowcase
+      client:visible
+      testimonials={projects}
+      autoplay={false}
+      imageAspectRatio={texasNovaPreview.width / texasNovaPreview.height}
+      buttonInscriptions={{
+        previousButton: "Previous project",
+        nextButton: "Next project",
+        openWebAppButton: "Explore Texas Nova",
+      }}
+    />
+  </div>
+</section>

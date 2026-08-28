@@ -1,3 +1,143 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --halomot-button-background: #0f1629;
+  --halomot-button-foreground: #f8fafc;
+  --project-showcase-name-color: #f8fafc;
+  --project-showcase-position-color: #7dd3fc;
+  --project-showcase-testimony-color: #cbd5e1;
+  --project-showcase-name-size: clamp(2.5rem, 5vw, 4rem);
+  --project-showcase-position-size: 1rem;
+  --project-showcase-testimony-size: 1rem;
+  --project-showcase-name-bottom: 0.5rem;
+  --project-showcase-position-bottom: 0;
+  --project-showcase-testimony-top: 1.25rem;
+  --project-showcase-testimony-bottom: 1.5rem;
+  --project-showcase-line-height: 1.6;
+  --project-showcase-button-gradient: linear-gradient(135deg, #2563eb, #38bdf8);
+  --project-showcase-button-background: #0f1629;
+  --project-showcase-button-text-color: #f8fafc;
+  --project-showcase-button-outer-radius: 13px;
+  --project-showcase-button-inner-radius: 12px;
+  --project-showcase-button-hover-text-color: #ffffff;
+  --project-showcase-surface: #0a0f1c;
+  --project-showcase-live-signal: #fbbf24;
+}
+
+.halomot-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: stretch;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: var(--halomot-border-width);
+  border: 0;
+  border-radius: var(--halomot-outer-radius);
+  background: var(--halomot-gradient);
+  color: var(--halomot-text);
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  touch-action: manipulation;
+  transition-property: filter, transform;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.halomot-button--fill {
+  width: 100%;
+}
+
+.halomot-button__inner {
+  display: inline-flex;
+  width: 100%;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  padding: var(--halomot-padding);
+  border-radius: var(--halomot-inner-radius);
+  background-color: var(--halomot-background);
+  color: var(--halomot-text);
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.halomot-button__icon {
+  display: inline-flex;
+  width: 1em;
+  height: 1em;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.halomot-button:active {
+  transform: scale(0.96);
+}
+
+.halomot-button:focus-visible {
+  outline: 2px solid #7dd3fc;
+  outline-offset: 3px;
+}
+
+.project-showcase {
+  background-color: var(--project-showcase-surface);
+  background-image:
+    radial-gradient(circle at 3% 0%, rgba(251, 191, 36, 0.045), transparent 26%),
+    radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.12), transparent 38%),
+    radial-gradient(circle at 34% 100%, rgba(34, 211, 238, 0.06), transparent 42%);
+  box-shadow:
+    0 0 0 1px rgba(125, 211, 252, 0.1),
+    0 30px 100px -55px rgba(56, 189, 248, 0.8);
+}
+
+.project-showcase-status-dot {
+  background-color: var(--project-showcase-live-signal);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.45);
+}
+
+.project-showcase-image-container {
+  background-color: var(--project-outline);
+  transition-property: background-color, box-shadow, transform;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
+}
+
+.project-showcase-image {
+  outline: 1px solid oklch(1 0 0 / 0.1);
+  outline-offset: -1px;
+}
+
+@media (hover: hover) {
+  .halomot-button:hover {
+    filter: brightness(1.08);
+  }
+
+  .halomot-button:hover .halomot-button__inner {
+    background-color: transparent;
+    color: var(--halomot-hover-text);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .project-showcase-image-container:hover {
+    background-color: var(--project-outline-hover);
+    box-shadow: 0 18px 48px -28px rgba(56, 189, 248, 0.7);
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-showcase *,
+  .project-showcase *::before,
+  .project-showcase *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
