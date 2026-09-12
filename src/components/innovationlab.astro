@@ -1,11 +1,14 @@
 ---
 import texasNovaPreview from "@assets/projects/texas-nova-live-map.webp";
+import ntx990Preview from "@assets/projects/ntx-990-graph.webp";
 import ProjectShowcase from "@components/ui/project-showcase";
 
 const projects = [
   {
     name: "Texas Nova",
     designation: "Realtime Texas news across every county",
+    kicker: "Statewide civic intelligence",
+    ctaLabel: "Explore Texas Nova",
     quote:
       "Follow the statewide wire, select any of Texas’ 254 counties on the live map, and open local reporting directly at the source.",
     src: texasNovaPreview.src,
@@ -15,10 +18,25 @@ const projects = [
     imageWidth: texasNovaPreview.width,
     imageHeight: texasNovaPreview.height,
   },
+  {
+    name: "990 Graph",
+    designation: "IRS 990 knowledge graph for tax-exempt organizations",
+    kicker: "Nonprofit fiscal intelligence",
+    ctaLabel: "Open 990 Graph",
+    quote:
+      "Analyze Form 990 filings and tax-exempt organizations by fiscal year — a read-only investigator workbench over the IRS exempt-organization corpus.",
+    src: ntx990Preview.src,
+    link: "https://990-g2.ntx.labs.fwtx.city/login",
+    imageAlt:
+      "Illustration of the North Texas Civic Intelligence knowledge graph for IRS Form 990 filings and tax-exempt organizations",
+    imageWidth: ntx990Preview.width,
+    imageHeight: ntx990Preview.height,
+    imageObjectPosition: "top" as const,
+  },
 ];
 ---
 
-<section id="innovation-lab" class="my-24 scroll-mt-28" aria-labelledby="innovation-lab-title">
+<section id="innovation-lab" class="my-24 scroll-mt-32" aria-labelledby="innovation-lab-title">
   <div class="mx-auto max-w-6xl px-4">
     <header class="mx-auto mb-10 max-w-3xl text-center sm:mb-12">
       <p class="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">
@@ -40,7 +58,7 @@ const projects = [
       buttonInscriptions={{
         previousButton: "Previous project",
         nextButton: "Next project",
-        openWebAppButton: "Explore Texas Nova",
+        openWebAppButton: "Open Web App",
       }}
     />
   </div>

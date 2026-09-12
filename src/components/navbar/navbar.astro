@@ -1,5 +1,6 @@
 ---
 import Container from "@components/container.astro";
+import HackfwHeaderBanner from "@components/hackfw-header-banner.astro";
 import Dropdown from "./dropdown.astro";
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Icon } from "astro-icon/components";
@@ -51,8 +52,10 @@ const DONATE_URL = "https://buy.stripe.com/9B66oHfy50e1b7C7buak000";
 const PORTAL_URL = "https://dao.fwtx.city";
 ---
 
-<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-navy-950/80 border-b border-navy-700/50">
-  <Container>
+<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-navy-950/80">
+  <HackfwHeaderBanner />
+  <div class="border-b border-navy-700/50">
+    <Container>
     <div class="flex flex-col lg:flex-row justify-between items-center py-3">
       <Astronav>
         <div class="flex w-full lg:w-auto items-center justify-between">
@@ -170,5 +173,6 @@ const PORTAL_URL = "https://dao.fwtx.city";
         </div>
       </div>
     </div>
-  </Container>
+    </Container>
+  </div>
 </header>
