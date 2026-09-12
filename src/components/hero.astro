@@ -1,28 +1,40 @@
 ---
 import heroImage from "../assets/hero.svg";
+import hackfwBanner from "../assets/hackfw-made-challenge.png";
 import Link from "@components/ui/link.astro";
 import { Icon } from "astro-icon/components";
 ---
 
 <main
-  class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24 gap-8 lg:gap-12">
-  <div class="py-6 md:order-1">
-    <div class="relative hidden md:block">
-      <img
-        src={heroImage.src}
-        alt="FWTX DAO Process"
-        width={heroImage.width}
-        height={heroImage.height}
-        loading="eager"
-        decoding="async"
-        class="relative z-10 invert opacity-85"
-      />
-    </div>
-    <!-- Mobile decorative element -->
-    <div class="flex md:hidden justify-center">
-      <div class="relative w-20 h-20">
-        <div class="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-glow-pulse"></div>
-        <img src="/logo.svg" alt="" class="relative w-full h-full" aria-hidden="true" />
+  class="grid lg:grid-cols-2 place-items-center lg:items-start lg:justify-items-stretch pt-16 pb-8 md:pt-12 md:pb-24 gap-8 lg:gap-12">
+  <div class="py-6 md:order-1 w-full max-w-xl lg:max-w-none">
+    <div class="flex flex-col gap-4 w-full">
+      <a
+        href="https://hack.fwtx.city/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group block w-full rounded-lg origin-center active:scale-[0.96] transition-transform duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
+        <img
+          src={hackfwBanner.src}
+          alt="HackFW MADE Challenge, October 1–30, 2026 in Fort Worth, Texas. Opens the event website in a new tab."
+          width={hackfwBanner.width}
+          height={hackfwBanner.height}
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          class="w-full h-auto rounded-lg outline outline-1 -outline-offset-1 outline-white/10 group-hover:outline-white/20 group-hover:shadow-glow-sm transition-[outline-color,box-shadow] duration-150 ease-out"
+        />
+      </a>
+      <div class="relative hidden md:block w-full">
+        <img
+          src={heroImage.src}
+          alt="FWTX DAO Process"
+          width={heroImage.width}
+          height={heroImage.height}
+          loading="eager"
+          decoding="async"
+          class="relative z-10 w-full h-auto invert opacity-85"
+        />
       </div>
     </div>
   </div>
