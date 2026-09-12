@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { HalomotButton } from "./halomot-button";
+import { cn } from "@lib/utils";
 
 export type ProjectShowcaseItem = {
   quote: string;
@@ -56,51 +56,32 @@ type ProjectShowcaseProps = {
   halomotButtonHoverTextColor?: string;
 };
 
-const defaultColors = {
-  name: "var(--project-showcase-name-color)",
-  position: "var(--project-showcase-position-color)",
-  testimony: "var(--project-showcase-testimony-color)",
-};
-
-const defaultFontSizes = {
-  name: "var(--project-showcase-name-size)",
-  position: "var(--project-showcase-position-size)",
-  testimony: "var(--project-showcase-testimony-size)",
-};
-
-const defaultSpacing = {
-  lineHeight: "var(--project-showcase-line-height)",
-  nameTop: "0",
-  nameBottom: "var(--project-showcase-name-bottom)",
-  positionTop: "0",
-  positionBottom: "var(--project-showcase-position-bottom)",
-  testimonyTop: "var(--project-showcase-testimony-top)",
-  testimonyBottom: "var(--project-showcase-testimony-bottom)",
-};
-
 const defaultInscriptions = {
-  previousButton: "Previous",
-  nextButton: "Next",
+  previousButton: "Previous project",
+  nextButton: "Next project",
   openWebAppButton: "Open Web App",
 };
 
-function resolveSpacing(value: string) {
-  return /^\d+(\.\d+)?$/.test(value) ? `${Number(value) * 0.25}rem` : value;
+function Chevron({ direction }: { direction: "prev" | "next" }) {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d={direction === "prev" ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"}
+      />
+    </svg>
+  );
 }
 
 export function ProjectShowcase({
   testimonials,
   autoplay = false,
-  colors = {},
-  fontSizes = {},
-  spacing = {},
-  imageAspectRatio = 1.6,
   isRTL = false,
   onItemClick,
-  outerRounding = "18px",
-  innerRounding = "17px",
-  outlineColor = "rgba(255, 255, 255, 0.1)",
-  hoverOutlineColor = "rgba(96, 165, 250, 0.6)",
   buttonInscriptions = {},
   halomotButtonGradient = "var(--project-showcase-button-gradient)",
   halomotButtonBackground = "var(--project-showcase-button-background)",
@@ -111,37 +92,71 @@ export function ProjectShowcase({
 }: ProjectShowcaseProps) {
   const [active, setActive] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Array<HTMLElement | null>>([]);
   const itemCount = testimonials.length;
   const hasMultipleItems = itemCount > 1;
-  const currentColors = { ...defaultColors, ...colors };
-  const currentFontSizes = { ...defaultFontSizes, ...fontSizes };
-  const currentSpacing = { ...defaultSpacing, ...spacing };
+  const fitsTwoUp = itemCount === 2;
   const currentInscriptions = { ...defaultInscriptions, ...buttonInscriptions };
 
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setPrefersReducedMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  const scrollToIndex = useCallback(
+    (index: number) => {
+      const track = trackRef.current;
+      const card = cardRefs.current[index];
+      if (!track || !card) return;
+      const nextLeft = track.scrollLeft + (card.getBoundingClientRect().left - track.getBoundingClientRect().left);
+      track.scrollTo({
+        left: nextLeft,
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+      });
+    },
+    [prefersReducedMotion],
+  );
+
   const handleNext = useCallback(() => {
-    setActive((current) => (current + 1) % Math.max(itemCount, 1));
-  }, [itemCount]);
+    const next = (active + 1) % Math.max(itemCount, 1);
+    setActive(next);
+    scrollToIndex(next);
+  }, [active, itemCount, scrollToIndex]);
 
   const handlePrevious = useCallback(() => {
-    setActive(
-      (current) =>
-        (current - 1 + Math.max(itemCount, 1)) % Math.max(itemCount, 1),
+    const next = (active - 1 + Math.max(itemCount, 1)) % Math.max(itemCount, 1);
+    setActive(next);
+    scrollToIndex(next);
+  }, [active, itemCount, scrollToIndex]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || itemCount === 0) return;
+
+    const cards = cardRefs.current.filter((card): card is HTMLElement => Boolean(card));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        const index = cards.indexOf(visible.target as HTMLElement);
+        if (index >= 0) setActive(index);
+      },
+      { root: track, threshold: 0.55 },
     );
+
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
   }, [itemCount]);
 
   useEffect(() => {
-    if (active >= itemCount) setActive(0);
-  }, [active, itemCount]);
-
-  useEffect(() => {
-    if (
-      !autoplay ||
-      !hasMultipleItems ||
-      isPaused ||
-      prefersReducedMotion ||
-      itemCount === 0
-    ) {
+    if (!autoplay || !hasMultipleItems || isPaused || prefersReducedMotion || itemCount === 0) {
       return;
     }
 
@@ -151,223 +166,195 @@ export function ProjectShowcase({
 
   if (itemCount === 0) return null;
 
-  const item = testimonials[active] ?? testimonials[0];
-  const transition = prefersReducedMotion
-    ? { duration: 0 }
-    : { duration: 0.22, ease: [0.2, 0, 0, 1] as const };
-  const contentStyle: CSSProperties = {
-    lineHeight: currentSpacing.lineHeight,
-  };
-
   return (
     <div
-      className="project-showcase relative mx-auto w-full overflow-hidden rounded-[2rem] bg-navy-950 p-4 sm:p-6 lg:p-8"
+      className="project-showcase relative mx-auto w-full overflow-hidden rounded-[2rem] bg-navy-950 p-4"
       dir={isRTL ? "rtl" : "ltr"}
-      style={{
-        paddingTop: spacing.top ? resolveSpacing(spacing.top) : undefined,
-        paddingBottom: spacing.bottom ? resolveSpacing(spacing.bottom) : undefined,
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setIsPaused(false);
+        }
       }}
     >
-      <div className="relative grid items-stretch gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(18rem,0.88fr)] lg:gap-12">
-        <div className="relative min-w-0 w-full max-w-full overflow-hidden" style={{ aspectRatio: imageAspectRatio }}>
-          <AnimatePresence initial={false} mode="wait">
-            <motion.div
-              key={item.src}
-              className="absolute inset-0"
-              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-              transition={transition}
-            >
-              <ImageContainer
-                item={item}
-                outerRounding={outerRounding}
-                innerRounding={innerRounding}
-                outlineColor={outlineColor}
-                hoverOutlineColor={hoverOutlineColor}
-              />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        <div className="flex min-w-0 flex-col justify-center py-1 sm:py-3" style={contentStyle}>
-          <div className="mb-6 flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-200">
-              <span className="project-showcase-status-dot h-1.5 w-1.5 rounded-full" aria-hidden="true" />
-              Live lab project
-            </span>
-            {item.kicker && (
-              <span className="text-xs font-medium uppercase tracking-[0.14em] text-slate-300">
-                {item.kicker}
-              </span>
-            )}
-          </div>
-
-          <AnimatePresence initial={false} mode="wait">
-            <motion.div
-              key={`${item.name}-${active}`}
-              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-              transition={transition}
-              aria-live={hasMultipleItems ? "polite" : undefined}
-            >
-              <h3
-                className="font-display font-semibold leading-none tracking-wide"
-                style={{
-                  color: currentColors.name,
-                  fontSize: currentFontSizes.name,
-                  marginTop: currentSpacing.nameTop,
-                  marginBottom: currentSpacing.nameBottom,
-                }}
-                translate="no"
-              >
-                {item.name}
-              </h3>
-              <p
-                className="font-semibold"
-                style={{
-                  color: currentColors.position,
-                  fontSize: currentFontSizes.position,
-                  marginTop: currentSpacing.positionTop,
-                  marginBottom: currentSpacing.positionBottom,
-                }}
-              >
-                {item.designation}
-              </p>
-              <p
-                className="max-w-[39rem] leading-relaxed"
-                style={{
-                  color: currentColors.testimony,
-                  fontSize: currentFontSizes.testimony,
-                  marginTop: currentSpacing.testimonyTop,
-                  marginBottom: currentSpacing.testimonyBottom,
-                }}
-              >
-                {item.quote}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-
-          {hasMultipleItems && (
-            <div className="mb-5 flex flex-wrap items-center gap-3" role="group" aria-label="Project showcase controls">
-              <HalomotButton
-                inscription={currentInscriptions.previousButton}
-                onClick={handlePrevious}
-                gradient={halomotButtonGradient}
-                backgroundColor={halomotButtonBackground}
-                textColor={halomotButtonTextColor}
-                hoverTextColor={halomotButtonHoverTextColor}
-                outerBorderRadius={halomotButtonOuterBorderRadius}
-                innerBorderRadius={halomotButtonInnerBorderRadius}
-                padding="0.7rem 1rem"
-              />
-              <HalomotButton
-                inscription={currentInscriptions.nextButton}
-                onClick={handleNext}
-                gradient={halomotButtonGradient}
-                backgroundColor={halomotButtonBackground}
-                textColor={halomotButtonTextColor}
-                hoverTextColor={halomotButtonHoverTextColor}
-                outerBorderRadius={halomotButtonOuterBorderRadius}
-                innerBorderRadius={halomotButtonInnerBorderRadius}
-                padding="0.7rem 1rem"
-              />
-              {autoplay && (
-                <button
-                  type="button"
-                  className="min-h-[44px] rounded-lg px-3 text-sm font-semibold text-slate-300 underline decoration-slate-500 underline-offset-4 transition-colors duration-150 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
-                  onClick={() => setIsPaused((current) => !current)}
-                >
-                  {isPaused ? "Resume rotation" : "Pause rotation"}
-                </button>
+      <div
+        className="relative"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Civic Innovation Lab projects"
+      >
+        <div
+          ref={trackRef}
+          className={cn(
+            "project-showcase-track flex gap-4",
+            fitsTwoUp && "project-showcase-track--fit",
+            !fitsTwoUp && "lg:gap-5",
+          )}
+        >
+          {testimonials.map((item, index) => (
+            <article
+              key={item.name}
+              ref={(node) => {
+                cardRefs.current[index] = node;
+              }}
+              data-project-card
+              aria-label={`${item.name}, ${index + 1} of ${itemCount}`}
+              aria-current={active === index ? "true" : undefined}
+              className={cn(
+                "project-showcase-card flex h-full min-w-[85%] snap-start snap-always flex-col overflow-hidden rounded-2xl bg-navy-900/55",
+                fitsTwoUp ? "lg:min-w-0" : "lg:min-w-[calc(50%-0.625rem)]",
               )}
-              <span className="ms-auto text-sm tabular-nums text-slate-500" aria-hidden="true">
-                {String(active + 1).padStart(2, "0")} / {String(itemCount).padStart(2, "0")}
-              </span>
-            </div>
-          )}
+            >
+              <figure className="project-showcase-image-container relative aspect-[16/10] w-full overflow-hidden">
+                <img
+                  src={item.src}
+                  alt={item.imageAlt ?? `${item.name} project preview`}
+                  width={item.imageWidth ?? 1600}
+                  height={item.imageHeight ?? 1000}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  className={cn(
+                    "project-showcase-image h-full w-full object-cover",
+                    item.imageObjectPosition === "top" ? "object-top" : "object-center",
+                  )}
+                />
+                {item.imageCredit && item.imageCreditLink && (
+                  <figcaption className="absolute bottom-3 right-3 text-[0.65rem] text-slate-300">
+                    <a
+                      href={item.imageCreditLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block min-h-[24px] rounded-md bg-navy-950/75 px-2.5 py-1.5 underline decoration-slate-500 underline-offset-2 backdrop-blur-md transition-colors duration-150 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
+                    >
+                      {item.imageCredit}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </figcaption>
+                )}
+              </figure>
 
-          {item.link && (
-            <div className="mt-auto pt-2">
-              <HalomotButton
-                inscription={item.ctaLabel ?? currentInscriptions.openWebAppButton}
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => onItemClick?.(item.link ?? "")}
-                fillWidth
-                gradient={halomotButtonGradient}
-                backgroundColor={halomotButtonBackground}
-                textColor={halomotButtonTextColor}
-                hoverTextColor={halomotButtonHoverTextColor}
-                outerBorderRadius={halomotButtonOuterBorderRadius}
-                innerBorderRadius={halomotButtonInnerBorderRadius}
-              />
-            </div>
-          )}
+              <div className="flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6">
+                <div className="mb-4 flex flex-wrap items-center gap-3">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-200">
+                    <span className="project-showcase-status-dot h-1.5 w-1.5 rounded-full" aria-hidden="true" />
+                    Live lab project
+                  </span>
+                  {item.kicker && (
+                    <span className="text-xs font-medium uppercase tracking-[0.14em] text-slate-300">
+                      {item.kicker}
+                    </span>
+                  )}
+                </div>
+
+                <h3
+                  className="font-display font-semibold leading-none tracking-wide text-balance"
+                  style={{
+                    color: "var(--project-showcase-name-color)",
+                    fontSize: "var(--project-showcase-name-size)",
+                    marginBottom: "var(--project-showcase-name-bottom)",
+                  }}
+                  translate="no"
+                >
+                  {item.name}
+                </h3>
+                <p
+                  className="font-semibold"
+                  style={{
+                    color: "var(--project-showcase-position-color)",
+                    fontSize: "var(--project-showcase-position-size)",
+                  }}
+                >
+                  {item.designation}
+                </p>
+                <p
+                  className="mt-4 max-w-[39rem] text-pretty leading-relaxed"
+                  style={{
+                    color: "var(--project-showcase-testimony-color)",
+                    fontSize: "var(--project-showcase-testimony-size)",
+                    lineHeight: "var(--project-showcase-line-height)",
+                  }}
+                >
+                  {item.quote}
+                </p>
+
+                {item.link && (
+                  <div className="mt-auto pt-6">
+                    <HalomotButton
+                      inscription={item.ctaLabel ?? currentInscriptions.openWebAppButton}
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => onItemClick?.(item.link ?? "")}
+                      fillWidth
+                      gradient={halomotButtonGradient}
+                      backgroundColor={halomotButtonBackground}
+                      textColor={halomotButtonTextColor}
+                      hoverTextColor={halomotButtonHoverTextColor}
+                      outerBorderRadius={halomotButtonOuterBorderRadius}
+                      innerBorderRadius={halomotButtonInnerBorderRadius}
+                    />
+                  </div>
+                )}
+              </div>
+            </article>
+          ))}
         </div>
+
+        {hasMultipleItems && (
+          <div
+            className={cn(
+              "pointer-events-none absolute inset-x-0 top-0 z-10 flex aspect-[16/10] w-[85%] items-center justify-between px-2",
+              fitsTwoUp && "lg:hidden",
+            )}
+          >
+            <button
+              type="button"
+              className="project-showcase-control pointer-events-auto"
+              aria-label={currentInscriptions.previousButton}
+              onClick={handlePrevious}
+            >
+              <Chevron direction="prev" />
+            </button>
+            <button
+              type="button"
+              className="project-showcase-control pointer-events-auto"
+              aria-label={currentInscriptions.nextButton}
+              onClick={handleNext}
+            >
+              <Chevron direction="next" />
+            </button>
+            <div
+              className="pointer-events-auto absolute inset-x-0 bottom-3 mx-auto flex w-max items-center justify-center gap-2 rounded-full bg-navy-950/55 px-2.5 py-1.5 backdrop-blur-md"
+              role="group"
+              aria-label="Choose a project"
+            >
+              {testimonials.map((item, index) => (
+                <button
+                  key={item.name}
+                  type="button"
+                  aria-label={`Show ${item.name}`}
+                  aria-current={active === index ? "true" : undefined}
+                  className={cn(
+                    "project-showcase-dot",
+                    active === index && "project-showcase-dot--active",
+                  )}
+                  onClick={() => {
+                    setActive(index);
+                    scrollToIndex(index);
+                  }}
+                />
+              ))}
+            </div>
+            <span className="sr-only" aria-live="polite">
+              {`${testimonials[active]?.name ?? ""}, ${active + 1} of ${itemCount}`}
+            </span>
+          </div>
+        )}
       </div>
     </div>
-  );
-}
-
-type ImageContainerProps = {
-  item: ProjectShowcaseItem;
-  outerRounding: string;
-  innerRounding: string;
-  outlineColor: string;
-  hoverOutlineColor: string;
-};
-
-type ImageContainerStyle = CSSProperties & {
-  "--project-outline": string;
-  "--project-outline-hover": string;
-};
-
-function ImageContainer({
-  item,
-  outerRounding,
-  innerRounding,
-  outlineColor,
-  hoverOutlineColor,
-}: ImageContainerProps) {
-  const style: ImageContainerStyle = {
-    borderRadius: outerRounding,
-    "--project-outline": outlineColor,
-    "--project-outline-hover": hoverOutlineColor,
-  };
-
-  return (
-    <figure className="project-showcase-image-container relative h-full w-full p-px" style={style}>
-      <div className="relative h-full w-full overflow-hidden" style={{ borderRadius: innerRounding }}>
-        <img
-          src={item.src}
-          alt={item.imageAlt ?? `${item.name} project preview`}
-          width={item.imageWidth ?? 1600}
-          height={item.imageHeight ?? 1000}
-          loading="lazy"
-          decoding="async"
-          draggable={false}
-          className={`project-showcase-image h-full w-full object-cover ${
-            item.imageObjectPosition === "top" ? "object-top" : "object-center"
-          }`}
-        />
-      </div>
-      {item.imageCredit && item.imageCreditLink && (
-        <figcaption className="absolute bottom-3 right-3 text-[0.65rem] text-slate-300 sm:bottom-4 sm:right-4">
-          <a
-            href={item.imageCreditLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block min-h-[24px] rounded-md bg-navy-950/75 px-2.5 py-1.5 underline decoration-slate-500 underline-offset-2 backdrop-blur-md transition-colors duration-150 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
-          >
-            {item.imageCredit}
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
-        </figcaption>
-      )}
-    </figure>
   );
 }
 
