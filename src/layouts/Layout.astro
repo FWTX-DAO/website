@@ -164,6 +164,12 @@ const webSiteSchema = {
       url: "https://talent.fwtx.city",
       description: "Profiles and connections for local builders, employers, and technology opportunities.",
     },
+    {
+      "@type": "WebSite",
+      name: "North Texas Civic Intelligence",
+      url: "https://990-g2.ntx.labs.fwtx.city/login",
+      description: "Knowledge graph of IRS Form 990 filings and tax-exempt organizations.",
+    },
   ],
 };
 
@@ -264,7 +270,7 @@ const webPageSchema = {
 
     <slot name="head" />
   </head>
-  <body class="bg-navy-950 min-h-screen text-gray-100 antialiased pt-20">
+  <body class="bg-navy-950 min-h-screen text-gray-100 antialiased pt-[7.5rem]">
     <!-- Skip navigation -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-blue-500 focus:text-white focus:font-semibold">Skip to content</a>
 
@@ -299,6 +305,7 @@ const webPageSchema = {
       html {
         color-scheme: dark;
         scroll-behavior: smooth;
+        scroll-padding-top: 7.5rem;
       }
 
       h1, h2, h3, h4, h5, h6 {

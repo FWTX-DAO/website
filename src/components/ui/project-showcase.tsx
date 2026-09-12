@@ -15,6 +15,9 @@ export type ProjectShowcaseItem = {
   imageHeight?: number;
   imageCredit?: string;
   imageCreditLink?: string;
+  kicker?: string;
+  ctaLabel?: string;
+  imageObjectPosition?: "center" | "top";
 };
 
 type ProjectShowcaseProps = {
@@ -193,9 +196,11 @@ export function ProjectShowcase({
               <span className="project-showcase-status-dot h-1.5 w-1.5 rounded-full" aria-hidden="true" />
               Live lab project
             </span>
-            <span className="text-xs font-medium uppercase tracking-[0.14em] text-slate-300">
-              Statewide civic intelligence
-            </span>
+            {item.kicker && (
+              <span className="text-xs font-medium uppercase tracking-[0.14em] text-slate-300">
+                {item.kicker}
+              </span>
+            )}
           </div>
 
           <AnimatePresence initial={false} mode="wait">
@@ -286,7 +291,7 @@ export function ProjectShowcase({
           {item.link && (
             <div className="mt-auto pt-2">
               <HalomotButton
-                inscription={currentInscriptions.openWebAppButton}
+                inscription={item.ctaLabel ?? currentInscriptions.openWebAppButton}
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -344,7 +349,9 @@ function ImageContainer({
           loading="lazy"
           decoding="async"
           draggable={false}
-          className="project-showcase-image h-full w-full object-cover object-center"
+          className={`project-showcase-image h-full w-full object-cover ${
+            item.imageObjectPosition === "top" ? "object-top" : "object-center"
+          }`}
         />
       </div>
       {item.imageCredit && item.imageCreditLink && (

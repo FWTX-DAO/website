@@ -1,0 +1,36 @@
+---
+import hackfwBanner from "../assets/hackfw-made-challenge.png";
+---
+
+<a
+  href="https://hack.fwtx.city/"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="hackfw-header-banner group relative flex min-h-[44px] items-center border-b border-white/[0.06] bg-black/25 text-slate-300 transition-colors duration-150 ease-out hover:bg-black/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-400">
+  <span
+    class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-400/40 to-transparent"
+    aria-hidden="true"></span>
+  <span class="mx-auto flex w-full max-w-screen-xl items-center gap-3 px-5 py-2">
+    <img
+      src={hackfwBanner.src}
+      alt=""
+      width={hackfwBanner.width}
+      height={hackfwBanner.height}
+      loading="eager"
+      decoding="async"
+      class="hidden h-8 w-auto shrink-0 rounded-sm outline outline-1 -outline-offset-1 outline-white/10 sm:block"
+    />
+    <span class="min-w-0 flex-1 text-sm leading-tight text-pretty">
+      <span class="font-medium text-slate-200 group-hover:text-white">HackFW MADE Challenge</span>
+      <span class="hidden text-slate-500 sm:inline"> · </span>
+      <span class="hidden tabular-nums text-slate-400 sm:inline">October 1–30, 2026</span>
+      <span class="sr-only">. Opens the event website in a new tab.</span>
+    </span>
+    <span class="inline-flex shrink-0 items-center gap-1 text-xs font-semibold tracking-wide text-slate-400 transition-colors duration-150 ease-out group-hover:text-blue-300">
+      Event site
+      <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M8 7h9v9"></path>
+      </svg>
+    </span>
+  </span>
+</a>
