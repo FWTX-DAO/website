@@ -169,7 +169,7 @@ export function ProjectShowcase({
       }}
     >
       <div className="relative grid items-stretch gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(18rem,0.88fr)] lg:gap-12">
-        <div className="relative min-w-0" style={{ aspectRatio: imageAspectRatio }}>
+        <div className="relative min-w-0 w-full max-w-full overflow-hidden" style={{ aspectRatio: imageAspectRatio }}>
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={item.src}
