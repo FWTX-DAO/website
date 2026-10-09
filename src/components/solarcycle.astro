@@ -25,7 +25,7 @@ const icons: Record<string, string> = {
 };
 
 // The poster is the server-rendered first frame: it uses the same camera
-// math as the WebGL scene, so labels don't jump when three.js takes over.
+// math as the WebGL scene, so nothing jumps when three.js takes over.
 const VIEW_W = 500;
 const VIEW_H = VIEW_W / SOLAR.aspect;
 const toView = (p: { x: number; y: number }) => ({ x: (p.x / 100) * VIEW_W, y: (p.y / 100) * VIEW_H });
@@ -88,53 +88,33 @@ const sunFrame = projectToFrame([0, 0, 0]);
 const sunRadius = projectedRadius(SOLAR.sunRadius, sunFrame.depth);
 const sun = { ...toView(sunFrame), r: (sunRadius / 100) * VIEW_H };
 
-const planets = PILLARS.map((pillar, index) => {
+const planets = PILLARS.map((pillar) => {
   const frame = projectToFrame(orbitPoint(pillar.angle));
   const [fx, , fz] = orbitPoint(pillar.angle);
   const radius = projectedRadius(SOLAR.planetRadius, frame.depth);
   const gap = radius * SOLAR.labelGap + 1;
   return {
     ...pillar,
-    index,
     icon: icons[pillar.id],
-    view: { ...toView(frame), r: (radius / 100) * VIEW_H },
-    foot: { ring: ringPath(0.16, MAP.y, [fx, fz], 32), base: ground(fx, fz), top: toView(projectToFrame([fx, -SOLAR.planetRadius * 1.9, fz])) },
     left: frame.x,
     top: pillar.labelSide === "above" ? frame.y - gap : frame.y + gap,
+    view: { ...toView(frame), r: (radius / 100) * VIEW_H },
+    foot: { ring: ringPath(0.16, MAP.y, [fx, fz], 32), base: ground(fx, fz), top: toView(projectToFrame([fx, -SOLAR.planetRadius * 1.9, fz])) },
   };
 });
-
-const first = PILLARS[0];
 ---
 
-<figure
-  class="solar-cycle relative w-full overflow-hidden rounded-2xl border border-blue-500/15"
-  style={`--active: ${first.color}`}
-  data-solar-cycle
-  aria-labelledby="solar-cycle-title"
-  aria-describedby="solar-cycle-summary">
-  <span class="pointer-events-none absolute left-0 top-0 h-6 w-6 rounded-tl-2xl border-l-2 border-t-2 border-blue-400/30" aria-hidden="true"></span>
-  <span class="pointer-events-none absolute right-0 top-0 h-6 w-6 rounded-tr-2xl border-r-2 border-t-2 border-blue-400/30" aria-hidden="true"></span>
-  <span class="pointer-events-none absolute bottom-0 left-0 h-6 w-6 rounded-bl-2xl border-b-2 border-l-2 border-blue-400/30" aria-hidden="true"></span>
-  <span class="pointer-events-none absolute bottom-0 right-0 h-6 w-6 rounded-br-2xl border-b-2 border-r-2 border-blue-400/30" aria-hidden="true"></span>
+<figure class="solar-cycle relative w-full" data-solar-cycle>
+  <figcaption class="sr-only">
+    {CORE.title} sits at the center and powers four pillars that strengthen one another in a loop, rooted over a
+    map of North Texas counties centered on Tarrant County.
+    <ul>
+      {PILLARS.map((p) => <li>{p.title}: {p.description}</li>)}
+      <li>{GROUND.title}: {GROUND.description}</li>
+    </ul>
+  </figcaption>
 
-  <div class="flex items-center justify-between gap-4 px-4 pt-4 sm:px-5">
-    <p id="solar-cycle-title" class="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 sm:text-[11px]">
-      Foundations of <span class="max-[399px]:sr-only">Decentralized </span>Governance
-    </p>
-    <span class="hidden items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-frontier-amber/80 sm:inline-flex" aria-hidden="true">
-      <Icon name="mdi:sync" class="solar-spin h-3.5 w-3.5" />
-      Virtuous cycle
-    </span>
-  </div>
-  <p id="solar-cycle-summary" class="sr-only">
-    {CORE.title} sits at the center and powers four pillars that strengthen one another in a loop:
-    {PILLARS.map((p) => p.title).join(", then ")}, which feeds back into {first.title}. The system is rooted over a
-    map of North Texas counties centered on Tarrant County, where a {GROUND.title.toLowerCase()} of builders, meetups,
-    and labs links up peer to peer and feeds every pillar from the ground up.
-  </p>
-
-  <div class="solar-stage relative w-full" style={`aspect-ratio: ${SOLAR.aspect}`} data-stage>
+  <div class="solar-stage relative w-full" style={`aspect-ratio: ${SOLAR.aspect}`} data-stage aria-hidden="true">
     <svg class="solar-poster absolute inset-0 h-full w-full" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} aria-hidden="true">
       <defs>
         <radialGradient id="solar-sun" cx="42%" cy="38%" r="62%">
@@ -219,92 +199,43 @@ const first = PILLARS[0];
         </g>
       ))}
     </svg>
-    <canvas class="solar-canvas absolute inset-0 h-full w-full" data-canvas aria-hidden="true"></canvas>
-
-    <ul class="contents" role="list" aria-label="Governance pillars">
-      {planets.map((p) => (
-        <li
-          class:list={["solar-label absolute -translate-x-1/2", p.labelSide === "above" && "-translate-y-full"]}
-          style={`left: ${p.left.toFixed(2)}%; top: ${p.top.toFixed(2)}%`}
-          data-label>
-          <button
-            type="button"
-            class="solar-chip inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border bg-navy-950/80 py-1 pl-2.5 pr-2.5 text-[10px] sm:pl-1 font-semibold text-slate-300 transition-[border-color,color,box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 sm:text-xs"
-            style={`--pillar: ${p.color}`}
-            data-pillar={p.index}
-            data-active={p.index === 0 ? "" : undefined}>
-            <span class="solar-dot hidden h-5 w-5 items-center justify-center rounded-full sm:flex" aria-hidden="true">
-              <Icon name={p.icon} class="h-3 w-3" />
-            </span>
-            <span class="sm:hidden">{p.short}</span>
-            <span class="hidden sm:inline">{p.title}</span>
-            <span class="sr-only">: {p.description}</span>
-          </button>
-        </li>
-      ))}
-      <li
-        class="solar-label absolute -translate-x-1/2"
-        style={`left: 50%; top: ${(sunFrame.y + sunRadius + 1.5).toFixed(2)}%`}
-        data-core-label>
-        <button
-          type="button"
-          class="solar-core whitespace-nowrap rounded-md bg-navy-950/60 px-2 py-0.5 font-display text-sm leading-none tracking-wide text-amber-100 transition-[color,text-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 sm:text-base"
-          data-pillar="-1">
-          {CORE.title}
-          <span class="sr-only">: {CORE.description}</span>
-        </button>
-      </li>
-      <li class="absolute bottom-2 right-3 sm:bottom-2.5 sm:right-4">
-        <button
-          type="button"
-          class="solar-chip inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border bg-navy-950/80 py-1 pl-2.5 pr-2.5 text-[10px] sm:pl-1 font-semibold text-slate-300 transition-[border-color,color,box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 sm:text-xs"
-          style={`--pillar: ${GROUND.color}`}
-          data-pillar="-2">
-          <span class="solar-dot hidden h-5 w-5 items-center justify-center rounded-full sm:flex" aria-hidden="true">
-            <Icon name="mdi:sprout-outline" class="h-3 w-3" />
-          </span>
-          {GROUND.title}
-          <span class="sr-only">: {GROUND.description}</span>
-        </button>
-      </li>
-    </ul>
-
-    <p class="pointer-events-none absolute bottom-3.5 left-3 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-500 sm:bottom-4 sm:left-4 sm:text-[10px]" aria-hidden="true">
-      Tarrant County<span class="hidden sm:inline"> · North Texas · {MAP.coordinates}</span>
-    </p>
-  </div>
-
-  <div class="border-t border-blue-500/10 px-4 pb-4 pt-3 sm:px-5" aria-hidden="true">
-    <div class="flex items-center justify-between gap-3">
-      <p class="solar-caption-title flex flex-col gap-0.5 font-mono sm:flex-row sm:items-center sm:gap-2 text-[10px] uppercase tracking-[0.18em] sm:text-[11px]">
-        <span data-caption-step>01 / 0{PILLARS.length}</span>
-        <span class="hidden text-slate-600 sm:inline">·</span>
-        <span class="whitespace-nowrap" data-caption-title>{first.title}</span>
-      </p>
-      <div class="flex shrink-0 items-center gap-1.5">
-        {PILLARS.map((p, i) => (
-          <span class="solar-step h-1.5 w-1.5 rounded-full" style={`--pillar: ${p.color}`} data-step={i} data-active={i === 0 ? "" : undefined}></span>
-        ))}
-      </div>
-    </div>
-    <p class="mt-1.5 min-h-[2.5rem] text-sm leading-snug text-slate-300 sm:min-h-0" data-caption-text>{first.description}</p>
-    <p class="mt-1 flex items-center gap-1 text-xs text-slate-500">
-      <Icon name="mdi:rotate-right" class="h-3.5 w-3.5" />
-      <span data-caption-next>Feeds {PILLARS[1].title}</span>
-    </p>
+    <canvas class="solar-canvas absolute inset-0 h-full w-full" data-canvas></canvas>
+    {planets.map((p, i) => (
+      <span
+        class:list={[
+          "solar-label solar-chip pointer-events-none absolute inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border bg-navy-950/80 py-1 pl-2.5 pr-2.5 text-[10px] font-semibold text-slate-300 transition-[border-color,color,box-shadow] duration-300 ease-out sm:pl-1 sm:text-xs",
+          p.labelSide === "above" && "-translate-y-full",
+        ]}
+        style={`left: ${p.left.toFixed(2)}%; top: ${p.top.toFixed(2)}%; --pillar: ${p.color}`}
+        data-label
+        data-active={i === 0 ? "" : undefined}>
+        <span class="solar-dot hidden h-5 w-5 items-center justify-center rounded-full sm:flex">
+          <Icon name={p.icon} class="h-3 w-3" />
+        </span>
+        <span class="sm:hidden">{p.short}</span>
+        <span class="hidden sm:inline">{p.title}</span>
+      </span>
+    ))}
+    <span
+      class="solar-label solar-core-label pointer-events-none absolute -translate-x-1/2 whitespace-nowrap rounded-md bg-navy-950/60 px-2 py-0.5 font-display text-sm leading-none tracking-wide text-amber-100 sm:text-base"
+      style={`left: 50%; top: ${(sunFrame.y + sunRadius + 1.5).toFixed(2)}%`}
+      data-core-label>
+      {CORE.title}
+    </span>
   </div>
 </figure>
 
 <style>
-  .solar-cycle {
-    background:
-      radial-gradient(ellipse 55% 45% at 50% 52%, rgba(251, 191, 36, 0.08), transparent 70%),
-      radial-gradient(ellipse 80% 60% at 50% 60%, rgba(59, 130, 246, 0.07), transparent 75%),
-      rgba(10, 15, 28, 0.78);
+  /* No frame: a soft backdrop keeps the page pattern out of the map, and
+     the scene (not its labels) fades into the page at its edges. */
+  .solar-stage {
+    background: radial-gradient(ellipse 50% 46% at 50% 54%, rgba(10, 15, 28, 0.9) 45%, transparent 100%);
   }
 
   .solar-poster,
   .solar-canvas {
+    -webkit-mask-image: radial-gradient(ellipse 52% 52% at 50% 50%, #000 78%, transparent 100%);
+    mask-image: radial-gradient(ellipse 52% 52% at 50% 50%, #000 78%, transparent 100%);
     transition: opacity 0.8s ease-out;
   }
 
@@ -330,25 +261,6 @@ const first = PILLARS[0];
     border-color: rgba(148, 163, 184, 0.18);
   }
 
-  /* Labels stay compact but get finger-sized hit areas, without the gray
-     tap flash on iOS since they have their own active state. */
-  .solar-chip,
-  .solar-core {
-    position: relative;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .solar-chip::before,
-  .solar-core::before {
-    content: "";
-    position: absolute;
-    inset: -10px -4px;
-  }
-
-  .solar-core::before {
-    inset: -13px -4px;
-  }
-
   .solar-chip[data-active] {
     border-color: var(--pillar);
     color: #fff;
@@ -360,49 +272,17 @@ const first = PILLARS[0];
     color: var(--pillar);
   }
 
-  .solar-core[data-active] {
+  .solar-core-label {
+    transition: color 0.3s ease-out, text-shadow 0.3s ease-out;
+  }
+
+  .solar-core-label[data-active] {
     color: #fff;
     text-shadow: 0 0 14px rgba(251, 191, 36, 0.8);
-  }
-
-  .solar-caption-title {
-    color: var(--active);
-    transition: color 0.3s ease-out;
-  }
-
-  .solar-step {
-    background: rgba(148, 163, 184, 0.25);
-    transition: background-color 0.3s ease-out, transform 0.3s ease-out;
-  }
-
-  .solar-step[data-active] {
-    background: var(--pillar);
-    transform: scale(1.35);
-  }
-
-  @media (hover: hover) {
-    .solar-chip:hover {
-      color: #fff;
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .solar-spin {
-      animation: solar-spin 8s linear infinite;
-    }
-  }
-
-  @keyframes solar-spin {
-    to {
-      transform: rotate(360deg);
-    }
   }
 </style>
 
 <script>
-  import { CORE, GROUND, PILLARS, SOLAR } from "@lib/solar-cycle";
-  import type { SolarCycle } from "../scripts/solar-cycle-scene";
-
   for (const root of document.querySelectorAll<HTMLElement>("[data-solar-cycle]")) init(root);
 
   function init(root: HTMLElement) {
@@ -410,86 +290,25 @@ const first = PILLARS[0];
     const canvas = root.querySelector<HTMLCanvasElement>("[data-canvas]")!;
     const labels = [...root.querySelectorAll<HTMLElement>("[data-label]")];
     const coreLabel = root.querySelector<HTMLElement>("[data-core-label]")!;
-    const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-pillar]")];
-    const steps = [...root.querySelectorAll<HTMLElement>("[data-step]")];
-    const stepEl = root.querySelector("[data-caption-step]")!;
-    const titleEl = root.querySelector("[data-caption-title]")!;
-    const textEl = root.querySelector("[data-caption-text]")!;
-    const nextEl = root.querySelector("[data-caption-next]")!;
-    const total = String(PILLARS.length).padStart(2, "0");
-
-    let scene: SolarCycle | null = null;
-    let locked: number | null = null;
-
-    // -1 is the core and -2 the grassroots ground; anything else is a pillar.
-    const captions: Record<number, { step: string; next: string; color: string; title: string; description: string }> = {
-      [-1]: { ...CORE, step: "Core", next: "Powers all four pillars", color: SOLAR.sunColor },
-      [-2]: { ...GROUND, step: "Roots", next: "Feeds every pillar from the ground up" },
-    };
-    const setActive = (index: number) => {
-      const item = captions[index] ?? {
-        ...PILLARS[index],
-        step: `${String(index + 1).padStart(2, "0")} / ${total}`,
-        next: `Feeds ${PILLARS[(index + 1) % PILLARS.length].title}`,
-      };
-      root.style.setProperty("--active", item.color);
-      stepEl.textContent = item.step;
-      titleEl.textContent = item.title;
-      textEl.textContent = item.description;
-      nextEl.textContent = item.next;
-      buttons.forEach((b) => b.toggleAttribute("data-active", Number(b.dataset.pillar) === index));
-      steps.forEach((s, i) => s.toggleAttribute("data-active", i === index));
-    };
-
-    // Without the WebGL scene, interactions still update the caption.
-    const show = (index: number | null) => {
-      if (scene) scene.setPinned(index);
-      else if (index !== null) setActive(index);
-    };
-
-    const select = (index: number | null) => {
-      locked = index === null || locked === index ? null : index;
-      show(locked);
-    };
-
-    for (const button of buttons) {
-      const index = Number(button.dataset.pillar);
-      button.addEventListener("pointerenter", (e) => e.pointerType === "mouse" && show(index));
-      button.addEventListener("pointerleave", (e) => e.pointerType === "mouse" && show(locked));
-      button.addEventListener("click", (e) => {
-        locked = locked === index ? null : index;
-        // A mouse is still hovering the label, so keep showing it.
-        show(locked ?? ((e as PointerEvent).pointerType === "mouse" ? index : null));
-      });
-      button.addEventListener("focus", () => {
-        if (!button.matches(":focus-visible")) return;
-        locked = index;
-        show(index);
-      });
-      button.addEventListener("blur", () => {
-        if (locked !== index) return;
-        locked = null;
-        show(null);
-      });
-    }
 
     const load = async () => {
       // Data Saver keeps the static poster instead of downloading three.js.
       if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return;
       try {
         const { mountSolarCycle } = await import("../scripts/solar-cycle-scene");
-        scene = mountSolarCycle({
+        const scene = mountSolarCycle({
           stage,
           canvas,
           labels,
           coreLabel,
           reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
-          onActiveChange: setActive,
-          onSelect: select,
+          // Light up the label of whichever pillar the cycle is on.
+          onActiveChange: (index) => {
+            labels.forEach((label, i) => label.toggleAttribute("data-active", i === index));
+            coreLabel.toggleAttribute("data-active", index === -1);
+          },
         });
-        if (!scene) return;
-        if (locked !== null) scene.setPinned(locked);
-        stage.dataset.webgl = "ready";
+        if (scene) stage.dataset.webgl = "ready";
       } catch (error) {
         console.warn("Solar cycle visual unavailable:", error);
       }

@@ -65,18 +65,15 @@ const CYCLE = LEG * PILLARS.length;
 export interface SolarCycleOptions {
   stage: HTMLElement;
   canvas: HTMLCanvasElement;
+  /** One floating label per pillar, in PILLARS order. */
   labels: HTMLElement[];
   coreLabel: HTMLElement;
   reducedMotion: boolean;
-  /** A pillar index, -1 for the core, or -2 for the grassroots ground. */
-  onActiveChange: (index: number) => void;
-  /** A planet (or the core, -1) was clicked or tapped on the canvas; null for empty space. */
-  onSelect: (index: number | null) => void;
+  /** The pillar the cycle (or a hovered planet) is on; -1 for the core. */
+  onActiveChange?: (index: number) => void;
 }
 
 export interface SolarCycle {
-  /** Holds the cycle on a pillar (-1 for the core, -2 for the ground); null resumes it. */
-  setPinned(index: number | null): void;
   dispose(): void;
 }
 
@@ -548,7 +545,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     mesh.position.set(x, 0.01, z);
     region.add(mesh);
     // `shown` fades the name out while a pillar label covers it.
-    return [{ mesh, material: mesh.material as MeshBasicMaterial, opacity, isTarrant: county.isTarrant, shown: 1 }];
+    return [{ mesh, material: mesh.material as MeshBasicMaterial, opacity, shown: 1 }];
   });
 
   const nodeColor = (node: MapNode) => new Color(node.pillar < 0 ? GROUND.color : PILLARS[node.pillar].color);
@@ -568,8 +565,8 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   );
   region.add(new LineSegments(linkGeometry, linkMaterial));
 
-  // Node glow by channel: pillars 0-3, the downtown root, then the whole ground.
-  const nodeGlow = { value: [0, 0, 0, 0, 0, 0] };
+  // Node glow by channel: pillars 0-3, then the Fort Worth root.
+  const nodeGlow = { value: [0, 0, 0, 0, 0] };
   const nodeMaterial = track(
     new ShaderMaterial({
       uniforms: { ...pointUniforms, uOpacity: { value: 1 }, uTime: { value: 0 }, uGlow: nodeGlow },
@@ -582,13 +579,13 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
         uniform float uPixelRatio;
         uniform float uScale;
         uniform float uTime;
-        uniform float uGlow[6];
+        uniform float uGlow[5];
         varying vec3 vColor;
         varying float vAlpha;
         void main() {
           vec4 mv = modelViewMatrix * vec4(position, 1.0);
           gl_Position = projectionMatrix * mv;
-          float glow = max(uGlow[int(aChannel)], uGlow[5]);
+          float glow = uGlow[int(aChannel)];
           float twinkle = 0.85 + 0.15 * sin(uTime * 1.6 + aSeed * 40.0);
           vColor = aColor;
           vAlpha = (0.55 + 0.6 * glow) * twinkle * aFade;
@@ -969,20 +966,17 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   // --- State ---------------------------------------------------------------
   let width = 0;
   let height = 0;
+  let time = 0;
+  let flowOffset = 0;
+  let cycleTime = DWELL * 0.5;
+  let hovered: number | null = null;
+  let lastArrival = -1;
+  let displayed: number | null = null;
   let labelWidths: number[] = labels.map(() => 0);
   let labelHeights: number[] = labels.map(() => 0);
   const labelRects = labels.map(() => ({ left: 0, right: 0, top: 0, bottom: 0 }));
   const countyProjected = { x: 0, y: 0, r: 0 };
-  let time = 0;
-  let flowOffset = 0;
-  let cycleTime = DWELL * 0.5;
-  let pinned: number | null = null;
-  let hovered: number | null = null;
-  let displayed: number | null = null;
-  let lastArrival = -1;
   let coreActive = 0;
-  let groundActive = 0;
-  let groundWasActive = false;
   let nextSprout = 1.2;
   let nextAmbient = 2;
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
@@ -1102,7 +1096,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
 
   function update(dt: number) {
     time += dt;
-    const holding = pinned !== null || hovered !== null;
+    const holding = hovered !== null;
     if (!reducedMotion) {
       if (!holding) cycleTime = (cycleTime + dt) % CYCLE;
       flowOffset += dt * 0.12;
@@ -1131,8 +1125,11 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     system.updateMatrixWorld();
 
     const state = cycleState();
-    const focus = hovered ?? pinned;
-    const active = focus ?? state.leg;
+    const active = hovered ?? state.leg;
+    if (active !== displayed) {
+      displayed = active;
+      opts.onActiveChange?.(active);
+    }
     if (state.leg !== lastArrival && !holding) {
       lastArrival = state.leg;
       if (!reducedMotion) {
@@ -1140,19 +1137,10 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
         rippleQuadrant(state.leg);
       }
     }
-    if (active !== displayed) {
-      displayed = active;
-      opts.onActiveChange(active);
-    }
 
     sunMaterial.uniforms.uTime.value = time;
     const k = reducedMotion ? 1 : Math.min(1, dt * 6);
     coreActive += ((active === -1 ? 1 : 0) - coreActive) * k;
-    groundActive += ((active === -2 ? 1 : 0) - groundActive) * k;
-    if (active === -2 && !groundWasActive) {
-      NODES.forEach((node) => ripple(node.x, node.z, nodeColor(node), Math.hypot(node.x, node.z) * 0.14, 0.32, 0.8));
-    }
-    groundWasActive = active === -2;
     sunMaterial.uniforms.uBoost.value = coreActive;
     corona.material.opacity = 0.8 + Math.sin(time * 1.3) * 0.06 + coreActive * 0.15;
     coronaWide.scale.setScalar(SOLAR.sunRadius * (9 + Math.sin(time * 0.8) * 0.4 + coreActive * 1.5));
@@ -1191,25 +1179,19 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
       planet.foot.material.opacity = 0.35 + a * 0.45;
       nodeGlow.value[i] = Math.min(1, a + f * 0.5);
       packetGain.value[i] = 0.1 + a * 1.1 + f * 0.6;
-      packetGain.value[5 + i] = 0.4 + a * 0.6 + groundActive * 0.6;
+      packetGain.value[5 + i] = 0.4 + a * 0.6;
     });
 
-    // The city: brighter when the ground itself is in focus.
-    nodeGlow.value[4] = Math.max(coreActive, groundActive);
-    nodeGlow.value[5] = groundActive;
-    packetGain.value[4] = 0.55 + coreActive * 0.6 + groundActive * 0.5;
-    packetGain.value[9] = 0.5 + groundActive * 0.6 + coreActive * 0.3;
+    // Fort Worth and the trunk brighten with the core.
+    nodeGlow.value[4] = coreActive;
+    packetGain.value[4] = 0.55 + coreActive * 0.6;
+    packetGain.value[9] = 0.5 + coreActive * 0.3;
     nodeMaterial.uniforms.uTime.value = time;
     packetMaterial.uniforms.uTime.value = time;
     trunk.material.uniforms.uTime.value = time;
-    trunk.material.uniforms.uActive.value = Math.max(coreActive, groundActive);
+    trunk.material.uniforms.uActive.value = coreActive;
     tarrantEdge.material.uniforms.uTime.value = time;
-    tarrantEdge.material.uniforms.uActive.value = groundActive;
-    (tarrantFill.material as MeshBasicMaterial).opacity = 0.07 + groundActive * 0.08;
-    dotsMaterial.uniforms.uOpacity.value = 0.6 + groundActive * 0.35;
-    borderMaterial.opacity = 0.85 + groundActive * 0.15;
-    linkMaterial.opacity = 0.6 + groundActive * 0.4;
-    (rootRing.material as MeshBasicMaterial).opacity = 0.45 + Math.max(coreActive, groundActive) * 0.4;
+    (rootRing.material as MeshBasicMaterial).opacity = 0.45 + coreActive * 0.4;
     updateSprouts();
     updateRipples();
 
@@ -1225,7 +1207,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
         (r) => countyProjected.x > r.left && countyProjected.x < r.right && countyProjected.y > r.top && countyProjected.y < r.bottom,
       );
       label.shown += ((covered ? 0 : 1) - label.shown) * k;
-      label.material.opacity = (label.opacity + (label.isTarrant ? groundActive * 0.25 : 0)) * label.shown;
+      label.material.opacity = label.opacity * label.shown;
     }
   }
 
@@ -1297,7 +1279,6 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     pointer.ty = y;
     if (hit !== hovered) {
       hovered = hit;
-      stage.style.cursor = hit === null ? "" : "pointer";
       renderStill();
     }
   };
@@ -1306,16 +1287,11 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     pointer.ty = 0;
     if (hovered !== null) {
       hovered = null;
-      stage.style.cursor = "";
       renderStill();
     }
   };
-  const onClick = (event: MouseEvent) => {
-    opts.onSelect(hitTest(event as PointerEvent).hit);
-  };
   stage.addEventListener("pointermove", onPointerMove);
   stage.addEventListener("pointerleave", onPointerLeave);
-  canvas.addEventListener("click", onClick);
 
   const onContextLost = (event: Event) => {
     event.preventDefault();
@@ -1338,16 +1314,6 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   schedule();
 
   return {
-    setPinned(index) {
-      if (index !== null && index >= 0) cycleTime = index * LEG + DWELL * 0.5;
-      pinned = index;
-      if (index !== null && index >= 0) lastArrival = index;
-      if (!reducedMotion && index !== null && index >= 0) {
-        planets[index].flare = 1;
-        rippleQuadrant(index);
-      }
-      renderStill();
-    },
     dispose() {
       stop();
       resizeObserver.disconnect();
@@ -1355,7 +1321,6 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
       document.removeEventListener("visibilitychange", onVisibility);
       stage.removeEventListener("pointermove", onPointerMove);
       stage.removeEventListener("pointerleave", onPointerLeave);
-      canvas.removeEventListener("click", onClick);
       canvas.removeEventListener("webglcontextlost", onContextLost);
       canvas.removeEventListener("webglcontextrestored", onContextRestored);
       disposables.forEach((d) => d.dispose());
