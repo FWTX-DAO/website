@@ -5,6 +5,7 @@ import {
   Color,
   ColorManagement,
   DoubleSide,
+  DynamicDrawUsage,
   EdgesGeometry,
   Float32BufferAttribute,
   Group,
@@ -28,7 +29,22 @@ import {
   Vector3,
   WebGLRenderer,
 } from "three";
-import { PILLARS, SOLAR, orbitPoint } from "@lib/solar-cycle";
+import {
+  CITY,
+  GROUND,
+  GROUND_LABEL,
+  LINKS,
+  NODES,
+  PILLARS,
+  RIVER,
+  ROADS,
+  SOLAR,
+  groundFade,
+  orbitPoint,
+  smoothPath,
+  type CityNode,
+  type Vec3,
+} from "@lib/solar-cycle";
 
 // Colors are authored as CSS hex values and blended like CSS, so skip
 // three's linear workflow entirely.
@@ -46,14 +62,16 @@ export interface SolarCycleOptions {
   canvas: HTMLCanvasElement;
   labels: HTMLElement[];
   coreLabel: HTMLElement;
+  groundLabel: HTMLElement;
   reducedMotion: boolean;
+  /** A pillar index, -1 for the core, or -2 for the grassroots ground. */
   onActiveChange: (index: number) => void;
   /** A planet (or the core, -1) was clicked or tapped on the canvas. */
   onSelect: (index: number) => void;
 }
 
 export interface SolarCycle {
-  /** Holds the cycle on a pillar (or -1 for the core); null resumes it. */
+  /** Holds the cycle on a pillar (-1 for the core, -2 for the ground); null resumes it. */
   setPinned(index: number | null): void;
   dispose(): void;
 }
@@ -98,6 +116,26 @@ const SOFT_POINT_FRAGMENT = /* glsl */ `
   }
 `;
 
+// A crisp center dot inside a soft halo, for places on the map.
+const NODE_FRAGMENT = /* glsl */ `
+  uniform float uOpacity;
+  varying vec3 vColor;
+  varying float vAlpha;
+  void main() {
+    float d = length(gl_PointCoord - 0.5);
+    float halo = smoothstep(0.5, 0.0, d);
+    float core = smoothstep(0.15, 0.09, d);
+    gl_FragColor = vec4(mix(vColor, vec3(1.0), core * 0.55), (halo * halo * 0.6 + core) * vAlpha * uOpacity);
+  }
+`;
+
+const smoothstep = (a: number, b: number, x: number) => {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+
+const VEC3_ATTRIBUTES = new Set(["position", "aColor", "aFrom", "aTo"]);
+
 function glowTexture() {
   const size = 128;
   const canvas = document.createElement("canvas");
@@ -126,7 +164,7 @@ const lineMaterial = (color: string, opacity: number) =>
   new LineBasicMaterial({ color, transparent: true, opacity, blending: AdditiveBlending, depthWrite: false });
 
 export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
-  const { stage, canvas, labels, coreLabel, reducedMotion } = opts;
+  const { stage, canvas, labels, coreLabel, groundLabel, reducedMotion } = opts;
 
   let renderer: WebGLRenderer;
   try {
@@ -155,6 +193,93 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   const pointUniforms = {
     uPixelRatio: { value: renderer.getPixelRatio() },
     uScale: { value: 1 },
+  };
+
+  const geometryFrom = (attributes: Record<string, number[]>) => {
+    const geometry = track(new BufferGeometry());
+    for (const [name, values] of Object.entries(attributes)) {
+      geometry.setAttribute(name, new Float32BufferAttribute(values, VEC3_ATTRIBUTES.has(name) ? 3 : 1));
+    }
+    return geometry;
+  };
+
+  // A line with dashes travelling from its first point to its last. `ends`
+  // fades the line in and out over that fraction of its length.
+  const flowLine = (
+    points: Vector3[],
+    opts: {
+      colorA: string;
+      colorB?: string;
+      dashes?: number;
+      dashLength?: number;
+      speed?: number;
+      base?: number;
+      dash?: number;
+      boost?: number;
+      ends?: [number, number];
+      fade?: (p: Vector3) => number;
+    },
+  ) => {
+    const { colorA, colorB = colorA, speed = 0.45, base = 0.1, dash = 0.22, boost = 0.6, ends = [0.1, 0.14] } = opts;
+    const distances = [0];
+    for (let i = 1; i < points.length; i++) distances.push(distances[i - 1] + points[i].distanceTo(points[i - 1]));
+    const length = distances[distances.length - 1];
+    const dashes = opts.dashLength ? length / opts.dashLength : (opts.dashes ?? 5);
+    const geometry = track(new BufferGeometry()).setFromPoints(points);
+    geometry.setAttribute("aT", new Float32BufferAttribute(distances.map((d) => d / length), 1));
+    geometry.setAttribute("aFade", new Float32BufferAttribute(points.map((p) => opts.fade?.(p) ?? 1), 1));
+    const material = track(
+      new ShaderMaterial({
+        uniforms: {
+          uColorA: { value: new Color(colorA) },
+          uColorB: { value: new Color(colorB) },
+          uTime: { value: 0 },
+          uActive: { value: 0 },
+          uEnds: { value: ends },
+        },
+        vertexShader: /* glsl */ `
+          attribute float aT;
+          attribute float aFade;
+          varying float vT;
+          varying float vFade;
+          void main() {
+            vT = aT;
+            vFade = aFade;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: /* glsl */ `
+          uniform vec3 uColorA;
+          uniform vec3 uColorB;
+          uniform float uTime;
+          uniform float uActive;
+          uniform vec2 uEnds;
+          varying float vT;
+          varying float vFade;
+          void main() {
+            float f = fract(vT * ${dashes.toFixed(2)} - uTime * ${speed.toFixed(3)});
+            float d = smoothstep(0.0, 0.3, f) * (1.0 - smoothstep(0.3, 0.45, f));
+            float fadeIn = uEnds.x > 0.0 ? smoothstep(0.0, uEnds.x, vT) : 1.0;
+            float fadeOut = uEnds.y > 0.0 ? smoothstep(1.0, 1.0 - uEnds.y, vT) : 1.0;
+            float a = fadeIn * fadeOut * vFade * (${base.toFixed(3)} + d * (${dash.toFixed(3)} + uActive * ${boost.toFixed(3)}));
+            gl_FragColor = vec4(mix(uColorA, uColorB, vT), a);
+          }
+        `,
+        transparent: true,
+        depthWrite: false,
+        blending: AdditiveBlending,
+      }),
+    );
+    return { line: new Line(geometry, material), material };
+  };
+
+  const flatRing = (inner: number, outer: number, color: string, opacity: number) => {
+    const geometry = track(new RingGeometry(inner, outer, 64));
+    geometry.rotateX(-Math.PI / 2);
+    const material = track(
+      new MeshBasicMaterial({ color, transparent: true, opacity, side: DoubleSide, blending: AdditiveBlending, depthWrite: false }),
+    );
+    return new Mesh(geometry, material);
   };
 
   // --- Sun: Decentralized Governance -------------------------------------
@@ -228,7 +353,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   nodeGeometry.setAttribute("aSize", new Float32BufferAttribute(new Array(nodeCount).fill(0.09), 1));
   nodeGeometry.setAttribute("aColor", new Float32BufferAttribute(new Array(nodeCount).fill([1, 0.85, 0.45]).flat(), 3));
   nodeGeometry.setAttribute("aAlpha", new Float32BufferAttribute(new Array(nodeCount).fill(0.9), 1));
-  const softPointsMaterial = (opacity: number) =>
+  const softPointsMaterial = (opacity: number, fragmentShader = SOFT_POINT_FRAGMENT) =>
     track(
       new ShaderMaterial({
         uniforms: { ...pointUniforms, uOpacity: { value: opacity } },
@@ -248,7 +373,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
             vAlpha = aAlpha;
           }
         `,
-        fragmentShader: SOFT_POINT_FRAGMENT,
+        fragmentShader,
         transparent: true,
         depthWrite: false,
         blending: AdditiveBlending,
@@ -298,12 +423,12 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   system.add(innerRing);
 
   // --- Dust disc ----------------------------------------------------------
-  const dustCount = 650;
+  const dustCount = 520;
   const dust = { position: [] as number[], aSize: [] as number[], aColor: [] as number[], aAlpha: [] as number[] };
   const warm = new Color("#FDE68A");
   const cool = new Color("#93C5FD");
   for (let i = 0; i < dustCount; i++) {
-    const r = 1.1 + Math.sqrt(Math.random()) * 4.6;
+    const r = 1.1 + Math.sqrt(Math.random()) * 3.6;
     const a = Math.random() * TAU;
     const spread = (Math.random() + Math.random() + Math.random() - 1.5) * (0.04 + r * 0.02);
     dust.position.push(Math.cos(a) * r, spread, -Math.sin(a) * r);
@@ -312,13 +437,284 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     dust.aColor.push(c.r, c.g, c.b);
     dust.aAlpha.push(0.25 + Math.random() * 0.55);
   }
-  const dustGeometry = track(new BufferGeometry());
-  dustGeometry.setAttribute("position", new Float32BufferAttribute(dust.position, 3));
-  dustGeometry.setAttribute("aSize", new Float32BufferAttribute(dust.aSize, 1));
-  dustGeometry.setAttribute("aColor", new Float32BufferAttribute(dust.aColor, 3));
-  dustGeometry.setAttribute("aAlpha", new Float32BufferAttribute(dust.aAlpha, 1));
-  const dustPoints = new Points(dustGeometry, softPointsMaterial(0.5));
+  const dustPoints = new Points(geometryFrom(dust), softPointsMaterial(0.5));
   system.add(dustPoints);
+
+  // --- City: Fort Worth from above ------------------------------------------
+  // A dot-matrix map under the system (Loop 820, I-35W, I-30, the Trinity)
+  // where grassroots nodes link up peer to peer and new ones keep sprouting.
+  const city = new Group();
+  city.position.y = CITY.y;
+  system.add(city);
+
+  const loopOutline = smoothPath(ROADS.loop820, true);
+  const insideLoop = (x: number, z: number) => {
+    let inside = false;
+    for (let i = 0, j = loopOutline.length - 1; i < loopOutline.length; j = i++) {
+      const [xi, zi] = loopOutline[i];
+      const [xj, zj] = loopOutline[j];
+      if (zi > z !== zj > z && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) inside = !inside;
+    }
+    return inside;
+  };
+
+  // Hex dot grid, denser in tone inside the loop.
+  const DOT = 0.16;
+  const dots = { position: [] as number[], aSize: [] as number[], aColor: [] as number[], aAlpha: [] as number[] };
+  const dotColor = new Color("#93C5FD");
+  const rows = Math.ceil(CITY.extent.far / (DOT * 0.866));
+  const cols = Math.ceil(CITY.extent.x / DOT) + 1;
+  for (let row = -rows; row <= rows; row++) {
+    const z = row * DOT * 0.866;
+    for (let col = -cols; col <= cols; col++) {
+      const x = (col + (row & 1) * 0.5) * DOT;
+      const fade = groundFade(x, z);
+      if (fade < 0.02) continue;
+      dots.position.push(x, 0, z);
+      dots.aSize.push(0.05);
+      dots.aColor.push(dotColor.r, dotColor.g, dotColor.b);
+      dots.aAlpha.push(fade * (insideLoop(x, z) ? 0.8 : 0.32));
+    }
+  }
+  const dotsMaterial = softPointsMaterial(0.6);
+  city.add(new Points(geometryFrom(dots), dotsMaterial));
+
+  // Roads fade with the map through per-vertex alpha. Fading the color alone
+  // would leave opaque dark lines on the transparent canvas.
+  const roadMaterial = track(
+    new LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85, blending: AdditiveBlending, depthWrite: false }),
+  );
+  const road = (points: [number, number][], strength: number) => {
+    const c = new Color("#93C5FD");
+    const colors = points.flatMap(([x, z]) => [c.r, c.g, c.b, groundFade(x, z) * strength]);
+    const geometry = geometryFrom({ position: points.flatMap(([x, z]) => [x, 0, z]) });
+    geometry.setAttribute("color", new Float32BufferAttribute(colors, 4));
+    return new Line(geometry, roadMaterial);
+  };
+  city.add(road(loopOutline, 0.75), road(smoothPath(ROADS.i35w), 0.45), road(smoothPath(ROADS.i30), 0.45));
+
+  const riverFade = (p: Vector3) => groundFade(p.x, p.z);
+  const rivers = [RIVER.westFork, RIVER.clearFork].map((fork) => {
+    const river = flowLine(
+      smoothPath(fork).map(([x, z]) => new Vector3(x, 0, z)),
+      { colorA: "#22D3EE", colorB: "#38BDF8", dashLength: 0.32, speed: 0.5, base: 0.38, dash: 0.45, boost: 0.25, ends: [0, 0], fade: riverFade },
+    );
+    city.add(river.line);
+    return river.material;
+  });
+
+  const nodeColor = (node: CityNode) => new Color(node.pillar < 0 ? GROUND.color : PILLARS[node.pillar].color);
+
+  const linkGeometry = geometryFrom({
+    position: LINKS.flatMap(([a, b]) => [NODES[a], NODES[b]].flatMap((n) => [n.x, 0.01, n.z])),
+  });
+  linkGeometry.setAttribute(
+    "color",
+    new Float32BufferAttribute(
+      LINKS.flatMap(([a, b]) => [NODES[a], NODES[b]].flatMap((n) => [...nodeColor(n).toArray(), 0.8 * groundFade(n.x, n.z)])),
+      4,
+    ),
+  );
+  const linkMaterial = track(
+    new LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.6, blending: AdditiveBlending, depthWrite: false }),
+  );
+  city.add(new LineSegments(linkGeometry, linkMaterial));
+
+  // Node glow by channel: pillars 0-3, the downtown root, then the whole ground.
+  const nodeGlow = { value: [0, 0, 0, 0, 0, 0] };
+  const nodeMaterial = track(
+    new ShaderMaterial({
+      uniforms: { ...pointUniforms, uOpacity: { value: 1 }, uTime: { value: 0 }, uGlow: nodeGlow },
+      vertexShader: /* glsl */ `
+        attribute vec3 aColor;
+        attribute float aSize;
+        attribute float aChannel;
+        attribute float aSeed;
+        attribute float aFade;
+        uniform float uPixelRatio;
+        uniform float uScale;
+        uniform float uTime;
+        uniform float uGlow[6];
+        varying vec3 vColor;
+        varying float vAlpha;
+        void main() {
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          gl_Position = projectionMatrix * mv;
+          float glow = max(uGlow[int(aChannel)], uGlow[5]);
+          float twinkle = 0.85 + 0.15 * sin(uTime * 1.6 + aSeed * 40.0);
+          vColor = aColor;
+          vAlpha = (0.55 + 0.6 * glow) * twinkle * aFade;
+          gl_PointSize = aSize * (1.0 + 0.45 * glow) * uPixelRatio * uScale / -mv.z;
+        }
+      `,
+      fragmentShader: NODE_FRAGMENT,
+      transparent: true,
+      depthWrite: false,
+      blending: AdditiveBlending,
+    }),
+  );
+  city.add(
+    new Points(
+      geometryFrom({
+        position: NODES.flatMap((n) => [n.x, 0.02, n.z]),
+        aColor: NODES.flatMap((n) => nodeColor(n).toArray()),
+        aSize: NODES.map((n) => (n.pillar < 0 ? 0.3 : 0.2)),
+        aChannel: NODES.map((n) => (n.pillar < 0 ? 4 : n.pillar)),
+        aSeed: NODES.map(() => Math.random()),
+        aFade: NODES.map((n) => 0.35 + 0.65 * groundFade(n.x, n.z)),
+      }),
+      nodeMaterial,
+    ),
+  );
+
+  // Downtown: where the core puts down roots.
+  const rootRing = flatRing(0.22, 0.24, GROUND.color, 0.45);
+  const rootDashGeometry = track(new BufferGeometry());
+  rootDashGeometry.setAttribute("position", circlePoints(0.38, 96));
+  const rootDash = new LineLoop(
+    rootDashGeometry,
+    track(new LineDashedMaterial({ color: GROUND.color, dashSize: 0.06, gapSize: 0.07, transparent: true, opacity: 0.35, blending: AdditiveBlending, depthWrite: false })),
+  );
+  rootDash.computeLineDistances();
+  city.add(rootRing, rootDash);
+
+  const trunk = flowLine([new Vector3(0, CITY.y, 0), new Vector3(0, -SOLAR.sunRadius * 1.05, 0)], {
+    colorA: GROUND.color,
+    colorB: SOLAR.sunColor,
+    dashes: 4,
+    speed: 0.5,
+    base: 0.14,
+    dash: 0.32,
+    boost: 0.5,
+  });
+  system.add(trunk.line);
+
+  // Ripples spread across the map when a part of the city lights up.
+  const rippleGeometry = track(new RingGeometry(0.9, 1, 64));
+  rippleGeometry.rotateX(-Math.PI / 2);
+  const ripples = Array.from({ length: 18 }, () => {
+    const material = track(
+      new MeshBasicMaterial({ transparent: true, opacity: 0, side: DoubleSide, blending: AdditiveBlending, depthWrite: false }),
+    );
+    const mesh = new Mesh(rippleGeometry, material);
+    mesh.visible = false;
+    city.add(mesh);
+    return { mesh, material, start: -1, strength: 1, size: 0.5 };
+  });
+  let rippleCursor = 0;
+  const ripple = (x: number, z: number, color: string | Color, delay = 0, size = 0.4, strength = 1) => {
+    if (reducedMotion) return;
+    const r = ripples[rippleCursor++ % ripples.length];
+    r.mesh.position.set(x, 0.005, z);
+    r.material.color.set(color);
+    Object.assign(r, { start: time + delay, size, strength });
+  };
+
+  // Sprouts: pop-up nodes that appear anywhere in the metro, reach out to
+  // their nearest neighbor, then fade.
+  const SPROUTS = 4;
+  const SPROUT_LIFE = 6.5;
+  const sprouts = Array.from({ length: SPROUTS }, () => ({ x: 0, z: 0, target: 0, born: -Infinity, linked: false }));
+  const lime = new Color(GROUND.color);
+  const sproutGeometry = geometryFrom({
+    position: new Array(SPROUTS * 3).fill(0),
+    aSize: new Array(SPROUTS).fill(0),
+    aColor: new Array(SPROUTS).fill(lime.toArray()).flat(),
+    aAlpha: new Array(SPROUTS).fill(0),
+  });
+  const sproutPoints = new Points(sproutGeometry, softPointsMaterial(1, NODE_FRAGMENT));
+  sproutPoints.frustumCulled = false;
+  const sproutLinkGeometry = geometryFrom({ position: new Array(SPROUTS * 6).fill(0) });
+  sproutLinkGeometry.setAttribute(
+    "color",
+    new Float32BufferAttribute(new Array(SPROUTS * 2).fill([lime.r, lime.g, lime.b, 0]).flat(), 4),
+  );
+  const sproutLinks = new LineSegments(
+    sproutLinkGeometry,
+    track(new LineBasicMaterial({ vertexColors: true, transparent: true, blending: AdditiveBlending, depthWrite: false })),
+  );
+  sproutLinks.frustumCulled = false;
+  for (const geometry of [sproutGeometry, sproutLinkGeometry]) {
+    for (const attribute of Object.values(geometry.attributes)) (attribute as Float32BufferAttribute).setUsage(DynamicDrawUsage);
+  }
+  city.add(sproutLinks, sproutPoints);
+
+  // --- Packets: grassroots energy moving up and across ----------------------
+  // Channels: 0-3 rise from each part of the city to its pillar, 4 rises from
+  // downtown into the core, 5-8 cross the mesh in each quadrant, 9 heads
+  // into downtown.
+  const packetGain = { value: new Array(10).fill(0) };
+  const packets = {
+    position: [] as number[],
+    aFrom: [] as number[],
+    aTo: [] as number[],
+    aColor: [] as number[],
+    aSeed: [] as number[],
+    aSpeed: [] as number[],
+    aSize: [] as number[],
+    aChannel: [] as number[],
+    aArc: [] as number[],
+  };
+  const addPacket = (from: Vec3, to: Vec3, color: Color, channel: number, speed: number, size: number, arc = 0) => {
+    packets.position.push(...from);
+    packets.aFrom.push(...from);
+    packets.aTo.push(...to);
+    packets.aColor.push(color.r, color.g, color.b);
+    packets.aSeed.push(Math.random());
+    packets.aSpeed.push(speed * (0.8 + Math.random() * 0.4));
+    packets.aSize.push(size);
+    packets.aChannel.push(channel);
+    packets.aArc.push(arc);
+  };
+  for (let i = 0; i < 10; i++) addPacket([0, CITY.y, 0], [0, -SOLAR.sunRadius, 0], lime, 4, 0.36, 0.07);
+  PILLARS.forEach((pillar, i) => {
+    const [x, , z] = orbitPoint(pillar.angle);
+    for (let k = 0; k < 4; k++) addPacket([x, CITY.y, z], [x, -SOLAR.planetRadius * 1.9, z], new Color(pillar.color), i, 0.4, 0.065);
+  });
+  for (const [a, b] of LINKS) {
+    const [from, to] = Math.random() < 0.5 ? [NODES[a], NODES[b]] : [NODES[b], NODES[a]];
+    const y = CITY.y + 0.02;
+    addPacket([from.x, y, from.z], [to.x, y, to.z], nodeColor(to), to.pillar < 0 ? 9 : 5 + to.pillar, 0.22, 0.055, 0.1);
+  }
+  const packetMaterial = track(
+    new ShaderMaterial({
+      uniforms: { ...pointUniforms, uOpacity: { value: 1 }, uTime: { value: 0 }, uGain: packetGain },
+      vertexShader: /* glsl */ `
+        attribute vec3 aFrom;
+        attribute vec3 aTo;
+        attribute vec3 aColor;
+        attribute float aSeed;
+        attribute float aSpeed;
+        attribute float aSize;
+        attribute float aChannel;
+        attribute float aArc;
+        uniform float uPixelRatio;
+        uniform float uScale;
+        uniform float uTime;
+        uniform float uGain[10];
+        varying vec3 vColor;
+        varying float vAlpha;
+        void main() {
+          float t = fract(uTime * aSpeed + aSeed);
+          float hump = sin(t * 3.14159265);
+          vec3 pos = mix(aFrom, aTo, t);
+          pos.y += hump * aArc;
+          vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+          gl_Position = projectionMatrix * mv;
+          vColor = aColor;
+          vAlpha = hump * uGain[int(aChannel)];
+          gl_PointSize = aSize * uPixelRatio * uScale / -mv.z;
+        }
+      `,
+      fragmentShader: SOFT_POINT_FRAGMENT,
+      transparent: true,
+      depthWrite: false,
+      blending: AdditiveBlending,
+    }),
+  );
+  const packetPoints = new Points(geometryFrom(packets), packetMaterial);
+  packetPoints.frustumCulled = false;
+  system.add(packetPoints);
 
   // --- Virtuous-cycle stream: particles flowing clockwise around the orbit,
   // tinted by whichever pillars they are travelling between. ---------------
@@ -333,10 +729,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     flow.aSpeed.push(0.8 + Math.random() * 0.4);
     flow.aSeed.push(Math.random());
   }
-  const flowGeometry = track(new BufferGeometry());
-  for (const [name, values] of Object.entries(flow)) {
-    flowGeometry.setAttribute(name, new Float32BufferAttribute(values, name === "position" ? 3 : 1));
-  }
+  const flowGeometry = geometryFrom(flow);
   const flowMaterial = track(
     new ShaderMaterial({
       uniforms: {
@@ -473,45 +866,54 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
 
     // Governance spoke: energy flowing from the core out to each pillar.
     const [x, , z] = orbitPoint(pillar.angle, 1);
-    const spokeGeometry = track(new BufferGeometry());
-    spokeGeometry.setAttribute(
-      "position",
-      new Float32BufferAttribute([x * SOLAR.sunRadius * 1.1, 0, z * SOLAR.sunRadius * 1.1, x * (R - SOLAR.planetRadius * 1.8), 0, z * (R - SOLAR.planetRadius * 1.8)], 3),
+    const spoke = flowLine(
+      [
+        new Vector3(x * SOLAR.sunRadius * 1.1, 0, z * SOLAR.sunRadius * 1.1),
+        new Vector3(x * (R - SOLAR.planetRadius * 1.8), 0, z * (R - SOLAR.planetRadius * 1.8)),
+      ],
+      { colorA: SOLAR.sunColor, colorB: pillar.color },
     );
-    spokeGeometry.setAttribute("aT", new Float32BufferAttribute([0, 1], 1));
-    const spokeMaterial = track(
-      new ShaderMaterial({
-        uniforms: { uColorA: { value: new Color(SOLAR.sunColor) }, uColorB: { value: color }, uTime: { value: 0 }, uActive: { value: 0 } },
-        vertexShader: /* glsl */ `
-          attribute float aT;
-          varying float vT;
-          void main() {
-            vT = aT;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `,
-        fragmentShader: /* glsl */ `
-          uniform vec3 uColorA;
-          uniform vec3 uColorB;
-          uniform float uTime;
-          uniform float uActive;
-          varying float vT;
-          void main() {
-            float f = fract(vT * 5.0 - uTime * 0.45);
-            float dash = smoothstep(0.0, 0.3, f) * (1.0 - smoothstep(0.3, 0.45, f));
-            float fade = smoothstep(0.0, 0.1, vT) * smoothstep(1.0, 0.86, vT);
-            gl_FragColor = vec4(mix(uColorA, uColorB, vT), fade * (0.1 + dash * (0.22 + uActive * 0.6)));
-          }
-        `,
-        transparent: true,
-        depthWrite: false,
-        blending: AdditiveBlending,
-      }),
-    );
-    system.add(new Line(spokeGeometry, spokeMaterial));
+    system.add(spoke.line);
 
-    return { group, body, material, ring, ringMaterial, halo, haloMaterial, spokeMaterial, active: 0, flare: 0 };
+    // Root: the pillar's own corner of the city, feeding energy up to it.
+    const [fx, , fz] = orbitPoint(pillar.angle);
+    const foot = flatRing(0.15, 0.165, pillar.color, 0.4);
+    foot.position.set(fx, 0.01, fz);
+    city.add(foot);
+    const root = flowLine([new Vector3(fx, CITY.y, fz), new Vector3(fx, -SOLAR.planetRadius * 1.9, fz)], {
+      colorA: pillar.color,
+      dashes: 4,
+      speed: 0.4,
+      base: 0.07,
+      dash: 0.16,
+      boost: 0.55,
+    });
+    system.add(root.line);
+
+    return {
+      group,
+      body,
+      material,
+      ring,
+      ringMaterial,
+      halo,
+      haloMaterial,
+      spokeMaterial: spoke.material,
+      rootMaterial: root.material,
+      foot: { x: fx, z: fz, material: foot.material as MeshBasicMaterial },
+      active: 0,
+      flare: 0,
+    };
   });
+
+  const rippleQuadrant = (index: number) => {
+    const { foot } = planets[index];
+    ripple(foot.x, foot.z, PILLARS[index].color, 0, 0.55, 1);
+    NODES.forEach((node) => {
+      if (node.pillar !== index) return;
+      ripple(node.x, node.z, PILLARS[index].color, Math.hypot(node.x - foot.x, node.z - foot.z) * 0.15, 0.32, 0.75);
+    });
+  };
 
   // --- State ---------------------------------------------------------------
   let width = 0;
@@ -522,12 +924,18 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   let cycleTime = DWELL * 0.5;
   let pinned: number | null = null;
   let hovered: number | null = null;
-  let displayed = -2;
+  let displayed: number | null = null;
   let lastArrival = -1;
   let coreActive = 0;
+  let groundActive = 0;
+  let groundWasActive = false;
+  let nextSprout = 1.2;
+  let nextAmbient = 2;
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
   const projected = PILLARS.map(() => ({ x: 0, y: 0, r: 0 }));
   const sunProjected = { x: 0, y: 0, r: 0 };
+  const groundProjected = { x: 0, y: 0, r: 0 };
+  const groundAnchor = new Vector3(...GROUND_LABEL);
   const tmp = new Vector3();
   const worldPos = new Vector3();
   const tanHalf = Math.tan((SOLAR.fov * DEG) / 2);
@@ -564,6 +972,63 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
           : `translate3d(${x}px, ${p.y + gap}px, 0) translate(-50%, 0)`;
     });
     coreLabel.style.transform = `translate3d(${sunProjected.x}px, ${sunProjected.y + sunProjected.r + 6}px, 0) translate(-50%, 0)`;
+    groundLabel.style.transform = `translate3d(${groundProjected.x}px, ${groundProjected.y}px, 0) translate(-50%, -50%)`;
+  }
+
+  function spawnSprout() {
+    const slot = sprouts.find((s) => time - s.born > SPROUT_LIFE);
+    if (!slot) return;
+    // Anywhere in the metro, not only where nodes already are.
+    const r = 0.7 + Math.sqrt(Math.random()) * 2.6;
+    const a = Math.random() * TAU;
+    slot.x = Math.cos(a) * r;
+    slot.z = Math.sin(a) * r * 0.9;
+    let best = Infinity;
+    NODES.forEach((node, i) => {
+      const d = Math.hypot(node.x - slot.x, node.z - slot.z);
+      if (d < best) [best, slot.target] = [d, i];
+    });
+    slot.born = time;
+    slot.linked = false;
+    ripple(slot.x, slot.z, GROUND.color, 0, 0.3, 0.9);
+  }
+
+  function updateSprouts() {
+    const position = sproutGeometry.getAttribute("position") as Float32BufferAttribute;
+    const size = sproutGeometry.getAttribute("aSize") as Float32BufferAttribute;
+    const alpha = sproutGeometry.getAttribute("aAlpha") as Float32BufferAttribute;
+    const linkPosition = sproutLinkGeometry.getAttribute("position") as Float32BufferAttribute;
+    const linkColor = sproutLinkGeometry.getAttribute("color") as Float32BufferAttribute;
+    sprouts.forEach((s, i) => {
+      const age = time - s.born;
+      const live = age < SPROUT_LIFE;
+      const grow = smoothstep(0, 0.5, age);
+      const fade = live ? grow * smoothstep(SPROUT_LIFE, SPROUT_LIFE - 1.4, age) : 0;
+      const reach = ease(Math.min(1, Math.max(0, (age - 0.3) / 0.9)));
+      const target = NODES[s.target];
+      if (live && reach >= 1 && !s.linked) {
+        s.linked = true;
+        ripple(target.x, target.z, GROUND.color, 0, 0.22, 0.6);
+      }
+      position.setXYZ(i, s.x, 0.02, s.z);
+      size.setX(i, 0.17 * (1 + (1 - grow) * 0.8));
+      alpha.setX(i, fade);
+      linkPosition.setXYZ(i * 2, s.x, 0.01, s.z);
+      linkPosition.setXYZ(i * 2 + 1, s.x + (target.x - s.x) * reach, 0.01, s.z + (target.z - s.z) * reach);
+      linkColor.setW(i * 2, fade * 0.6);
+      linkColor.setW(i * 2 + 1, fade * 0.25);
+    });
+    for (const attribute of [position, size, alpha, linkPosition, linkColor]) attribute.needsUpdate = true;
+  }
+
+  function updateRipples() {
+    for (const r of ripples) {
+      const age = (time - r.start) / 1.8;
+      r.mesh.visible = r.start >= 0 && age >= 0 && age <= 1;
+      if (!r.mesh.visible) continue;
+      r.mesh.scale.setScalar(0.03 + r.size * (1 - (1 - age) ** 3));
+      r.material.opacity = (1 - age) ** 2 * 0.6 * r.strength;
+    }
   }
 
   function resize() {
@@ -594,15 +1059,29 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
       sun.rotation.y += dt * 0.04;
       innerRing.rotation.y -= dt * 0.05;
       dustPoints.rotation.y += dt * 0.012;
+      rootDash.rotation.y += dt * 0.1;
+      if (time > nextSprout) {
+        spawnSprout();
+        nextSprout = time + 1.3 + Math.random() * 1.3;
+      }
+      if (time > nextAmbient) {
+        const node = NODES[1 + Math.floor(Math.random() * (NODES.length - 1))];
+        ripple(node.x, node.z, nodeColor(node), 0, 0.24, 0.45);
+        nextAmbient = time + 1.2 + Math.random() * 1.2;
+      }
     }
     camera.updateMatrixWorld();
+    system.updateMatrixWorld();
 
     const state = cycleState();
     const focus = hovered ?? pinned;
     const active = focus ?? state.leg;
     if (state.leg !== lastArrival && !holding) {
       lastArrival = state.leg;
-      if (!reducedMotion) planets[state.leg].flare = 1;
+      if (!reducedMotion) {
+        planets[state.leg].flare = 1;
+        rippleQuadrant(state.leg);
+      }
     }
     if (active !== displayed) {
       displayed = active;
@@ -612,6 +1091,11 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     sunMaterial.uniforms.uTime.value = time;
     const k = reducedMotion ? 1 : Math.min(1, dt * 6);
     coreActive += ((active === -1 ? 1 : 0) - coreActive) * k;
+    groundActive += ((active === -2 ? 1 : 0) - groundActive) * k;
+    if (active === -2 && !groundWasActive) {
+      NODES.forEach((node) => ripple(node.x, node.z, nodeColor(node), Math.hypot(node.x, node.z) * 0.14, 0.32, 0.8));
+    }
+    groundWasActive = active === -2;
     sunMaterial.uniforms.uBoost.value = coreActive;
     corona.material.opacity = 0.8 + Math.sin(time * 1.3) * 0.06 + coreActive * 0.15;
     coronaWide.scale.setScalar(SOLAR.sunRadius * (9 + Math.sin(time * 0.8) * 0.4 + coreActive * 1.5));
@@ -645,12 +1129,39 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
       planet.halo.scale.setScalar(SOLAR.planetRadius * (5 + a * 2.2 + f * 4));
       planet.haloMaterial.opacity = 0.32 + a * 0.35 + f * 0.4;
       planet.group.position.y = reducedMotion ? 0 : Math.sin(time * 0.9 + i * 1.7) * 0.05;
+      planet.rootMaterial.uniforms.uTime.value = time;
+      planet.rootMaterial.uniforms.uActive.value = a + f * 0.5;
+      planet.foot.material.opacity = 0.35 + a * 0.45;
+      nodeGlow.value[i] = Math.min(1, a + f * 0.5);
+      packetGain.value[i] = 0.1 + a * 1.1 + f * 0.6;
+      packetGain.value[5 + i] = 0.4 + a * 0.6 + groundActive * 0.6;
     });
+
+    // The city: brighter when the ground itself is in focus.
+    nodeGlow.value[4] = Math.max(coreActive, groundActive);
+    nodeGlow.value[5] = groundActive;
+    packetGain.value[4] = 0.55 + coreActive * 0.6 + groundActive * 0.5;
+    packetGain.value[9] = 0.5 + groundActive * 0.6 + coreActive * 0.3;
+    nodeMaterial.uniforms.uTime.value = time;
+    packetMaterial.uniforms.uTime.value = time;
+    trunk.material.uniforms.uTime.value = time;
+    trunk.material.uniforms.uActive.value = Math.max(coreActive, groundActive);
+    for (const river of rivers) {
+      river.uniforms.uTime.value = time;
+      river.uniforms.uActive.value = groundActive;
+    }
+    dotsMaterial.uniforms.uOpacity.value = 0.6 + groundActive * 0.35;
+    roadMaterial.opacity = 0.85 + groundActive * 0.15;
+    linkMaterial.opacity = 0.6 + groundActive * 0.4;
+    (rootRing.material as MeshBasicMaterial).opacity = 0.45 + Math.max(coreActive, groundActive) * 0.4;
+    updateSprouts();
+    updateRipples();
 
     planets.forEach((planet, i) => {
       project(planet.group.getWorldPosition(worldPos), SOLAR.planetRadius, projected[i]);
     });
     project(worldPos.copy(sunPosition), SOLAR.sunRadius, sunProjected);
+    project(system.localToWorld(worldPos.copy(groundAnchor)), 0, groundProjected);
     placeLabels();
   }
 
@@ -745,7 +1256,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     contextLost = true;
     stop();
     stage.dataset.webgl = "lost";
-    [...labels, coreLabel].forEach((label) => (label.style.transform = ""));
+    [...labels, coreLabel, groundLabel].forEach((label) => (label.style.transform = ""));
   };
   const onContextRestored = () => {
     contextLost = false;
@@ -765,7 +1276,10 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
       if (index !== null && index >= 0) cycleTime = index * LEG + DWELL * 0.5;
       pinned = index;
       if (index !== null && index >= 0) lastArrival = index;
-      if (!reducedMotion && index !== null && index >= 0) planets[index].flare = 1;
+      if (!reducedMotion && index !== null && index >= 0) {
+        planets[index].flare = 1;
+        rippleQuadrant(index);
+      }
       renderStill();
     },
     dispose() {

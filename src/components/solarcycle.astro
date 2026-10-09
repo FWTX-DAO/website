@@ -1,6 +1,21 @@
 ---
 import { Icon } from "astro-icon/components";
-import { CORE, PILLARS, SOLAR, orbitPoint, projectToFrame, projectedRadius } from "@lib/solar-cycle";
+import {
+  CITY,
+  CORE,
+  GROUND,
+  GROUND_LABEL,
+  LINKS,
+  NODES,
+  PILLARS,
+  RIVER,
+  ROADS,
+  SOLAR,
+  orbitPoint,
+  projectToFrame,
+  projectedRadius,
+  smoothPath,
+} from "@lib/solar-cycle";
 
 const icons: Record<string, string> = {
   inclusion: "mdi:account-group-outline",
@@ -15,11 +30,41 @@ const VIEW_W = 500;
 const VIEW_H = VIEW_W / SOLAR.aspect;
 const toView = (p: { x: number; y: number }) => ({ x: (p.x / 100) * VIEW_W, y: (p.y / 100) * VIEW_H });
 
-const ringPath = (radius: number) =>
-  Array.from({ length: 96 }, (_, i) => {
-    const p = toView(projectToFrame(orbitPoint((i / 96) * 360, radius)));
+const ringPath = (radius: number, y = 0, [cx, cz] = [0, 0], segments = 96) =>
+  Array.from({ length: segments }, (_, i) => {
+    const [x, , z] = orbitPoint((i / segments) * 360, radius);
+    const p = toView(projectToFrame([cx + x, y, cz + z]));
     return `${i ? "L" : "M"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
   }).join(" ") + "Z";
+
+// The city plane under the system, with the same falloff as the scene.
+const ground = (x: number, z: number) => toView(projectToFrame([x, CITY.y, z]));
+const groundPath = (points: [number, number][]) =>
+  points
+    .map(([x, z], i) => {
+      const p = ground(x, z);
+      return `${i ? "L" : "M"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
+    })
+    .join(" ");
+const downtown = ground(0, 0);
+const groundNear = ground(0, CITY.extent.near);
+const groundFar = ground(0, -CITY.extent.far);
+const groundFade = {
+  cy: (groundNear.y + groundFar.y) / 2,
+  rx: ground(CITY.extent.x, 0).x - downtown.x,
+  ry: (groundNear.y - groundFar.y) / 2,
+};
+const groundPaths = {
+  roads: [smoothPath(ROADS.loop820, true, 0.3), smoothPath(ROADS.i35w, false, 0.5), smoothPath(ROADS.i30, false, 0.5)].map(groundPath),
+  rivers: [RIVER.westFork, RIVER.clearFork].map((fork) => groundPath(smoothPath(fork, false, 0.3))),
+};
+const cityNodes = NODES.map((node) => ({
+  ...ground(node.x, node.z),
+  color: node.pillar < 0 ? GROUND.color : PILLARS[node.pillar].color,
+  root: node.pillar < 0,
+}));
+const sunBase = toView(projectToFrame([0, -SOLAR.sunRadius, 0]));
+const groundLabel = projectToFrame(GROUND_LABEL);
 
 const sunFrame = projectToFrame([0, 0, 0]);
 const sunRadius = projectedRadius(SOLAR.sunRadius, sunFrame.depth);
@@ -27,6 +72,7 @@ const sun = { ...toView(sunFrame), r: (sunRadius / 100) * VIEW_H };
 
 const planets = PILLARS.map((pillar, index) => {
   const frame = projectToFrame(orbitPoint(pillar.angle));
+  const [fx, , fz] = orbitPoint(pillar.angle);
   const radius = projectedRadius(SOLAR.planetRadius, frame.depth);
   const gap = radius * SOLAR.labelGap + 1;
   return {
@@ -34,6 +80,7 @@ const planets = PILLARS.map((pillar, index) => {
     index,
     icon: icons[pillar.id],
     view: { ...toView(frame), r: (radius / 100) * VIEW_H },
+    foot: { ring: ringPath(0.16, CITY.y, [fx, fz], 32), base: ground(fx, fz), top: toView(projectToFrame([fx, -SOLAR.planetRadius * 1.9, fz])) },
     left: frame.x,
     top: pillar.labelSide === "above" ? frame.y - gap : frame.y + gap,
   };
@@ -64,7 +111,9 @@ const first = PILLARS[0];
   </div>
   <p id="solar-cycle-summary" class="sr-only">
     {CORE.title} sits at the center and powers four pillars that strengthen one another in a loop:
-    {PILLARS.map((p) => p.title).join(", then ")}, which feeds back into {first.title}.
+    {PILLARS.map((p) => p.title).join(", then ")}, which feeds back into {first.title}. The system is rooted over a
+    map of Fort Worth and North Texas, where a {GROUND.title.toLowerCase()} of builders, meetups, and labs links up
+    peer to peer and feeds every pillar from the ground up.
   </p>
 
   <div class="solar-stage relative w-full" style={`aspect-ratio: ${SOLAR.aspect}`} data-stage>
@@ -79,6 +128,19 @@ const first = PILLARS[0];
           <stop offset="0" stop-color="#FBBF24" stop-opacity="0.5" />
           <stop offset="1" stop-color="#FBBF24" stop-opacity="0" />
         </radialGradient>
+        <radialGradient
+          id="solar-ground-gradient"
+          gradientUnits="userSpaceOnUse"
+          cx={downtown.x}
+          cy={groundFade.cy}
+          r={groundFade.rx}
+          gradientTransform={`translate(0 ${groundFade.cy}) scale(1 ${(groundFade.ry / groundFade.rx).toFixed(3)}) translate(0 ${-groundFade.cy})`}>
+          <stop offset="0.7" stop-color="#fff" />
+          <stop offset="1" stop-color="#fff" stop-opacity="0" />
+        </radialGradient>
+        <mask id="solar-ground-fade" maskUnits="userSpaceOnUse" x="0" y="0" width={VIEW_W} height={VIEW_H}>
+          <rect width={VIEW_W} height={VIEW_H} fill="url(#solar-ground-gradient)" />
+        </mask>
         {planets.map((p) => (
           <radialGradient id={`solar-${p.id}`} cx="38%" cy="35%" r="70%">
             <stop offset="0" stop-color={p.color} />
@@ -87,6 +149,31 @@ const first = PILLARS[0];
           </radialGradient>
         ))}
       </defs>
+      <g mask="url(#solar-ground-fade)" fill="none">
+        {groundPaths.roads.map((d, i) => (
+          <path d={d} stroke="#93C5FD" stroke-opacity={i ? 0.16 : 0.26} />
+        ))}
+        {groundPaths.rivers.map((d) => (
+          <path d={d} stroke="#22D3EE" stroke-opacity="0.32" />
+        ))}
+        {LINKS.map(([a, b]) => (
+          <line x1={cityNodes[a].x} y1={cityNodes[a].y} x2={cityNodes[b].x} y2={cityNodes[b].y} stroke={cityNodes[b].color} stroke-opacity="0.22" />
+        ))}
+        {cityNodes.map((n) => (
+          <g>
+            <circle cx={n.x} cy={n.y} r={n.root ? 6 : 4} fill={n.color} fill-opacity="0.12" />
+            <circle cx={n.x} cy={n.y} r={n.root ? 2.2 : 1.5} fill={n.color} />
+          </g>
+        ))}
+      </g>
+      <path d={ringPath(0.23, CITY.y, [0, 0], 48)} fill="none" stroke={GROUND.color} stroke-opacity="0.45" />
+      <line x1={downtown.x} y1={downtown.y} x2={sunBase.x} y2={sunBase.y} stroke={GROUND.color} stroke-opacity="0.18" />
+      {planets.map((p) => (
+        <g fill="none" stroke={p.color}>
+          <path d={p.foot.ring} stroke-opacity="0.4" />
+          <line x1={p.foot.base.x} y1={p.foot.base.y} x2={p.foot.top.x} y2={p.foot.top.y} stroke-opacity="0.12" />
+        </g>
+      ))}
       <path d={ringPath(SOLAR.orbitRadius * 1.2)} fill="none" stroke="#93C5FD" stroke-opacity="0.08" />
       <path d={ringPath(SOLAR.orbitRadius * 0.6)} fill="none" stroke="#FBBF24" stroke-opacity="0.2" stroke-dasharray="3 4" />
       <path d={ringPath(SOLAR.orbitRadius)} fill="none" stroke="#60A5FA" stroke-opacity="0.35" />
@@ -131,13 +218,33 @@ const first = PILLARS[0];
         data-core-label>
         <button
           type="button"
-          class="solar-core whitespace-nowrap rounded-md px-2 py-0.5 font-display text-sm leading-none tracking-wide text-amber-100 transition-[color,text-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 sm:text-base"
+          class="solar-core whitespace-nowrap rounded-md bg-navy-950/60 px-2 py-0.5 font-display text-sm leading-none tracking-wide text-amber-100 transition-[color,text-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 sm:text-base"
           data-pillar="-1">
           {CORE.title}
           <span class="sr-only">: {CORE.description}</span>
         </button>
       </li>
+      <li
+        class="solar-label absolute -translate-x-1/2 -translate-y-1/2"
+        style={`left: ${groundLabel.x.toFixed(2)}%; top: ${groundLabel.y.toFixed(2)}%`}
+        data-ground-label>
+        <button
+          type="button"
+          class="solar-chip inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border bg-navy-950/80 py-1 pl-2.5 pr-2.5 text-[10px] sm:pl-1 font-semibold text-slate-300 transition-[border-color,color,box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 sm:text-xs"
+          style={`--pillar: ${GROUND.color}`}
+          data-pillar="-2">
+          <span class="solar-dot hidden h-5 w-5 items-center justify-center rounded-full sm:flex" aria-hidden="true">
+            <Icon name="mdi:sprout-outline" class="h-3 w-3" />
+          </span>
+          {GROUND.title}
+          <span class="sr-only">: {GROUND.description}</span>
+        </button>
+      </li>
     </ul>
+
+    <p class="pointer-events-none absolute bottom-2.5 left-3 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-500 sm:bottom-3 sm:left-4 sm:text-[10px]" aria-hidden="true">
+      Fort Worth · North Texas<span class="hidden sm:inline"> · {CITY.coordinates}</span>
+    </p>
   </div>
 
   <div class="border-t border-blue-500/10 px-4 pb-4 pt-3 sm:px-5" aria-hidden="true">
@@ -247,7 +354,7 @@ const first = PILLARS[0];
 </style>
 
 <script>
-  import { CORE, PILLARS, SOLAR } from "@lib/solar-cycle";
+  import { CORE, GROUND, PILLARS, SOLAR } from "@lib/solar-cycle";
   import type { SolarCycle } from "../scripts/solar-cycle-scene";
 
   for (const root of document.querySelectorAll<HTMLElement>("[data-solar-cycle]")) init(root);
@@ -257,6 +364,7 @@ const first = PILLARS[0];
     const canvas = root.querySelector<HTMLCanvasElement>("[data-canvas]")!;
     const labels = [...root.querySelectorAll<HTMLElement>("[data-label]")];
     const coreLabel = root.querySelector<HTMLElement>("[data-core-label]")!;
+    const groundLabel = root.querySelector<HTMLElement>("[data-ground-label]")!;
     const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-pillar]")];
     const steps = [...root.querySelectorAll<HTMLElement>("[data-step]")];
     const stepEl = root.querySelector("[data-caption-step]")!;
@@ -268,14 +376,22 @@ const first = PILLARS[0];
     let scene: SolarCycle | null = null;
     let locked: number | null = null;
 
+    // -1 is the core and -2 the grassroots ground; anything else is a pillar.
+    const captions: Record<number, { step: string; next: string; color: string; title: string; description: string }> = {
+      [-1]: { ...CORE, step: "Core", next: "Powers all four pillars", color: SOLAR.sunColor },
+      [-2]: { ...GROUND, step: "Roots", next: "Feeds every pillar from the ground up" },
+    };
     const setActive = (index: number) => {
-      const isCore = index === -1;
-      const item = isCore ? CORE : PILLARS[index];
-      root.style.setProperty("--active", isCore ? SOLAR.sunColor : PILLARS[index].color);
-      stepEl.textContent = isCore ? "Core" : `${String(index + 1).padStart(2, "0")} / ${total}`;
+      const item = captions[index] ?? {
+        ...PILLARS[index],
+        step: `${String(index + 1).padStart(2, "0")} / ${total}`,
+        next: `Feeds ${PILLARS[(index + 1) % PILLARS.length].title}`,
+      };
+      root.style.setProperty("--active", item.color);
+      stepEl.textContent = item.step;
       titleEl.textContent = item.title;
       textEl.textContent = item.description;
-      nextEl.textContent = isCore ? "Powers all four pillars" : `Feeds ${PILLARS[(index + 1) % PILLARS.length].title}`;
+      nextEl.textContent = item.next;
       buttons.forEach((b) => b.toggleAttribute("data-active", Number(b.dataset.pillar) === index));
       steps.forEach((s, i) => s.toggleAttribute("data-active", i === index));
     };
@@ -320,6 +436,7 @@ const first = PILLARS[0];
           canvas,
           labels,
           coreLabel,
+          groundLabel,
           reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
           onActiveChange: setActive,
           onSelect: select,
