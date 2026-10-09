@@ -120,7 +120,7 @@ const first = PILLARS[0];
 
   <div class="flex items-center justify-between gap-4 px-4 pt-4 sm:px-5">
     <p id="solar-cycle-title" class="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 sm:text-[11px]">
-      Foundations of Decentralized Governance
+      Foundations of <span class="max-[399px]:sr-only">Decentralized </span>Governance
     </p>
     <span class="hidden items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-frontier-amber/80 sm:inline-flex" aria-hidden="true">
       <Icon name="mdi:sync" class="solar-spin h-3.5 w-3.5" />
@@ -236,7 +236,8 @@ const first = PILLARS[0];
             <span class="solar-dot hidden h-5 w-5 items-center justify-center rounded-full sm:flex" aria-hidden="true">
               <Icon name={p.icon} class="h-3 w-3" />
             </span>
-            {p.title}
+            <span class="sm:hidden">{p.short}</span>
+            <span class="hidden sm:inline">{p.title}</span>
             <span class="sr-only">: {p.description}</span>
           </button>
         </li>
@@ -327,6 +328,25 @@ const first = PILLARS[0];
 
   .solar-chip {
     border-color: rgba(148, 163, 184, 0.18);
+  }
+
+  /* Labels stay compact but get finger-sized hit areas, without the gray
+     tap flash on iOS since they have their own active state. */
+  .solar-chip,
+  .solar-core {
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .solar-chip::before,
+  .solar-core::before {
+    content: "";
+    position: absolute;
+    inset: -10px -4px;
+  }
+
+  .solar-core::before {
+    inset: -13px -4px;
   }
 
   .solar-chip[data-active] {
@@ -427,8 +447,8 @@ const first = PILLARS[0];
       else if (index !== null) setActive(index);
     };
 
-    const select = (index: number) => {
-      locked = locked === index ? null : index;
+    const select = (index: number | null) => {
+      locked = index === null || locked === index ? null : index;
       show(locked);
     };
 
@@ -454,6 +474,8 @@ const first = PILLARS[0];
     }
 
     const load = async () => {
+      // Data Saver keeps the static poster instead of downloading three.js.
+      if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return;
       try {
         const { mountSolarCycle } = await import("../scripts/solar-cycle-scene");
         scene = mountSolarCycle({

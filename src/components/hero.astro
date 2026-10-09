@@ -5,7 +5,7 @@ import { Icon } from "astro-icon/components";
 ---
 
 <main
-  class="grid lg:grid-cols-2 items-start lg:items-center pt-12 pb-8 md:pb-16 gap-x-12 gap-y-8">
+  class="grid lg:grid-cols-2 items-start lg:items-center pt-8 sm:pt-12 pb-8 md:pb-16 gap-x-12 gap-y-8">
   <div class="w-full max-w-xl mx-auto lg:max-w-none animate-fade-in">
     <p class="inline-flex flex-wrap items-center gap-x-2 gap-y-1 rounded-full border border-blue-500/20 bg-navy-900/60 px-3 py-1 font-mono text-xs text-slate-400">
       <span class="relative flex h-2 w-2" aria-hidden="true">
@@ -15,8 +15,8 @@ import { Icon } from "astro-icon/components";
       <span>DAO Status: <span class="text-green-400">Active</span></span>
       <span class="text-slate-600" aria-hidden="true">/</span>
       <span>501(c)(3) Nonprofit</span>
-      <span class="text-slate-600" aria-hidden="true">/</span>
-      <span>Fort Worth, TX</span>
+      <span class="hidden text-slate-600 sm:inline" aria-hidden="true">/</span>
+      <span class="hidden sm:inline">Fort Worth, TX</span>
     </p>
 
     <h1
@@ -28,8 +28,8 @@ import { Icon } from "astro-icon/components";
       <span class="text-blue-400">in Fort Worth</span>
     </h1>
 
-    <div class="mt-5 max-w-xl space-y-3 text-base leading-relaxed text-slate-300">
-      <p class="text-lg text-slate-200">
+    <div class="mt-5 max-w-xl space-y-3 text-[15px] leading-relaxed text-slate-300 sm:text-base">
+      <p class="text-base text-slate-200 sm:text-lg">
         Fort Worth DAO is a 501(c)(3) nonprofit and <span class="text-blue-400 font-medium">modern-day guild</span>{" "}
         focused on education and digital sovereignty across Fort Worth and Greater Texas. We're a
         Web3 community and decentralized autonomous organization, with Fort Worth DAO LCA as our legal entity.
@@ -47,12 +47,12 @@ import { Icon } from "astro-icon/components";
       </p>
     </div>
 
-    <div class="mt-7 flex flex-wrap gap-3">
+    <div class="mt-6 grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 sm:mt-7 sm:flex sm:flex-wrap">
       <Link
         href="https://dao.fwtx.city"
         target="_blank"
         style="primary"
-        class="flex gap-2 items-center justify-center group min-h-[44px]"
+        class="flex gap-2 items-center justify-center group min-h-[44px] whitespace-nowrap max-sm:px-3"
         rel="noopener">
         <Icon class="w-5 h-5" name="bx:bx-user-plus" aria-hidden="true" />
         Join the DAO
@@ -62,7 +62,7 @@ import { Icon } from "astro-icon/components";
         target="_blank"
         style="outline"
         size="md"
-        class="flex gap-2 items-center justify-center group min-h-[44px]"
+        class="flex gap-2 items-center justify-center group min-h-[44px] whitespace-nowrap max-sm:px-3"
         rel="noopener">
         <Icon class="w-5 h-5" name="bx:bxl-telegram" aria-hidden="true" />
         Telegram
@@ -72,7 +72,7 @@ import { Icon } from "astro-icon/components";
         size="md"
         rel="noopener"
         href="https://github.com/FWTX-DAO"
-        class="flex gap-2 items-center justify-center group min-h-[44px]"
+        class="flex gap-2 items-center justify-center group min-h-[44px] whitespace-nowrap max-sm:px-3"
         target="_blank">
         <Icon class="w-4 h-4" name="bx:bxl-github" aria-hidden="true" />
         GitHub
@@ -81,7 +81,7 @@ import { Icon } from "astro-icon/components";
         href="https://buy.stripe.com/9B66oHfy50e1b7C7buak000"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 rounded font-semibold text-frontier-amber border-2 border-frontier-amber/40 hover:border-frontier-amber hover:bg-frontier-amber/10 transition-[border-color,background-color] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frontier-amber/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
+        class="inline-flex items-center justify-center gap-2 min-h-[44px] whitespace-nowrap px-4 py-2 max-sm:px-3 rounded font-semibold text-frontier-amber border-2 border-frontier-amber/40 hover:border-frontier-amber hover:bg-frontier-amber/10 transition-[border-color,background-color] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frontier-amber/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>

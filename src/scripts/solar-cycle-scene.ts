@@ -70,8 +70,8 @@ export interface SolarCycleOptions {
   reducedMotion: boolean;
   /** A pillar index, -1 for the core, or -2 for the grassroots ground. */
   onActiveChange: (index: number) => void;
-  /** A planet (or the core, -1) was clicked or tapped on the canvas. */
-  onSelect: (index: number) => void;
+  /** A planet (or the core, -1) was clicked or tapped on the canvas; null for empty space. */
+  onSelect: (index: number | null) => void;
 }
 
 export interface SolarCycle {
@@ -540,17 +540,16 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     );
     return new Mesh(geometry, material);
   };
-  let tarrantLabel: Mesh | null = null;
-  for (const county of COUNTY_SHAPES) {
-    if (!county.label) continue;
+  const countyLabels = COUNTY_SHAPES.flatMap((county) => {
+    if (!county.label) return [];
     const [x, z] = county.label;
-    const label = county.isTarrant
-      ? groundText(county.name, 0.3, 0.75)
-      : groundText(county.name, 0.24, 0.4 * groundFade(x, z));
-    label.position.set(x, 0.01, z);
-    region.add(label);
-    if (county.isTarrant) tarrantLabel = label;
-  }
+    const opacity = county.isTarrant ? 0.75 : 0.4 * groundFade(x, z);
+    const mesh = groundText(county.name, county.isTarrant ? 0.3 : 0.24, opacity);
+    mesh.position.set(x, 0.01, z);
+    region.add(mesh);
+    // `shown` fades the name out while a pillar label covers it.
+    return [{ mesh, material: mesh.material as MeshBasicMaterial, opacity, isTarrant: county.isTarrant, shown: 1 }];
+  });
 
   const nodeColor = (node: MapNode) => new Color(node.pillar < 0 ? GROUND.color : PILLARS[node.pillar].color);
 
@@ -971,6 +970,9 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   let width = 0;
   let height = 0;
   let labelWidths: number[] = labels.map(() => 0);
+  let labelHeights: number[] = labels.map(() => 0);
+  const labelRects = labels.map(() => ({ left: 0, right: 0, top: 0, bottom: 0 }));
+  const countyProjected = { x: 0, y: 0, r: 0 };
   let time = 0;
   let flowOffset = 0;
   let cycleTime = DWELL * 0.5;
@@ -1020,6 +1022,8 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
         pillar.labelSide === "above"
           ? `translate3d(${x}px, ${p.y - gap}px, 0) translate(-50%, -100%)`
           : `translate3d(${x}px, ${p.y + gap}px, 0) translate(-50%, 0)`;
+      const top = pillar.labelSide === "above" ? p.y - gap - labelHeights[i] : p.y + gap;
+      Object.assign(labelRects[i], { left: x - half, right: x + half, top: top - 6, bottom: top + labelHeights[i] + 6 });
     });
     coreLabel.style.transform = `translate3d(${sunProjected.x}px, ${sunProjected.y + sunProjected.r + 6}px, 0) translate(-50%, 0)`;
   }
@@ -1086,6 +1090,10 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     height = rect.height;
     if (!width || !height) return;
     labelWidths = labels.map((label) => label.offsetWidth);
+    labelHeights = labels.map((label) => label.offsetHeight);
+    // County names grow a little on small screens so they stay legible.
+    const textScale = Math.min(1.3, Math.max(1, 480 / width));
+    countyLabels.forEach(({ mesh }) => mesh.scale.set(textScale, 1, textScale));
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
@@ -1198,7 +1206,6 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     tarrantEdge.material.uniforms.uTime.value = time;
     tarrantEdge.material.uniforms.uActive.value = groundActive;
     (tarrantFill.material as MeshBasicMaterial).opacity = 0.07 + groundActive * 0.08;
-    if (tarrantLabel) (tarrantLabel.material as MeshBasicMaterial).opacity = 0.75 + groundActive * 0.25;
     dotsMaterial.uniforms.uOpacity.value = 0.6 + groundActive * 0.35;
     borderMaterial.opacity = 0.85 + groundActive * 0.15;
     linkMaterial.opacity = 0.6 + groundActive * 0.4;
@@ -1211,6 +1218,15 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     });
     project(worldPos.copy(sunPosition), SOLAR.sunRadius, sunProjected);
     placeLabels();
+
+    for (const label of countyLabels) {
+      project(region.localToWorld(worldPos.copy(label.mesh.position)), 0, countyProjected);
+      const covered = labelRects.some(
+        (r) => countyProjected.x > r.left && countyProjected.x < r.right && countyProjected.y > r.top && countyProjected.y < r.bottom,
+      );
+      label.shown += ((covered ? 0 : 1) - label.shown) * k;
+      label.material.opacity = (label.opacity + (label.isTarrant ? groundActive * 0.25 : 0)) * label.shown;
+    }
   }
 
   function render(dt: number) {
@@ -1273,10 +1289,13 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     return { hit, x: x / rect.width - 0.5, y: y / rect.height - 0.5 };
   };
   const onPointerMove = (event: PointerEvent) => {
+    // Parallax and hover follow a mouse only, so touch scrolling doesn't
+    // jolt the camera.
+    if (event.pointerType !== "mouse") return;
     const { hit, x, y } = hitTest(event);
     pointer.tx = x;
     pointer.ty = y;
-    if (event.pointerType === "mouse" && hit !== hovered) {
+    if (hit !== hovered) {
       hovered = hit;
       stage.style.cursor = hit === null ? "" : "pointer";
       renderStill();
@@ -1292,8 +1311,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     }
   };
   const onClick = (event: MouseEvent) => {
-    const { hit } = hitTest(event as PointerEvent);
-    if (hit !== null) opts.onSelect(hit);
+    opts.onSelect(hitTest(event as PointerEvent).hit);
   };
   stage.addEventListener("pointermove", onPointerMove);
   stage.addEventListener("pointerleave", onPointerLeave);

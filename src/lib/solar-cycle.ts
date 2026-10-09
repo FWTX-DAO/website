@@ -11,6 +11,8 @@ const DEG = Math.PI / 180;
 export interface Pillar {
   id: string;
   title: string;
+  /** Fits the narrow labels on phones. */
+  short: string;
   description: string;
   color: string;
   /** Position on the orbit in degrees (0 = right, 90 = far side). */
@@ -38,6 +40,7 @@ export const PILLARS: Pillar[] = [
   {
     id: "inclusion",
     title: "Democratic Inclusion",
+    short: "Inclusion",
     description: "Promotes equal participation and representation.",
     color: "#22D3EE",
     angle: 135,
@@ -46,6 +49,7 @@ export const PILLARS: Pillar[] = [
   {
     id: "community",
     title: "Community-Driven Approach",
+    short: "Community",
     description: "Emphasizes collective decision-making and participation.",
     color: "#A78BFA",
     angle: 45,
@@ -54,6 +58,7 @@ export const PILLARS: Pillar[] = [
   {
     id: "transparency",
     title: "Transparency",
+    short: "Transparency",
     description: "Ensures open and accessible information for all stakeholders.",
     color: "#34D399",
     angle: -45,
@@ -62,6 +67,7 @@ export const PILLARS: Pillar[] = [
   {
     id: "innovation",
     title: "Innovation",
+    short: "Innovation",
     description: "Fosters new ideas and technological advancements.",
     color: "#60A5FA",
     angle: -135,
