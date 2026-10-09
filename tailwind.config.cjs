@@ -18,12 +18,25 @@ module.exports = {
           700: "#1E293B",
           600: "#2A3A52",
         },
+        cyber: {
+          dark: "#0A0F1C",
+          slate: "#1E293B",
+        },
+        neon: {
+          cyan: "#22D3EE",
+          purple: "#A78BFA",
+        },
+        frontier: {
+          amber: "#FBBF24",
+          copper: "#D97706",
+        },
       },
       boxShadow: {
         "glow-sm": "0 0 10px rgba(59, 130, 246, 0.2)",
         "glow-md": "0 0 20px rgba(59, 130, 246, 0.3)",
         "glow-lg": "0 0 30px rgba(59, 130, 246, 0.4)",
         "glow-blue": "0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(59, 130, 246, 0.2)",
+        "glow-amber": "0 0 20px rgba(251, 191, 36, 0.35), 0 0 40px rgba(251, 191, 36, 0.15)",
       },
       animation: {
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",

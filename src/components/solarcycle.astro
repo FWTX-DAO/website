@@ -1,0 +1,330 @@
+---
+import { Icon } from "astro-icon/components";
+import {
+  BORDER_LINES,
+  CORE,
+  COUNTY_SHAPES,
+  GROUND,
+  LINKS,
+  MAP,
+  NODES,
+  PILLARS,
+  SOLAR,
+  TARRANT_OUTLINE,
+  groundFade,
+  orbitPoint,
+  projectToFrame,
+  projectedRadius,
+} from "@lib/solar-cycle";
+
+const icons: Record<string, string> = {
+  inclusion: "mdi:account-group-outline",
+  community: "mdi:account-network-outline",
+  transparency: "mdi:eye-outline",
+  innovation: "mdi:lightbulb-on-outline",
+};
+
+// The poster is the server-rendered first frame: it uses the same camera
+// math as the WebGL scene, so nothing jumps when three.js takes over.
+const VIEW_W = 500;
+const VIEW_H = VIEW_W / SOLAR.aspect;
+const toView = (p: { x: number; y: number }) => ({ x: (p.x / 100) * VIEW_W, y: (p.y / 100) * VIEW_H });
+
+const ringPath = (radius: number, y = 0, [cx, cz] = [0, 0], segments = 96) =>
+  Array.from({ length: segments }, (_, i) => {
+    const [x, , z] = orbitPoint((i / segments) * 360, radius);
+    const p = toView(projectToFrame([cx + x, y, cz + z]));
+    return `${i ? "L" : "M"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
+  }).join(" ") + "Z";
+
+// The map under the system, with the same falloff as the scene.
+const ground = (x: number, z: number) => toView(projectToFrame([x, MAP.y, z]));
+const groundPath = (points: [number, number][]) =>
+  points
+    .map(([x, z], i) => {
+      const p = ground(x, z);
+      return `${i ? "L" : "M"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
+    })
+    .join(" ");
+const center = ground(0, 0);
+const groundNear = ground(0, MAP.extent.near);
+const groundFar = ground(0, -MAP.extent.far);
+const fadeEllipse = {
+  cy: (groundNear.y + groundFar.y) / 2,
+  rx: ground(MAP.extent.x, 0).x - center.x,
+  ry: (groundNear.y - groundFar.y) / 2,
+};
+const borderPaths = BORDER_LINES.map(groundPath);
+const tarrantPath = groundPath(TARRANT_OUTLINE) + "Z";
+
+// County names lie flat on the ground: approximate the perspective at each
+// label with an affine transform built from the projected east and south axes.
+const countyLabels = COUNTY_SHAPES.flatMap((county) => {
+  if (!county.label) return [];
+  const [x, z] = county.label;
+  const o = ground(x, z);
+  const east = ground(x + 1, z);
+  const south = ground(x, z + 1);
+  const matrix = [east.x - o.x, east.y - o.y, south.x - o.x, south.y - o.y, o.x, o.y].map((v) => v.toFixed(3)).join(" ");
+  return [
+    {
+      text: county.name.toUpperCase(),
+      size: county.isTarrant ? 0.3 : 0.24,
+      opacity: county.isTarrant ? 0.75 : 0.4 * groundFade(x, z),
+      transform: `matrix(${matrix})`,
+    },
+  ];
+});
+
+const cityNodes = NODES.map((node) => ({
+  ...ground(node.x, node.z),
+  color: node.pillar < 0 ? GROUND.color : PILLARS[node.pillar].color,
+  root: node.pillar < 0,
+}));
+const sunBase = toView(projectToFrame([0, -SOLAR.sunRadius, 0]));
+const fortWorth = cityNodes[0];
+
+const sunFrame = projectToFrame([0, 0, 0]);
+const sunRadius = projectedRadius(SOLAR.sunRadius, sunFrame.depth);
+const sun = { ...toView(sunFrame), r: (sunRadius / 100) * VIEW_H };
+
+const planets = PILLARS.map((pillar) => {
+  const frame = projectToFrame(orbitPoint(pillar.angle));
+  const [fx, , fz] = orbitPoint(pillar.angle);
+  const radius = projectedRadius(SOLAR.planetRadius, frame.depth);
+  const gap = radius * SOLAR.labelGap + 1;
+  return {
+    ...pillar,
+    icon: icons[pillar.id],
+    left: frame.x,
+    top: pillar.labelSide === "above" ? frame.y - gap : frame.y + gap,
+    view: { ...toView(frame), r: (radius / 100) * VIEW_H },
+    foot: { ring: ringPath(0.16, MAP.y, [fx, fz], 32), base: ground(fx, fz), top: toView(projectToFrame([fx, -SOLAR.planetRadius * 1.9, fz])) },
+  };
+});
+---
+
+<figure class="solar-cycle relative w-full" data-solar-cycle>
+  <figcaption class="sr-only">
+    {CORE.title} sits at the center and powers four pillars that strengthen one another in a loop, rooted over a
+    map of North Texas counties centered on Tarrant County.
+    <ul>
+      {PILLARS.map((p) => <li>{p.title}: {p.description}</li>)}
+      <li>{GROUND.title}: {GROUND.description}</li>
+    </ul>
+  </figcaption>
+
+  <div class="solar-stage relative w-full" style={`aspect-ratio: ${SOLAR.aspect}`} data-stage aria-hidden="true">
+    <svg class="solar-poster absolute inset-0 h-full w-full" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} aria-hidden="true">
+      <defs>
+        <radialGradient id="solar-sun" cx="42%" cy="38%" r="62%">
+          <stop offset="0" stop-color="#FFF1C2" />
+          <stop offset="0.45" stop-color="#FBBF24" />
+          <stop offset="1" stop-color="#C2410C" />
+        </radialGradient>
+        <radialGradient id="solar-corona">
+          <stop offset="0" stop-color="#FBBF24" stop-opacity="0.5" />
+          <stop offset="1" stop-color="#FBBF24" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient
+          id="solar-ground-gradient"
+          gradientUnits="userSpaceOnUse"
+          cx={center.x}
+          cy={fadeEllipse.cy}
+          r={fadeEllipse.rx}
+          gradientTransform={`translate(0 ${fadeEllipse.cy}) scale(1 ${(fadeEllipse.ry / fadeEllipse.rx).toFixed(3)}) translate(0 ${-fadeEllipse.cy})`}>
+          <stop offset="0.7" stop-color="#fff" />
+          <stop offset="1" stop-color="#fff" stop-opacity="0" />
+        </radialGradient>
+        <mask id="solar-ground-fade" maskUnits="userSpaceOnUse" x="0" y="0" width={VIEW_W} height={VIEW_H}>
+          <rect width={VIEW_W} height={VIEW_H} fill="url(#solar-ground-gradient)" />
+        </mask>
+        {planets.map((p) => (
+          <radialGradient id={`solar-${p.id}`} cx="38%" cy="35%" r="70%">
+            <stop offset="0" stop-color={p.color} />
+            <stop offset="0.55" stop-color={p.color} stop-opacity="0.35" />
+            <stop offset="1" stop-color="#0A0F1C" />
+          </radialGradient>
+        ))}
+      </defs>
+      <g mask="url(#solar-ground-fade)" fill="none">
+        <path d={tarrantPath} fill="#3B82F6" fill-opacity="0.07" stroke="#BFDBFE" stroke-opacity="0.45" />
+        {borderPaths.map((d) => (
+          <path d={d} stroke="#93C5FD" stroke-opacity="0.28" />
+        ))}
+        {countyLabels.map((label) => (
+          <text
+            transform={label.transform}
+            font-size={label.size}
+            letter-spacing={label.size * 0.32}
+            text-anchor="middle"
+            dominant-baseline="central"
+            fill="#BFDBFE"
+            fill-opacity={label.opacity.toFixed(2)}
+            class="font-mono font-semibold">
+            {label.text}
+          </text>
+        ))}
+        {LINKS.map(([a, b]) => (
+          <line x1={cityNodes[a].x} y1={cityNodes[a].y} x2={cityNodes[b].x} y2={cityNodes[b].y} stroke={cityNodes[b].color} stroke-opacity="0.22" />
+        ))}
+        {cityNodes.map((n) => (
+          <g>
+            <circle cx={n.x} cy={n.y} r={n.root ? 6 : 4} fill={n.color} fill-opacity="0.12" />
+            <circle cx={n.x} cy={n.y} r={n.root ? 2.2 : 1.5} fill={n.color} />
+          </g>
+        ))}
+      </g>
+      <path d={ringPath(0.23, MAP.y, [NODES[0].x, NODES[0].z], 48)} fill="none" stroke={GROUND.color} stroke-opacity="0.45" />
+      <line x1={fortWorth.x} y1={fortWorth.y} x2={sunBase.x} y2={sunBase.y} stroke={GROUND.color} stroke-opacity="0.18" />
+      {planets.map((p) => (
+        <g fill="none" stroke={p.color}>
+          <path d={p.foot.ring} stroke-opacity="0.4" />
+          <line x1={p.foot.base.x} y1={p.foot.base.y} x2={p.foot.top.x} y2={p.foot.top.y} stroke-opacity="0.12" />
+        </g>
+      ))}
+      <path d={ringPath(SOLAR.orbitRadius * 1.2)} fill="none" stroke="#93C5FD" stroke-opacity="0.08" />
+      <path d={ringPath(SOLAR.orbitRadius * 0.6)} fill="none" stroke="#FBBF24" stroke-opacity="0.2" stroke-dasharray="3 4" />
+      <path d={ringPath(SOLAR.orbitRadius)} fill="none" stroke="#60A5FA" stroke-opacity="0.35" />
+      {planets.map((p) => (
+        <line x1={sun.x} y1={sun.y} x2={p.view.x} y2={p.view.y} stroke={p.color} stroke-opacity="0.18" />
+      ))}
+      <circle cx={sun.x} cy={sun.y} r={sun.r * 3.4} fill="url(#solar-corona)" />
+      <circle cx={sun.x} cy={sun.y} r={sun.r} fill="url(#solar-sun)" />
+      {planets.map((p) => (
+        <g>
+          <circle cx={p.view.x} cy={p.view.y} r={p.view.r * 2.6} fill={p.color} fill-opacity="0.08" />
+          <ellipse cx={p.view.x} cy={p.view.y} rx={p.view.r * 1.6} ry={p.view.r * 0.6} fill="none" stroke={p.color} stroke-opacity="0.4" />
+          <circle cx={p.view.x} cy={p.view.y} r={p.view.r} fill={`url(#solar-${p.id})`} />
+        </g>
+      ))}
+    </svg>
+    <canvas class="solar-canvas absolute inset-0 h-full w-full" data-canvas></canvas>
+    {planets.map((p, i) => (
+      <span
+        class:list={[
+          "solar-label solar-chip pointer-events-none absolute inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border bg-navy-950/80 py-1 pl-2.5 pr-2.5 text-[10px] font-semibold text-slate-300 transition-[border-color,color,box-shadow] duration-300 ease-out sm:pl-1 sm:text-xs",
+          p.labelSide === "above" && "-translate-y-full",
+        ]}
+        style={`left: ${p.left.toFixed(2)}%; top: ${p.top.toFixed(2)}%; --pillar: ${p.color}`}
+        data-label
+        data-active={i === 0 ? "" : undefined}>
+        <span class="solar-dot hidden h-5 w-5 items-center justify-center rounded-full sm:flex">
+          <Icon name={p.icon} class="h-3 w-3" />
+        </span>
+        <span class="sm:hidden">{p.short}</span>
+        <span class="hidden sm:inline">{p.title}</span>
+      </span>
+    ))}
+    <span
+      class="solar-label solar-core-label pointer-events-none absolute -translate-x-1/2 whitespace-nowrap rounded-md bg-navy-950/60 px-2 py-0.5 font-display text-sm leading-none tracking-wide text-amber-100 sm:text-base"
+      style={`left: 50%; top: ${(sunFrame.y + sunRadius + 1.5).toFixed(2)}%`}
+      data-core-label>
+      {CORE.title}
+    </span>
+  </div>
+</figure>
+
+<style>
+  /* No frame: a soft backdrop keeps the page pattern out of the map, and
+     the scene (not its labels) fades into the page at its edges. */
+  .solar-stage {
+    background: radial-gradient(ellipse 50% 46% at 50% 54%, rgba(10, 15, 28, 0.9) 45%, transparent 100%);
+  }
+
+  .solar-poster,
+  .solar-canvas {
+    -webkit-mask-image: radial-gradient(closest-side, #000 81%, transparent 104%);
+    mask-image: radial-gradient(closest-side, #000 81%, transparent 104%);
+    transition: opacity 0.8s ease-out;
+  }
+
+  .solar-canvas {
+    opacity: 0;
+  }
+
+  [data-webgl="ready"] .solar-canvas {
+    opacity: 1;
+  }
+
+  [data-webgl="ready"] .solar-poster {
+    opacity: 0;
+  }
+
+  [data-webgl="ready"] .solar-label {
+    left: 0 !important;
+    top: 0 !important;
+    will-change: transform;
+  }
+
+  .solar-chip {
+    border-color: rgba(148, 163, 184, 0.18);
+  }
+
+  .solar-chip[data-active] {
+    border-color: var(--pillar);
+    color: #fff;
+    box-shadow: 0 0 18px -6px var(--pillar);
+  }
+
+  .solar-dot {
+    background: color-mix(in srgb, var(--pillar) 18%, transparent);
+    color: var(--pillar);
+  }
+
+  .solar-core-label {
+    transition: color 0.3s ease-out, text-shadow 0.3s ease-out;
+  }
+
+  .solar-core-label[data-active] {
+    color: #fff;
+    text-shadow: 0 0 14px rgba(251, 191, 36, 0.8);
+  }
+</style>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-solar-cycle]")) init(root);
+
+  function init(root: HTMLElement) {
+    const stage = root.querySelector<HTMLElement>("[data-stage]")!;
+    const canvas = root.querySelector<HTMLCanvasElement>("[data-canvas]")!;
+    const labels = [...root.querySelectorAll<HTMLElement>("[data-label]")];
+    const coreLabel = root.querySelector<HTMLElement>("[data-core-label]")!;
+
+    const load = async () => {
+      // Data Saver keeps the static poster instead of downloading three.js.
+      if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return;
+      try {
+        const { mountSolarCycle } = await import("../scripts/solar-cycle-scene");
+        const scene = mountSolarCycle({
+          stage,
+          canvas,
+          labels,
+          coreLabel,
+          reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+          // Light up the label of whichever pillar the cycle is on.
+          onActiveChange: (index) => {
+            labels.forEach((label, i) => label.toggleAttribute("data-active", i === index));
+            coreLabel.toggleAttribute("data-active", index === -1);
+          },
+        });
+        if (scene) stage.dataset.webgl = "ready";
+      } catch (error) {
+        console.warn("Solar cycle visual unavailable:", error);
+      }
+    };
+
+    const whenIdle = (fn: () => void) =>
+      "requestIdleCallback" in window ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 200);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        observer.disconnect();
+        whenIdle(load);
+      },
+      { rootMargin: "300px" },
+    );
+    observer.observe(root);
+  }
+</script>

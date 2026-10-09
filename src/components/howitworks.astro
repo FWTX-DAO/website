@@ -1,0 +1,129 @@
+---
+import { Icon } from "astro-icon/components";
+
+const ARAGON_URL = "https://app.aragon.org/dao/base-mainnet/0xCA1726313108af31C3482630062fFa2D511096FD";
+
+const steps = [
+  {
+    step: "01",
+    title: "Learn",
+    icon: "mdi:school-outline",
+    accent: "text-neon-cyan",
+    body: "Start at a weekly roundtable or workshop on digital assets, cybersecurity, and emerging tech. Open to anyone curious about technology and Fort Worth's future.",
+    meta: "Wednesdays · 12pm CST · CreateFW",
+    links: [{ label: "See upcoming events", href: "/events" }],
+  },
+  {
+    step: "02",
+    title: "Build",
+    icon: "mdi:hammer-wrench",
+    accent: "text-frontier-amber",
+    body: "Put those skills to work: join HackFW, take on an innovation bounty, or contribute to our open source tools and study guides.",
+    meta: "Hackathons · Bounties · Open source",
+    links: [
+      { label: "HackFW", href: "https://hack.fwtx.city" },
+      { label: "Bounties", href: "https://innovate.fwtx.city" },
+      { label: "GitHub", href: "https://github.com/FWTX-DAO" },
+    ],
+  },
+  {
+    step: "03",
+    title: "Govern",
+    icon: "mdi:vote-outline",
+    accent: "text-neon-purple",
+    body: "Become a member through the portal and help steer the DAO's direction under its public constitution.",
+    meta: "Membership · Proposals · Voting",
+    links: [
+      { label: "Join the DAO", href: "https://dao.fwtx.city" },
+      { label: "Read the constitution", href: "https://constitution.fwtx.city" },
+    ],
+  },
+];
+
+const proof = [
+  { label: "501(c)(3) nonprofit", detail: "Fort Worth DAO LCA · EIN 41-2815082", href: "/donate", icon: "mdi:shield-check-outline" },
+  { label: "Founded December 2023", detail: "Serving Fort Worth and Greater Texas", icon: "mdi:calendar-clock" },
+  { label: "Public constitution", detail: "Mission, membership, governance, and voting", href: "https://constitution.fwtx.city", icon: "mdi:file-document-outline" },
+  { label: "Onchain on Base", detail: "Our DAO is a public Aragon organization", href: ARAGON_URL, icon: "mdi:cube-outline" },
+];
+
+const isExternal = (href: string) => href.startsWith("http");
+---
+
+<section class="my-16 md:my-20" aria-labelledby="how-it-works-title">
+  <div class="mx-auto max-w-3xl text-center">
+    <p class="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-blue-300">How it works</p>
+    <h2 id="how-it-works-title" class="font-display text-4xl font-bold tracking-tight text-white lg:text-5xl">
+      From Curious to <span class="gradient-text">Contributing</span>
+    </h2>
+    <p class="mt-4 text-lg text-slate-400">
+      A DAO is an organization its members run together, under rules anyone can read.
+      Ours are written in a public constitution, and the DAO itself is published onchain.
+      Here's how people take part.
+    </p>
+  </div>
+
+  <ol class="relative mt-12 grid gap-6 md:grid-cols-3">
+    {steps.map((s, i) => (
+      <li class="glass-card relative flex flex-col rounded-xl p-6">
+        {i < steps.length - 1 && (
+          <span class="absolute -right-5 top-1/2 z-10 hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-blue-500/20 bg-navy-950 text-blue-400 md:flex" aria-hidden="true">
+            <Icon name="mdi:arrow-right" class="h-4 w-4" />
+          </span>
+        )}
+        <div class="flex items-center justify-between">
+          <div class:list={["flex h-11 w-11 items-center justify-center rounded-lg bg-navy-800/80", s.accent]}>
+            <Icon name={s.icon} class="h-6 w-6" aria-hidden="true" />
+          </div>
+          <span class="select-none font-display text-4xl text-frontier-amber/40" aria-hidden="true">{s.step}</span>
+        </div>
+        <h3 class="mt-5 text-xl font-semibold text-white">
+          <span class="sr-only">Step {i + 1}: </span>{s.title}
+        </h3>
+        <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-400">{s.body}</p>
+        <p class="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-500">{s.meta}</p>
+        <div class="mt-4 flex flex-wrap gap-x-5 gap-y-4 border-t border-blue-500/10 pt-4">
+          {s.links.map((link) => (
+            <a
+              href={link.href}
+              target={isExternal(link.href) ? "_blank" : undefined}
+              rel={isExternal(link.href) ? "noopener noreferrer" : undefined}
+              class="group -my-3 inline-flex min-h-[44px] items-center gap-1 text-sm font-semibold text-blue-400 transition-colors duration-200 hover:text-blue-300">
+              {link.label}
+              <Icon name="mdi:arrow-right" class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+            </a>
+          ))}
+        </div>
+      </li>
+    ))}
+  </ol>
+
+  <p class="mt-6 flex items-center justify-center gap-2 text-center text-sm text-slate-400">
+    <Icon name="mdi:sync" class="h-4 w-4 shrink-0 text-frontier-amber" aria-hidden="true" />
+    What members build and decide feeds what the community learns next, and the cycle repeats.
+  </p>
+
+  <ul class="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4" role="list">
+    {proof.map((item) => {
+      const Tag = item.href ? "a" : "div";
+      return (
+        <li>
+          <Tag
+            href={item.href}
+            target={item.href && isExternal(item.href) ? "_blank" : undefined}
+            rel={item.href && isExternal(item.href) ? "noopener noreferrer" : undefined}
+            class:list={[
+              "flex h-full items-start gap-3 rounded-lg border border-slate-700/50 bg-navy-900/50 p-4",
+              item.href && "transition-[border-color] duration-200 hover:border-blue-400/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400",
+            ]}>
+            <Icon name={item.icon} class="mt-0.5 h-5 w-5 shrink-0 text-blue-400" aria-hidden="true" />
+            <span>
+              <span class="block text-sm font-semibold text-white">{item.label}</span>
+              <span class="block text-xs leading-relaxed text-slate-400">{item.detail}</span>
+            </span>
+          </Tag>
+        </li>
+      );
+    })}
+  </ul>
+</section>
