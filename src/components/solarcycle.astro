@@ -1,20 +1,20 @@
 ---
 import { Icon } from "astro-icon/components";
 import {
-  CITY,
+  BORDER_LINES,
   CORE,
+  COUNTY_SHAPES,
   GROUND,
-  GROUND_LABEL,
   LINKS,
+  MAP,
   NODES,
   PILLARS,
-  RIVER,
-  ROADS,
   SOLAR,
+  TARRANT_OUTLINE,
+  groundFade,
   orbitPoint,
   projectToFrame,
   projectedRadius,
-  smoothPath,
 } from "@lib/solar-cycle";
 
 const icons: Record<string, string> = {
@@ -37,8 +37,8 @@ const ringPath = (radius: number, y = 0, [cx, cz] = [0, 0], segments = 96) =>
     return `${i ? "L" : "M"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
   }).join(" ") + "Z";
 
-// The city plane under the system, with the same falloff as the scene.
-const ground = (x: number, z: number) => toView(projectToFrame([x, CITY.y, z]));
+// The map under the system, with the same falloff as the scene.
+const ground = (x: number, z: number) => toView(projectToFrame([x, MAP.y, z]));
 const groundPath = (points: [number, number][]) =>
   points
     .map(([x, z], i) => {
@@ -46,25 +46,43 @@ const groundPath = (points: [number, number][]) =>
       return `${i ? "L" : "M"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
     })
     .join(" ");
-const downtown = ground(0, 0);
-const groundNear = ground(0, CITY.extent.near);
-const groundFar = ground(0, -CITY.extent.far);
-const groundFade = {
+const center = ground(0, 0);
+const groundNear = ground(0, MAP.extent.near);
+const groundFar = ground(0, -MAP.extent.far);
+const fadeEllipse = {
   cy: (groundNear.y + groundFar.y) / 2,
-  rx: ground(CITY.extent.x, 0).x - downtown.x,
+  rx: ground(MAP.extent.x, 0).x - center.x,
   ry: (groundNear.y - groundFar.y) / 2,
 };
-const groundPaths = {
-  roads: [smoothPath(ROADS.loop820, true, 0.3), smoothPath(ROADS.i35w, false, 0.5), smoothPath(ROADS.i30, false, 0.5)].map(groundPath),
-  rivers: [RIVER.westFork, RIVER.clearFork].map((fork) => groundPath(smoothPath(fork, false, 0.3))),
-};
+const borderPaths = BORDER_LINES.map(groundPath);
+const tarrantPath = groundPath(TARRANT_OUTLINE) + "Z";
+
+// County names lie flat on the ground: approximate the perspective at each
+// label with an affine transform built from the projected east and south axes.
+const countyLabels = COUNTY_SHAPES.flatMap((county) => {
+  if (!county.label) return [];
+  const [x, z] = county.label;
+  const o = ground(x, z);
+  const east = ground(x + 1, z);
+  const south = ground(x, z + 1);
+  const matrix = [east.x - o.x, east.y - o.y, south.x - o.x, south.y - o.y, o.x, o.y].map((v) => v.toFixed(3)).join(" ");
+  return [
+    {
+      text: county.name.toUpperCase(),
+      size: county.isTarrant ? 0.3 : 0.24,
+      opacity: county.isTarrant ? 0.75 : 0.4 * groundFade(x, z),
+      transform: `matrix(${matrix})`,
+    },
+  ];
+});
+
 const cityNodes = NODES.map((node) => ({
   ...ground(node.x, node.z),
   color: node.pillar < 0 ? GROUND.color : PILLARS[node.pillar].color,
   root: node.pillar < 0,
 }));
 const sunBase = toView(projectToFrame([0, -SOLAR.sunRadius, 0]));
-const groundLabel = projectToFrame(GROUND_LABEL);
+const fortWorth = cityNodes[0];
 
 const sunFrame = projectToFrame([0, 0, 0]);
 const sunRadius = projectedRadius(SOLAR.sunRadius, sunFrame.depth);
@@ -80,7 +98,7 @@ const planets = PILLARS.map((pillar, index) => {
     index,
     icon: icons[pillar.id],
     view: { ...toView(frame), r: (radius / 100) * VIEW_H },
-    foot: { ring: ringPath(0.16, CITY.y, [fx, fz], 32), base: ground(fx, fz), top: toView(projectToFrame([fx, -SOLAR.planetRadius * 1.9, fz])) },
+    foot: { ring: ringPath(0.16, MAP.y, [fx, fz], 32), base: ground(fx, fz), top: toView(projectToFrame([fx, -SOLAR.planetRadius * 1.9, fz])) },
     left: frame.x,
     top: pillar.labelSide === "above" ? frame.y - gap : frame.y + gap,
   };
@@ -112,8 +130,8 @@ const first = PILLARS[0];
   <p id="solar-cycle-summary" class="sr-only">
     {CORE.title} sits at the center and powers four pillars that strengthen one another in a loop:
     {PILLARS.map((p) => p.title).join(", then ")}, which feeds back into {first.title}. The system is rooted over a
-    map of Fort Worth and North Texas, where a {GROUND.title.toLowerCase()} of builders, meetups, and labs links up
-    peer to peer and feeds every pillar from the ground up.
+    map of North Texas counties centered on Tarrant County, where a {GROUND.title.toLowerCase()} of builders, meetups,
+    and labs links up peer to peer and feeds every pillar from the ground up.
   </p>
 
   <div class="solar-stage relative w-full" style={`aspect-ratio: ${SOLAR.aspect}`} data-stage>
@@ -131,10 +149,10 @@ const first = PILLARS[0];
         <radialGradient
           id="solar-ground-gradient"
           gradientUnits="userSpaceOnUse"
-          cx={downtown.x}
-          cy={groundFade.cy}
-          r={groundFade.rx}
-          gradientTransform={`translate(0 ${groundFade.cy}) scale(1 ${(groundFade.ry / groundFade.rx).toFixed(3)}) translate(0 ${-groundFade.cy})`}>
+          cx={center.x}
+          cy={fadeEllipse.cy}
+          r={fadeEllipse.rx}
+          gradientTransform={`translate(0 ${fadeEllipse.cy}) scale(1 ${(fadeEllipse.ry / fadeEllipse.rx).toFixed(3)}) translate(0 ${-fadeEllipse.cy})`}>
           <stop offset="0.7" stop-color="#fff" />
           <stop offset="1" stop-color="#fff" stop-opacity="0" />
         </radialGradient>
@@ -150,11 +168,22 @@ const first = PILLARS[0];
         ))}
       </defs>
       <g mask="url(#solar-ground-fade)" fill="none">
-        {groundPaths.roads.map((d, i) => (
-          <path d={d} stroke="#93C5FD" stroke-opacity={i ? 0.16 : 0.26} />
+        <path d={tarrantPath} fill="#3B82F6" fill-opacity="0.07" stroke="#BFDBFE" stroke-opacity="0.45" />
+        {borderPaths.map((d) => (
+          <path d={d} stroke="#93C5FD" stroke-opacity="0.28" />
         ))}
-        {groundPaths.rivers.map((d) => (
-          <path d={d} stroke="#22D3EE" stroke-opacity="0.32" />
+        {countyLabels.map((label) => (
+          <text
+            transform={label.transform}
+            font-size={label.size}
+            letter-spacing={label.size * 0.32}
+            text-anchor="middle"
+            dominant-baseline="central"
+            fill="#BFDBFE"
+            fill-opacity={label.opacity.toFixed(2)}
+            class="font-mono font-semibold">
+            {label.text}
+          </text>
         ))}
         {LINKS.map(([a, b]) => (
           <line x1={cityNodes[a].x} y1={cityNodes[a].y} x2={cityNodes[b].x} y2={cityNodes[b].y} stroke={cityNodes[b].color} stroke-opacity="0.22" />
@@ -166,8 +195,8 @@ const first = PILLARS[0];
           </g>
         ))}
       </g>
-      <path d={ringPath(0.23, CITY.y, [0, 0], 48)} fill="none" stroke={GROUND.color} stroke-opacity="0.45" />
-      <line x1={downtown.x} y1={downtown.y} x2={sunBase.x} y2={sunBase.y} stroke={GROUND.color} stroke-opacity="0.18" />
+      <path d={ringPath(0.23, MAP.y, [NODES[0].x, NODES[0].z], 48)} fill="none" stroke={GROUND.color} stroke-opacity="0.45" />
+      <line x1={fortWorth.x} y1={fortWorth.y} x2={sunBase.x} y2={sunBase.y} stroke={GROUND.color} stroke-opacity="0.18" />
       {planets.map((p) => (
         <g fill="none" stroke={p.color}>
           <path d={p.foot.ring} stroke-opacity="0.4" />
@@ -224,10 +253,7 @@ const first = PILLARS[0];
           <span class="sr-only">: {CORE.description}</span>
         </button>
       </li>
-      <li
-        class="solar-label absolute -translate-x-1/2 -translate-y-1/2"
-        style={`left: ${groundLabel.x.toFixed(2)}%; top: ${groundLabel.y.toFixed(2)}%`}
-        data-ground-label>
+      <li class="absolute bottom-2 right-3 sm:bottom-2.5 sm:right-4">
         <button
           type="button"
           class="solar-chip inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border bg-navy-950/80 py-1 pl-2.5 pr-2.5 text-[10px] sm:pl-1 font-semibold text-slate-300 transition-[border-color,color,box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 sm:text-xs"
@@ -242,8 +268,8 @@ const first = PILLARS[0];
       </li>
     </ul>
 
-    <p class="pointer-events-none absolute bottom-2.5 left-3 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-500 sm:bottom-3 sm:left-4 sm:text-[10px]" aria-hidden="true">
-      Fort Worth · North Texas<span class="hidden sm:inline"> · {CITY.coordinates}</span>
+    <p class="pointer-events-none absolute bottom-3.5 left-3 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-500 sm:bottom-4 sm:left-4 sm:text-[10px]" aria-hidden="true">
+      Tarrant County<span class="hidden sm:inline"> · North Texas · {MAP.coordinates}</span>
     </p>
   </div>
 
@@ -364,7 +390,6 @@ const first = PILLARS[0];
     const canvas = root.querySelector<HTMLCanvasElement>("[data-canvas]")!;
     const labels = [...root.querySelectorAll<HTMLElement>("[data-label]")];
     const coreLabel = root.querySelector<HTMLElement>("[data-core-label]")!;
-    const groundLabel = root.querySelector<HTMLElement>("[data-ground-label]")!;
     const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-pillar]")];
     const steps = [...root.querySelectorAll<HTMLElement>("[data-step]")];
     const stepEl = root.querySelector("[data-caption-step]")!;
@@ -436,7 +461,6 @@ const first = PILLARS[0];
           canvas,
           labels,
           coreLabel,
-          groundLabel,
           reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
           onActiveChange: setActive,
           onSelect: select,

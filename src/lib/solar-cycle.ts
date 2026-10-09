@@ -2,6 +2,8 @@
 // fallback (SVG poster + label positions) and the three.js scene read from
 // here, so the static frame and the first WebGL frame line up exactly.
 
+import { BORDERS, COUNTIES, TARRANT_FIPS } from "./north-texas-counties";
+
 export type Vec3 = [number, number, number];
 
 const DEG = Math.PI / 180;
@@ -25,7 +27,7 @@ export const CORE = {
 export const GROUND = {
   title: "Grassroots Ecosystem",
   description:
-    "Builders, meetups, and labs across Fort Worth and North Texas sprout and link up peer to peer, growing the tech ecosystem from the ground up.",
+    "Builders, meetups, and labs across Tarrant County and North Texas sprout and link up peer to peer, growing the tech ecosystem from the ground up.",
   color: "#A3E635",
 };
 
@@ -81,103 +83,105 @@ export const SOLAR = {
   labelGap: 1.6,
 };
 
-// --- City ---------------------------------------------------------------
-// The system floats over a map of Fort Worth: downtown sits directly under
-// the core, north points away from the camera, and every place below is a
-// real lat/lng projected onto the ground plane.
+// --- Map ----------------------------------------------------------------
+// The system floats over North Texas, centered on Tarrant County: county
+// lines come from Census boundary data, north points away from the camera,
+// and every place below is a real lat/lng projected onto the ground plane.
 
-export const CITY = {
+const TARRANT = COUNTIES.find((county) => county.fips === TARRANT_FIPS)!;
+
+export const MAP = {
   y: -2.1,
-  origin: { lat: 32.7555, lng: -97.3308 },
+  origin: { lng: TARRANT.center[0], lat: TARRANT.center[1] },
   /** Miles per world unit. */
-  scale: 2.5,
+  scale: 10.5,
   /**
-   * Ground detail fades out toward these distances from downtown. The near
-   * side fades sooner so the map is gone before it reaches the frame edge.
+   * Ground detail fades out toward these distances from the center. The
+   * near side fades sooner so the map is gone before it reaches the frame.
    */
   extent: { x: 4, near: 3.8, far: 4.8 },
-  coordinates: "32.7555° N · 97.3308° W",
+  coordinates: "32.77° N · 97.29° W",
 };
 
 const MILES_PER_DEG_LAT = 69;
-const MILES_PER_DEG_LNG = MILES_PER_DEG_LAT * Math.cos(CITY.origin.lat * DEG);
+const MILES_PER_DEG_LNG = MILES_PER_DEG_LAT * Math.cos(MAP.origin.lat * DEG);
 
-/** How much ground detail shows at a point: 1 around downtown, 0 at the edge. */
+const fadeRadius = (x: number, z: number) =>
+  Math.hypot(x / MAP.extent.x, z / (z > 0 ? MAP.extent.near : MAP.extent.far));
+
+/** How much ground detail shows at a point: 1 near the center, 0 at the edge. */
 export function groundFade(x: number, z: number) {
-  const { extent } = CITY;
-  const r = Math.hypot(x / extent.x, z / (z > 0 ? extent.near : extent.far));
-  const t = Math.min(1, Math.max(0, (r - 0.7) / 0.3));
+  const t = Math.min(1, Math.max(0, (fadeRadius(x, z) - 0.7) / 0.3));
   return 1 - t * t * (3 - 2 * t);
 }
 
 /** Projects a lat/lng onto the ground plane as [x, z]. */
 export function geo(lat: number, lng: number): [number, number] {
   return [
-    ((lng - CITY.origin.lng) * MILES_PER_DEG_LNG) / CITY.scale,
-    (-(lat - CITY.origin.lat) * MILES_PER_DEG_LAT) / CITY.scale,
+    ((lng - MAP.origin.lng) * MILES_PER_DEG_LNG) / MAP.scale,
+    (-(lat - MAP.origin.lat) * MILES_PER_DEG_LAT) / MAP.scale,
   ];
 }
 
-const geoPath = (points: [number, number][]) => points.map(([lat, lng]) => geo(lat, lng));
+export function insidePolygon([x, z]: [number, number], ring: [number, number][]) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, zi] = ring[i];
+    const [xj, zj] = ring[j];
+    if (zi > z !== zj > z && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) inside = !inside;
+  }
+  return inside;
+}
 
-export const ROADS = {
-  loop820: geoPath([
-    [32.84, -97.43],
-    [32.845, -97.35],
-    [32.83, -97.235],
-    [32.75, -97.21],
-    [32.675, -97.22],
-    [32.665, -97.33],
-    [32.67, -97.43],
-    [32.75, -97.465],
-  ]),
-  i35w: geoPath([
-    [33.0, -97.318],
-    [32.5, -97.322],
-  ]),
-  i30: geoPath([
-    [32.726, -97.62],
-    [32.742, -97.33],
-    [32.755, -97.04],
-  ]),
+/** Splits a polyline so no segment is longer than `step`, for smooth fades. */
+export function densify(points: [number, number][], step = 0.12) {
+  const out: [number, number][] = [points[0]];
+  for (let i = 1; i < points.length; i++) {
+    const [x0, z0] = points[i - 1];
+    const [x1, z1] = points[i];
+    const n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, z1 - z0) / step));
+    for (let s = 1; s <= n; s++) out.push([x0 + ((x1 - x0) * s) / n, z0 + ((z1 - z0) * s) / n]);
+  }
+  return out;
+}
+
+export interface MapCounty {
+  name: string;
+  isTarrant: boolean;
+  rings: [number, number][][];
+  /** Where the county's name sits on the ground, or null when it's off the map. */
+  label: [number, number] | null;
+}
+
+// Labels sit at each county's center, pulled toward Tarrant when the center
+// is too far out to read, as long as they stay inside the county. A few are
+// placed by hand ([lng, lat]) to stay clear of the pillars and the core.
+const LABEL_RADIUS = 0.8;
+const LABEL_AT: Record<string, [number, number]> = {
+  Tarrant: [-97.29, 32.64],
+  Parker: [-97.76, 32.585],
+  Dallas: [-96.76, 32.585],
+  Denton: [-96.97, 33.11],
 };
+export const COUNTY_SHAPES: MapCounty[] = COUNTIES.map((county) => {
+  const rings = county.rings.map((ring) => ring.map(([lng, lat]) => geo(lat, lng)));
+  const isTarrant = county.fips === TARRANT_FIPS;
+  const [lng, lat] = LABEL_AT[county.name] ?? county.center;
+  let label: [number, number] | null = geo(lat, lng);
+  const r = fadeRadius(...label);
+  if (r > LABEL_RADIUS) label = [(label[0] * LABEL_RADIUS) / r, (label[1] * LABEL_RADIUS) / r];
+  if (!rings.some((ring) => insidePolygon(label!, ring)) || groundFade(...label) < 0.5) label = null;
+  return { name: county.name, isTarrant, rings, label };
+});
 
-// The Trinity's two forks meet just northwest of downtown, then the West
-// Fork carries on east toward Dallas.
-const CONFLUENCE: [number, number] = [32.765, -97.337];
-export const RIVER = {
-  westFork: geoPath([
-    [32.83, -97.5],
-    [32.79, -97.42],
-    [32.785, -97.395],
-    [32.78, -97.37],
-    [32.774, -97.35],
-    CONFLUENCE,
-    [32.77, -97.325],
-    [32.769, -97.31],
-    [32.76, -97.29],
-    [32.77, -97.27],
-    [32.785, -97.24],
-    [32.79, -97.2],
-    [32.8, -97.15],
-    [32.79, -97.1],
-    [32.78, -97.02],
-  ]),
-  clearFork: geoPath([
-    [32.62, -97.5],
-    [32.66, -97.45],
-    [32.69, -97.42],
-    [32.715, -97.395],
-    [32.735, -97.37],
-    [32.75, -97.355],
-    CONFLUENCE,
-  ]),
-};
+export const TARRANT_OUTLINE = COUNTY_SHAPES.find((county) => county.isTarrant)!.rings[0];
 
-export interface CityNode {
+export const BORDER_LINES = BORDERS.map((line) => line.map(([lng, lat]) => geo(lat, lng)));
+
+export interface MapNode {
   x: number;
   z: number;
-  /** Index of the pillar standing over this part of the city; -1 for the downtown root. */
+  /** Index of the pillar standing over this part of the map; -1 for the Fort Worth root. */
   pillar: number;
 }
 
@@ -192,26 +196,34 @@ const nearestPillar = (x: number, z: number) => {
   return best;
 };
 
-// Grassroots nodes: builders, meetups, and labs across the metro. The first
-// one is downtown, the root under the core.
-export const NODES: CityNode[] = geoPath([
-  [32.7555, -97.3308], // Downtown
-  [32.789, -97.347], // Stockyards
-  [32.735, -97.327], // Near Southside
-  [32.749, -97.367], // Cultural District
-  [32.709, -97.363], // TCU
-  [32.725, -97.272], // Polytechnic
-  [32.805, -97.445], // Lake Worth
-  [32.86, -97.364], // Saginaw
-  [32.8, -97.27], // Haltom City
-  [32.834, -97.229], // North Richland Hills
-  [32.673, -97.461], // Benbrook
-  [32.69, -97.27], // Forest Hill
-  [32.759, -97.458], // White Settlement
-  [32.735, -97.2], // Handley
-  [32.89, -97.29], // Far North
-  [32.84, -97.16], // Hurst
-]).map(([x, z], i) => ({ x, z, pillar: i === 0 ? -1 : nearestPillar(x, z) }));
+// Grassroots nodes: builders, meetups, and labs across North Texas. The
+// first is Fort Worth, the root under the core.
+export const NODES: MapNode[] = (
+  [
+    [32.7555, -97.3308], // Fort Worth
+    [32.7357, -97.1081], // Arlington
+    [32.9746, -97.3478], // Alliance
+    [32.9346, -97.2292], // Keller
+    [32.9343, -97.0781], // Grapevine
+    [32.5632, -97.1417], // Mansfield
+    [32.5421, -97.3208], // Burleson
+    [32.8951, -97.5456], // Azle
+    [32.7767, -96.797], // Dallas
+    [32.814, -96.9489], // Irving
+    [32.7459, -96.9978], // Grand Prairie
+    [33.0462, -96.9942], // Lewisville
+    [33.2148, -97.1331], // Denton
+    [33.1507, -96.8236], // Frisco
+    [32.7593, -97.7973], // Weatherford
+    [32.4421, -97.7942], // Granbury
+    [32.3476, -97.3867], // Cleburne
+    [32.4824, -96.9945], // Midlothian
+    [32.3866, -96.8483], // Waxahachie
+    [33.2343, -97.5861], // Decatur
+  ] as [number, number][]
+)
+  .map(([lat, lng]) => geo(lat, lng))
+  .map(([x, z], i) => ({ x, z, pillar: i === 0 ? -1 : nearestPillar(x, z) }));
 
 // A peer-to-peer mesh rather than hub-and-spoke: each node links to its two
 // nearest neighbors.
@@ -232,35 +244,6 @@ export const LINKS: [number, number][] = (() => {
   });
   return links;
 })();
-
-/**
- * Smooths a polyline into a Catmull-Rom curve, sampled roughly every `step`
- * world units so faded lines interpolate evenly.
- */
-export function smoothPath(points: [number, number][], closed = false, step = 0.12): [number, number][] {
-  const n = points.length;
-  const at = (i: number) => (closed ? points[(i + n) % n] : points[Math.min(Math.max(i, 0), n - 1)]);
-  const out: [number, number][] = [];
-  for (let i = 0; i < (closed ? n : n - 1); i++) {
-    const [p0, p1, p2, p3] = [at(i - 1), at(i), at(i + 1), at(i + 2)];
-    const samples = Math.max(2, Math.ceil(Math.hypot(p2[0] - p1[0], p2[1] - p1[1]) / step));
-    for (let s = 0; s < samples; s++) {
-      const t = s / samples;
-      const curve = (k: 0 | 1) =>
-        0.5 *
-        (2 * p1[k] +
-          (p2[k] - p0[k]) * t +
-          (2 * p0[k] - 5 * p1[k] + 4 * p2[k] - p3[k]) * t * t +
-          (3 * p1[k] - p0[k] - 3 * p2[k] + p3[k]) * t * t * t);
-      out.push([curve(0), curve(1)]);
-    }
-  }
-  out.push(closed ? out[0] : points[n - 1]);
-  return out;
-}
-
-/** Where the ground label sits: on the south side of Loop 820. */
-export const GROUND_LABEL: Vec3 = [0, CITY.y, 3.2];
 
 export function orbitPoint(angleDeg: number, radius = SOLAR.orbitRadius, y = 0): Vec3 {
   const a = angleDeg * DEG;

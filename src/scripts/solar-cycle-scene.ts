@@ -19,30 +19,35 @@ import {
   Mesh,
   MeshBasicMaterial,
   PerspectiveCamera,
+  PlaneGeometry,
   Points,
   RingGeometry,
   Scene,
   ShaderMaterial,
+  Shape,
+  ShapeGeometry,
   SphereGeometry,
   Sprite,
   SpriteMaterial,
+  Vector2,
   Vector3,
   WebGLRenderer,
 } from "three";
 import {
-  CITY,
+  BORDER_LINES,
+  COUNTY_SHAPES,
   GROUND,
-  GROUND_LABEL,
   LINKS,
+  MAP,
   NODES,
   PILLARS,
-  RIVER,
-  ROADS,
   SOLAR,
+  TARRANT_OUTLINE,
+  densify,
   groundFade,
+  insidePolygon,
   orbitPoint,
-  smoothPath,
-  type CityNode,
+  type MapNode,
   type Vec3,
 } from "@lib/solar-cycle";
 
@@ -62,7 +67,6 @@ export interface SolarCycleOptions {
   canvas: HTMLCanvasElement;
   labels: HTMLElement[];
   coreLabel: HTMLElement;
-  groundLabel: HTMLElement;
   reducedMotion: boolean;
   /** A pillar index, -1 for the core, or -2 for the grassroots ground. */
   onActiveChange: (index: number) => void;
@@ -164,7 +168,7 @@ const lineMaterial = (color: string, opacity: number) =>
   new LineBasicMaterial({ color, transparent: true, opacity, blending: AdditiveBlending, depthWrite: false });
 
 export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
-  const { stage, canvas, labels, coreLabel, groundLabel, reducedMotion } = opts;
+  const { stage, canvas, labels, coreLabel, reducedMotion } = opts;
 
   let renderer: WebGLRenderer;
   try {
@@ -440,30 +444,22 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   const dustPoints = new Points(geometryFrom(dust), softPointsMaterial(0.5));
   system.add(dustPoints);
 
-  // --- City: Fort Worth from above ------------------------------------------
-  // A dot-matrix map under the system (Loop 820, I-35W, I-30, the Trinity)
-  // where grassroots nodes link up peer to peer and new ones keep sprouting.
-  const city = new Group();
-  city.position.y = CITY.y;
-  system.add(city);
+  // --- Map: North Texas, centered on Tarrant County -------------------------
+  // Census county lines under the system with Tarrant lit up in the middle,
+  // and grassroots nodes across the region that link up peer to peer while
+  // new ones keep sprouting.
+  const region = new Group();
+  region.position.y = MAP.y;
+  system.add(region);
 
-  const loopOutline = smoothPath(ROADS.loop820, true);
-  const insideLoop = (x: number, z: number) => {
-    let inside = false;
-    for (let i = 0, j = loopOutline.length - 1; i < loopOutline.length; j = i++) {
-      const [xi, zi] = loopOutline[i];
-      const [xj, zj] = loopOutline[j];
-      if (zi > z !== zj > z && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) inside = !inside;
-    }
-    return inside;
-  };
+  const inTarrant = (x: number, z: number) => insidePolygon([x, z], TARRANT_OUTLINE);
 
-  // Hex dot grid, denser in tone inside the loop.
+  // Hex dot grid, brightest inside Tarrant.
   const DOT = 0.16;
   const dots = { position: [] as number[], aSize: [] as number[], aColor: [] as number[], aAlpha: [] as number[] };
   const dotColor = new Color("#93C5FD");
-  const rows = Math.ceil(CITY.extent.far / (DOT * 0.866));
-  const cols = Math.ceil(CITY.extent.x / DOT) + 1;
+  const rows = Math.ceil(MAP.extent.far / (DOT * 0.866));
+  const cols = Math.ceil(MAP.extent.x / DOT) + 1;
   for (let row = -rows; row <= rows; row++) {
     const z = row * DOT * 0.866;
     for (let col = -cols; col <= cols; col++) {
@@ -473,37 +469,90 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
       dots.position.push(x, 0, z);
       dots.aSize.push(0.05);
       dots.aColor.push(dotColor.r, dotColor.g, dotColor.b);
-      dots.aAlpha.push(fade * (insideLoop(x, z) ? 0.8 : 0.32));
+      dots.aAlpha.push(fade * (inTarrant(x, z) ? 0.85 : 0.3));
     }
   }
   const dotsMaterial = softPointsMaterial(0.6);
-  city.add(new Points(geometryFrom(dots), dotsMaterial));
+  region.add(new Points(geometryFrom(dots), dotsMaterial));
 
-  // Roads fade with the map through per-vertex alpha. Fading the color alone
-  // would leave opaque dark lines on the transparent canvas.
-  const roadMaterial = track(
+  // County lines fade with the map through per-vertex alpha. Fading the color
+  // alone would leave opaque dark lines on the transparent canvas.
+  const borderColor = new Color("#93C5FD");
+  const borderPositions: number[] = [];
+  const borderColors: number[] = [];
+  for (const line of BORDER_LINES) {
+    const points = densify(line);
+    for (let i = 1; i < points.length; i++) {
+      for (const [x, z] of [points[i - 1], points[i]]) {
+        borderPositions.push(x, 0, z);
+        borderColors.push(borderColor.r, borderColor.g, borderColor.b, groundFade(x, z) * 0.62);
+      }
+    }
+  }
+  const borderGeometry = geometryFrom({ position: borderPositions });
+  borderGeometry.setAttribute("color", new Float32BufferAttribute(borderColors, 4));
+  const borderMaterial = track(
     new LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85, blending: AdditiveBlending, depthWrite: false }),
   );
-  const road = (points: [number, number][], strength: number) => {
-    const c = new Color("#93C5FD");
-    const colors = points.flatMap(([x, z]) => [c.r, c.g, c.b, groundFade(x, z) * strength]);
-    const geometry = geometryFrom({ position: points.flatMap(([x, z]) => [x, 0, z]) });
-    geometry.setAttribute("color", new Float32BufferAttribute(colors, 4));
-    return new Line(geometry, roadMaterial);
-  };
-  city.add(road(loopOutline, 0.75), road(smoothPath(ROADS.i35w), 0.45), road(smoothPath(ROADS.i30), 0.45));
+  region.add(new LineSegments(borderGeometry, borderMaterial));
 
-  const riverFade = (p: Vector3) => groundFade(p.x, p.z);
-  const rivers = [RIVER.westFork, RIVER.clearFork].map((fork) => {
-    const river = flowLine(
-      smoothPath(fork).map(([x, z]) => new Vector3(x, 0, z)),
-      { colorA: "#22D3EE", colorB: "#38BDF8", dashLength: 0.32, speed: 0.5, base: 0.38, dash: 0.45, boost: 0.25, ends: [0, 0], fade: riverFade },
+  // Tarrant: a faint fill and a live perimeter.
+  const tarrantShape = new Shape(TARRANT_OUTLINE.map(([x, z]) => new Vector2(x, z)));
+  const tarrantGeometry = track(new ShapeGeometry(tarrantShape));
+  tarrantGeometry.rotateX(Math.PI / 2);
+  const tarrantFill = new Mesh(
+    tarrantGeometry,
+    track(new MeshBasicMaterial({ color: "#3B82F6", transparent: true, opacity: 0.07, side: DoubleSide, blending: AdditiveBlending, depthWrite: false })),
+  );
+  const tarrantEdge = flowLine(
+    densify(TARRANT_OUTLINE).map(([x, z]) => new Vector3(x, 0.005, z)),
+    { colorA: "#BFDBFE", dashLength: 0.22, speed: 0.4, base: 0.42, dash: 0.4, boost: 0.3, ends: [0, 0] },
+  );
+  region.add(tarrantFill, tarrantEdge.line);
+
+  // County names lie flat on the ground, reading north-up.
+  const MONO = '"JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace';
+  const groundText = (text: string, height: number, opacity: number) => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d")!;
+    const px = 64;
+    const font = `600 ${px}px ${MONO}`;
+    const spacing = px * 0.32;
+    const chars = [...text.toUpperCase()];
+    ctx.font = font;
+    const widths = chars.map((c) => ctx.measureText(c).width);
+    canvas.width = Math.ceil(widths.reduce((a, b) => a + b, 0) + spacing * (chars.length - 1) + 16);
+    canvas.height = Math.ceil(px * 1.3);
+    ctx.font = font;
+    ctx.fillStyle = "#fff";
+    ctx.textBaseline = "middle";
+    let x = 8;
+    chars.forEach((c, i) => {
+      ctx.fillText(c, x, canvas.height / 2);
+      x += widths[i] + spacing;
+    });
+    const texture = track(new CanvasTexture(canvas));
+    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    const geometry = track(new PlaneGeometry((height * canvas.width) / canvas.height, height));
+    geometry.rotateX(-Math.PI / 2);
+    const material = track(
+      new MeshBasicMaterial({ map: texture, color: "#BFDBFE", transparent: true, opacity, blending: AdditiveBlending, depthWrite: false }),
     );
-    city.add(river.line);
-    return river.material;
-  });
+    return new Mesh(geometry, material);
+  };
+  let tarrantLabel: Mesh | null = null;
+  for (const county of COUNTY_SHAPES) {
+    if (!county.label) continue;
+    const [x, z] = county.label;
+    const label = county.isTarrant
+      ? groundText(county.name, 0.3, 0.75)
+      : groundText(county.name, 0.24, 0.4 * groundFade(x, z));
+    label.position.set(x, 0.01, z);
+    region.add(label);
+    if (county.isTarrant) tarrantLabel = label;
+  }
 
-  const nodeColor = (node: CityNode) => new Color(node.pillar < 0 ? GROUND.color : PILLARS[node.pillar].color);
+  const nodeColor = (node: MapNode) => new Color(node.pillar < 0 ? GROUND.color : PILLARS[node.pillar].color);
 
   const linkGeometry = geometryFrom({
     position: LINKS.flatMap(([a, b]) => [NODES[a], NODES[b]].flatMap((n) => [n.x, 0.01, n.z])),
@@ -518,7 +567,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   const linkMaterial = track(
     new LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.6, blending: AdditiveBlending, depthWrite: false }),
   );
-  city.add(new LineSegments(linkGeometry, linkMaterial));
+  region.add(new LineSegments(linkGeometry, linkMaterial));
 
   // Node glow by channel: pillars 0-3, the downtown root, then the whole ground.
   const nodeGlow = { value: [0, 0, 0, 0, 0, 0] };
@@ -553,7 +602,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
       blending: AdditiveBlending,
     }),
   );
-  city.add(
+  region.add(
     new Points(
       geometryFrom({
         position: NODES.flatMap((n) => [n.x, 0.02, n.z]),
@@ -567,7 +616,8 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     ),
   );
 
-  // Downtown: where the core puts down roots.
+  // Fort Worth: where the core puts down roots.
+  const fortWorth = NODES[0];
   const rootRing = flatRing(0.22, 0.24, GROUND.color, 0.45);
   const rootDashGeometry = track(new BufferGeometry());
   rootDashGeometry.setAttribute("position", circlePoints(0.38, 96));
@@ -576,9 +626,11 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     track(new LineDashedMaterial({ color: GROUND.color, dashSize: 0.06, gapSize: 0.07, transparent: true, opacity: 0.35, blending: AdditiveBlending, depthWrite: false })),
   );
   rootDash.computeLineDistances();
-  city.add(rootRing, rootDash);
+  rootRing.position.set(fortWorth.x, 0, fortWorth.z);
+  rootDash.position.set(fortWorth.x, 0, fortWorth.z);
+  region.add(rootRing, rootDash);
 
-  const trunk = flowLine([new Vector3(0, CITY.y, 0), new Vector3(0, -SOLAR.sunRadius * 1.05, 0)], {
+  const trunk = flowLine([new Vector3(fortWorth.x, MAP.y, fortWorth.z), new Vector3(0, -SOLAR.sunRadius * 1.05, 0)], {
     colorA: GROUND.color,
     colorB: SOLAR.sunColor,
     dashes: 4,
@@ -598,7 +650,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     );
     const mesh = new Mesh(rippleGeometry, material);
     mesh.visible = false;
-    city.add(mesh);
+    region.add(mesh);
     return { mesh, material, start: -1, strength: 1, size: 0.5 };
   });
   let rippleCursor = 0;
@@ -637,7 +689,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   for (const geometry of [sproutGeometry, sproutLinkGeometry]) {
     for (const attribute of Object.values(geometry.attributes)) (attribute as Float32BufferAttribute).setUsage(DynamicDrawUsage);
   }
-  city.add(sproutLinks, sproutPoints);
+  region.add(sproutLinks, sproutPoints);
 
   // --- Packets: grassroots energy moving up and across ----------------------
   // Channels: 0-3 rise from each part of the city to its pillar, 4 rises from
@@ -666,14 +718,14 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     packets.aChannel.push(channel);
     packets.aArc.push(arc);
   };
-  for (let i = 0; i < 10; i++) addPacket([0, CITY.y, 0], [0, -SOLAR.sunRadius, 0], lime, 4, 0.36, 0.07);
+  for (let i = 0; i < 10; i++) addPacket([fortWorth.x, MAP.y, fortWorth.z], [0, -SOLAR.sunRadius, 0], lime, 4, 0.36, 0.07);
   PILLARS.forEach((pillar, i) => {
     const [x, , z] = orbitPoint(pillar.angle);
-    for (let k = 0; k < 4; k++) addPacket([x, CITY.y, z], [x, -SOLAR.planetRadius * 1.9, z], new Color(pillar.color), i, 0.4, 0.065);
+    for (let k = 0; k < 4; k++) addPacket([x, MAP.y, z], [x, -SOLAR.planetRadius * 1.9, z], new Color(pillar.color), i, 0.4, 0.065);
   });
   for (const [a, b] of LINKS) {
     const [from, to] = Math.random() < 0.5 ? [NODES[a], NODES[b]] : [NODES[b], NODES[a]];
-    const y = CITY.y + 0.02;
+    const y = MAP.y + 0.02;
     addPacket([from.x, y, from.z], [to.x, y, to.z], nodeColor(to), to.pillar < 0 ? 9 : 5 + to.pillar, 0.22, 0.055, 0.1);
   }
   const packetMaterial = track(
@@ -879,8 +931,8 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     const [fx, , fz] = orbitPoint(pillar.angle);
     const foot = flatRing(0.15, 0.165, pillar.color, 0.4);
     foot.position.set(fx, 0.01, fz);
-    city.add(foot);
-    const root = flowLine([new Vector3(fx, CITY.y, fz), new Vector3(fx, -SOLAR.planetRadius * 1.9, fz)], {
+    region.add(foot);
+    const root = flowLine([new Vector3(fx, MAP.y, fz), new Vector3(fx, -SOLAR.planetRadius * 1.9, fz)], {
       colorA: pillar.color,
       dashes: 4,
       speed: 0.4,
@@ -934,8 +986,6 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
   const projected = PILLARS.map(() => ({ x: 0, y: 0, r: 0 }));
   const sunProjected = { x: 0, y: 0, r: 0 };
-  const groundProjected = { x: 0, y: 0, r: 0 };
-  const groundAnchor = new Vector3(...GROUND_LABEL);
   const tmp = new Vector3();
   const worldPos = new Vector3();
   const tanHalf = Math.tan((SOLAR.fov * DEG) / 2);
@@ -972,7 +1022,6 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
           : `translate3d(${x}px, ${p.y + gap}px, 0) translate(-50%, 0)`;
     });
     coreLabel.style.transform = `translate3d(${sunProjected.x}px, ${sunProjected.y + sunProjected.r + 6}px, 0) translate(-50%, 0)`;
-    groundLabel.style.transform = `translate3d(${groundProjected.x}px, ${groundProjected.y}px, 0) translate(-50%, -50%)`;
   }
 
   function spawnSprout() {
@@ -1146,12 +1195,12 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     packetMaterial.uniforms.uTime.value = time;
     trunk.material.uniforms.uTime.value = time;
     trunk.material.uniforms.uActive.value = Math.max(coreActive, groundActive);
-    for (const river of rivers) {
-      river.uniforms.uTime.value = time;
-      river.uniforms.uActive.value = groundActive;
-    }
+    tarrantEdge.material.uniforms.uTime.value = time;
+    tarrantEdge.material.uniforms.uActive.value = groundActive;
+    (tarrantFill.material as MeshBasicMaterial).opacity = 0.07 + groundActive * 0.08;
+    if (tarrantLabel) (tarrantLabel.material as MeshBasicMaterial).opacity = 0.75 + groundActive * 0.25;
     dotsMaterial.uniforms.uOpacity.value = 0.6 + groundActive * 0.35;
-    roadMaterial.opacity = 0.85 + groundActive * 0.15;
+    borderMaterial.opacity = 0.85 + groundActive * 0.15;
     linkMaterial.opacity = 0.6 + groundActive * 0.4;
     (rootRing.material as MeshBasicMaterial).opacity = 0.45 + Math.max(coreActive, groundActive) * 0.4;
     updateSprouts();
@@ -1161,7 +1210,6 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
       project(planet.group.getWorldPosition(worldPos), SOLAR.planetRadius, projected[i]);
     });
     project(worldPos.copy(sunPosition), SOLAR.sunRadius, sunProjected);
-    project(system.localToWorld(worldPos.copy(groundAnchor)), 0, groundProjected);
     placeLabels();
   }
 
@@ -1256,7 +1304,7 @@ export function mountSolarCycle(opts: SolarCycleOptions): SolarCycle | null {
     contextLost = true;
     stop();
     stage.dataset.webgl = "lost";
-    [...labels, coreLabel, groundLabel].forEach((label) => (label.style.transform = ""));
+    [...labels, coreLabel].forEach((label) => (label.style.transform = ""));
   };
   const onContextRestored = () => {
     contextLost = false;
