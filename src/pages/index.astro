@@ -3,6 +3,7 @@ import Container from "@components/container.astro";
 import Cta from "@components/cta.astro";
 import Features from "@components/features.astro";
 import Hero from "@components/hero.astro";
+import HowItWorks from "@components/howitworks.astro";
 import UpcomingEvents from "@components/upcomingevents.astro";
 import InnovationBounty from "@components/innovationbounty.astro";
 import DonateBanner from "@components/donatebanner.astro";
@@ -55,28 +56,9 @@ const faqSchema = {
 
   <Container>
     <Hero />
-    <UpcomingEvents />
-
-    <!-- Community Roundtables Section -->
-    <div class="mt-8 mb-20">
-      <div class="max-w-4xl mx-auto px-4 text-center">
-        <h2 class="font-display text-4xl lg:text-5xl font-bold tracking-tight mb-8 text-white">
-          Join Our <span class="gradient-text">Community Roundtables</span>
-        </h2>
-        <p class="text-lg text-slate-400 mb-8">
-          Growing a technologist culture in Fort Worth via Digital Assets, Emerging Tech, and Information Age First principles
-        </p>
-        <a
-          href="/events"
-          class="bg-frontier-amber text-cyber-dark font-semibold px-8 py-3 rounded-lg inline-flex items-center gap-2 hover:bg-frontier-amber/90 hover:shadow-glow-amber transition duration-300 min-h-[44px]"
-        >
-          RSVP
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </a>
-      </div>
+    <HowItWorks />
+    <div class="mb-20">
+      <UpcomingEvents />
     </div>
     <Features />
     <DonateBanner />
