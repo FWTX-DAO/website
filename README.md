@@ -1,5 +1,8 @@
 # FWTX DAO
 
+Use Node.js 22.23.4 (`nvm use`), Node.js 24.22.1+, or Node.js 26.12.1+.
+The engine ranges in `package.json` require the October 2026 security patches.
+
 ## Installation
 
 If you are reading this on github, you can click on the "Use this template" button above to create a new repository from astroship to your account. Then you can do a `git clone` to clone it to your local system.
@@ -24,6 +27,8 @@ npm install
 yarn install
 # or (recommended)
 pnpm install
+# or, with Bun 1.4.4 or newer
+bun install --frozen-lockfile
 ```
 
 ### 3. Start development Server
@@ -50,6 +55,22 @@ pnpm build
 ```
 
 We recommend using [pnpm](https://pnpm.io/) to save disk space on your computer.
+
+### Dependency Updates
+
+```bash
+bun update --latest
+pnpm update --lockfile-only
+bun audit
+pnpm audit
+bun run build
+```
+
+Commit both `bun.lock` and `pnpm-lock.yaml` after updates. Keep the security
+overrides in `package.json` and `pnpm-workspace.yaml` aligned; they patch
+transitive dependencies whose upstream packages still pin vulnerable versions.
+Tailwind CSS v4 runs through `@tailwindcss/postcss` and loads the existing
+theme from `tailwind.config.cjs`.
 
 ### Other Commands
 

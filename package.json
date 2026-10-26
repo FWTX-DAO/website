@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.2",
   "private": true,
-  "packageManager": "pnpm@11.18.0",
+  "packageManager": "pnpm@12.15.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -12,35 +12,42 @@
     "astro": "astro"
   },
   "engines": {
-    "node": ">=22.19.0"
+    "node": "^22.23.4 || ^24.22.1 || >=26.12.1",
+    "bun": ">=1.4.4"
   },
   "dependencies": {
-    "@astrojs/mdx": "^7.0.8",
-    "@astrojs/react": "^6.0.4",
+    "@astrojs/mdx": "^8.1.1",
+    "@astrojs/react": "^7.1.1",
     "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.3",
-    "@fontsource-variable/inter": "^5.2.8",
-    "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
-    "@fontsource/teko": "^5.2.7",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "@fontsource/teko": "^5.3.0",
     "@iconify-json/bx": "^1.2.3",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/uil": "^1.2.3",
-    "@tailwindcss/typography": "^0.5.19",
-    "astro": "^7.2.8",
-    "astro-icon": "^1.1.5",
+    "@tailwindcss/typography": "^0.5.20",
+    "astro": "^7.4.2",
+    "astro-icon": "^1.2.0",
     "astro-navbar": "^2.4.0",
-    "astro-seo": "^0.8.4",
+    "astro-seo": "^1.2.0",
     "clsx": "^2.1.1",
-    "framer-motion": "^13.1.1",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "sharp": "^0.33.5",
-    "tailwind-merge": "^3.5.0",
-    "tailwindcss": "^3.4.19",
+    "framer-motion": "^14.6.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sharp": "^0.35.5",
+    "tailwind-merge": "^3.7.0",
+    "tailwindcss": "^4.3.3",
     "three": "^0.186.1"
   },
   "devDependencies": {
-    "@types/three": "^0.186.0",
-    "autoprefixer": "^10.5.2"
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/three": "^0.186.0"
+  },
+  "overrides": {
+    "anymatch>picomatch": "^2.3.2",
+    "@tailwindcss/typography>postcss-selector-parser": "^7.1.6",
+    "source-map-js": "^1.2.2",
+    "@astrojs/rss>zod": "^4.6.7"
   }
 }

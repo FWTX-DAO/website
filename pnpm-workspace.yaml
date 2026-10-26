@@ -7,3 +7,9 @@ minimumReleaseAgeExclude:
 peerDependencyRules:
   allowedVersions:
     '@tailwindcss/typography@0.5.19>tailwindcss': '>=3.0.0'
+# Keep these security fixes aligned with package.json's Bun overrides.
+overrides:
+  anymatch>picomatch: ^2.3.2
+  '@tailwindcss/typography>postcss-selector-parser': ^7.1.6
+  source-map-js: ^1.2.2
+  '@astrojs/rss>zod': ^4.6.7

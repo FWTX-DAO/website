@@ -29,7 +29,7 @@ pnpm astro
 
 ### Tech Stack
 - **Framework**: Astro v7 (static site generator)
-- **Styling**: Tailwind CSS v3 with Typography plugin through PostCSS
+- **Styling**: Tailwind CSS v4 with Typography plugin through `@tailwindcss/postcss`
 - **Content**: Astro Content Collections with Zod validation
 - **Components**: `.astro` files with TypeScript support
 
@@ -67,7 +67,9 @@ pnpm astro
 
 - No linting or formatting configured - follow existing code style
 - No testing framework - manual verification required
-- Tailwind is wired through `postcss.config.cjs`; do not re-add `@astrojs/tailwind` unless its peer range supports the active Astro major.
+- Tailwind is wired through `@tailwindcss/postcss` in `postcss.config.cjs`, with the existing theme loaded by `@config` in `src/styles/global.css`; do not re-add `@astrojs/tailwind` unless its peer range supports the active Astro major.
+- Use the security-patched Node release in `.nvmrc` (or a compatible patched release from `package.json`'s engines). Bun requires v1.4.4 or newer.
+- Keep security overrides in `package.json` and `pnpm-workspace.yaml` aligned and audit both lockfiles after dependency updates.
 - Static site with no API endpoints or server-side logic
 - SEO managed through astro-seo in Layout component
 - Responsive design using Tailwind breakpoints
