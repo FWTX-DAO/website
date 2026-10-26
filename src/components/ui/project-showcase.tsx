@@ -240,7 +240,7 @@ export function ProjectShowcase({
                 <div className="mb-4 flex flex-wrap items-center gap-3">
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-200">
                     <span className="project-showcase-status-dot h-1.5 w-1.5 rounded-full" aria-hidden="true" />
-                    Live lab project
+                    {item.link ? "Live lab project" : "Lab project"}
                   </span>
                   {item.kicker && (
                     <span className="text-xs font-medium uppercase tracking-[0.14em] text-slate-300">
